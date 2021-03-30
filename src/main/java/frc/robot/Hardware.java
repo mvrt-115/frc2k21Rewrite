@@ -4,5 +4,12 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
 /** Add your docs here. */
-public class Hardware {}
+public class Hardware {
+    // example
+    public static class ExampleSubsystem {
+        public static WPI_TalonSRX rightLeader;
+    }
+}
