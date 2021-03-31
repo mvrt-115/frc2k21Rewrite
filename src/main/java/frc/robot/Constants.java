@@ -13,7 +13,8 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    public static class Hoopper {
+    /** Hopper subsystem constants*/
+    public static class Hopper {
         public static final double KP = 0.1;
         public static final double KI = 0.01;
         public static final double KD = 0.1;
