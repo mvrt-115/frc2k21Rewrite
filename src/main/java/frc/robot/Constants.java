@@ -13,7 +13,6 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    // example
     public static class ExampleSubsystem {
         public static final double SPEED = 0.5;
     }
