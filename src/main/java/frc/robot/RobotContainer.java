@@ -7,8 +7,11 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Hardware.Hopper;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.subsystems.Hopper;
+import frc.robot.commands.HopperManual;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -23,6 +26,8 @@ public class RobotContainer {
   // private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem, true);
 
   private final Hopper hopper = new Hopper();
+
+  private final HopperManual hoopperManual = new HopperManual(hopper, false);
 
   private Joystick joystick;
 
@@ -46,8 +51,15 @@ public class RobotContainer {
     // if you want to run a command when the button is released
   //   new JoystickButton(joystick, 1).whenPressed(new ExampleCommand(m_exampleSubsystem, true)).whenReleased(new ExampleCommand(m_exampleSubsystem, false));
 
-  //   SmartDashboard.putData("ExampleCommand", new ExampleCommand(m_exampleSubsystem, true));
-   }
+    //SmartDashboard.putData("ExampleCommand", new ExampleCommand(m_exampleSubsystem, true));
+
+    new JoystickButton(joystick, 1)
+      .whenPressed(new HopperManual(hopper, true))
+      .whenReleased(new HopperManual(hopper, false));
+
+    SmartDashboard.putData("Manual Hopper", new HopperManual(hopper, true));
+    SmartDashboard.putData("Stop Hopper", new HopperManual(hopper, false));
+  }
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.

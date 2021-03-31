@@ -3,21 +3,36 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.commands;
+import frc.robot.subsystems.Hopper;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+
 
 /**
  * HopperManual runs the hopper indefinetely for as long as the button is held down
  */
 public class HopperManual extends CommandBase {
+  private Hopper hopper;
+  private boolean run;
+
   /** Creates a new HopperManual. */
-  public HopperManual() {
-    // Use addRequirements() here to declare subsystem dependencies.
+  public HopperManual(Hopper hopper, boolean run) {
+    this.hopper = hopper;
+    this.run = run;
+
+    addRequirements(hopper);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    if(run) {
+      hopper.setState(Hopper.State.DISABLED);
+    } else { 
+      hopper.setRPM(Constants.Hopper.MANUAL_RPM);
+      hopper.setState(Hopper.State.RUNNING);
+    }
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -30,6 +45,6 @@ public class HopperManual extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }
