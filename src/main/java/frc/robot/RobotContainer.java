@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.Hopper;
+import frc.robot.commands.HopperAutomatic;
 import frc.robot.commands.HopperManual;
 
 /**
@@ -26,8 +27,6 @@ public class RobotContainer {
   // private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem, true);
 
   private final Hopper hopper = new Hopper();
-
-  private final HopperManual hoopperManual = new HopperManual(hopper, false);
 
   private Joystick joystick;
 
@@ -57,8 +56,11 @@ public class RobotContainer {
       .whenPressed(new HopperManual(hopper, true))
       .whenReleased(new HopperManual(hopper, false));
 
+    new JoystickButton(joystick, 2).whenPressed(new HopperAutomatic(hopper));
+
     SmartDashboard.putData("Manual Hopper", new HopperManual(hopper, true));
     SmartDashboard.putData("Stop Hopper", new HopperManual(hopper, false));
+    SmartDashboard.putData("Automatic Hoppper", new HopperAutomatic(hopper));
   }
 
   /**
