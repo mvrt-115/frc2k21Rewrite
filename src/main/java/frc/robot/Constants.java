@@ -13,8 +13,19 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    // example
     public static class ExampleSubsystem {
         public static final double SPEED = 0.5;
+    }
+    public static class Intake {
+        public static final int PIVOT_ID = 0;
+        public static final int ROLLER_ID = 1;
+        public static final int FUNNEL_ID = 2;
+
+        public static final double PIVOT_STOWED_DEGREES = 90;
+        public static final double PIVOT_DEPLOYED_DEGREES = 90;
+
+        public static final double kP = 0;
+        public static final double kI = 0;
+        public static final double kD = 0;
     }
 }
