@@ -8,44 +8,43 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Hopper;
 
-
-/**
- * HopperManual runs the hopper indefinetely for as long as the button is held down
- */
-public class HopperManual extends CommandBase {
+public class HopperAutomatic extends CommandBase {
   private Hopper hopper;
-  private boolean run;
+  private int lastBallNum;      
 
-  /** Creates a new HopperManual. */
-  public HopperManual(Hopper hopper, boolean run) {
+  /** Creates a new HopperAutomatic. */
+  public HopperAutomatic(Hopper hopper) {
     this.hopper = hopper;
-    this.run = run;
+    lastBallNum = hopper.getBallNum();
 
+    // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(hopper);
   }
-
+  
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if(run) {
-      hopper.setState(Hopper.State.DISABLED);
-    } else { 
-      hopper.setRPM(Constants.Hopper.MANUAL_RPM);
-      hopper.setState(Hopper.State.RUNNING);
-    }
+    hopper.setRPM(Constants.Hopper.AUTOMATIC_BASE_RPM + (Constants.Hopper.AUTOMATIC_SLOPE * hopper.getBallNum()));
   }
-
+  
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
-
+  public void execute() {
+    if(lastBallNum != hopper.getBallNum()) {
+      hopper.setRPM(Constants.Hopper.AUTOMATIC_BASE_RPM + (Constants.Hopper.AUTOMATIC_SLOPE * hopper.getBallNum()));
+      lastBallNum = hopper.getBallNum();
+    }
+  }
+  
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
-
+  public void end(boolean interrupted) {
+    hopper.setRPM(0);
+  }
+  
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    return hopper.getBallNum() == 4;
   }
 }
