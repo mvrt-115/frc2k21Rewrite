@@ -5,7 +5,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
 import frc.robot.subsystems.Hopper;
 
 
@@ -30,7 +29,7 @@ public class HopperManual extends CommandBase {
     if(run) {
       hopper.setState(Hopper.State.DISABLED);
     } else { 
-      hopper.setRPM(Constants.Hopper.MANUAL_RPM);
+      hopper.runMotors();
       hopper.setState(Hopper.State.RUNNING);
     }
   }

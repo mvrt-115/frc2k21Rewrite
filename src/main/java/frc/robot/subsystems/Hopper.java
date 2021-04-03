@@ -21,7 +21,7 @@ public class Hopper extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-  public void run() {
+  public void runMotors() {
 
   }
 
