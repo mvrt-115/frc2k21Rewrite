@@ -21,7 +21,11 @@ public class Hopper extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-  public void setRPM(int rpm) {
+  public void run() {
+
+  }
+
+  public void stopMotors() {
 
   }
 
@@ -30,6 +34,6 @@ public class Hopper extends SubsystemBase {
   }
 
   public int getBallNum() {
-
+    return 0;
   }
 }

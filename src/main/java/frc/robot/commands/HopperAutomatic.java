@@ -5,17 +5,17 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
 import frc.robot.subsystems.Hopper;
 
+/**
+ * HopperAutomatic runs the motors until 
+ */
 public class HopperAutomatic extends CommandBase {
   private Hopper hopper;
-  private int lastBallNum;      
 
   /** Creates a new HopperAutomatic. */
   public HopperAutomatic(Hopper hopper) {
     this.hopper = hopper;
-    lastBallNum = hopper.getBallNum();
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(hopper);
@@ -24,22 +24,17 @@ public class HopperAutomatic extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    hopper.setRPM(Constants.Hopper.AUTOMATIC_BASE_RPM + (Constants.Hopper.AUTOMATIC_SLOPE * hopper.getBallNum()));
+    hopper.run();
   }
   
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    if(lastBallNum != hopper.getBallNum()) {
-      hopper.setRPM(Constants.Hopper.AUTOMATIC_BASE_RPM + (Constants.Hopper.AUTOMATIC_SLOPE * hopper.getBallNum()));
-      lastBallNum = hopper.getBallNum();
-    }
-  }
+  public void execute() {}
   
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    hopper.setRPM(0);
+    hopper.stopMotors();
   }
   
   // Returns true when the command should end.
