@@ -7,6 +7,8 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.TalonSRXSimCollection;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+
 /** Add your docs here. */
 public class Hardware {
     // public static class ExampleSubsystem {
@@ -17,10 +19,14 @@ public class Hardware {
     // }
 
     public static class Hopper {
-        public static BaseTalon right;
-        public static BaseTalon left;
+        public static BaseTalon top;
+        public static BaseTalon bottom;
         
-        public static TalonSRXSimCollection rightSim;
-        public static TalonSRXSimCollection leftSim;
+        public static TalonSRXSimCollection topSim;
+        public static TalonSRXSimCollection bottomSim;
+
+        public static DigitalInput diTop;
+        public static DigitalInput diMid;
+        public static DigitalInput diBot;
     }
 }
