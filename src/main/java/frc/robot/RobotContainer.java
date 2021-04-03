@@ -11,7 +11,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.RunIntake;
 import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.Intake;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -25,6 +27,9 @@ public class RobotContainer {
 
   private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem, true);
 
+  private final Intake intake = new Intake();
+
+  /** Main joystick */
   private Joystick joystick;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -46,6 +51,8 @@ public class RobotContainer {
 
     // if you want to run a command when the button is released
     new JoystickButton(joystick, 1).whenPressed(new ExampleCommand(m_exampleSubsystem, true)).whenReleased(new ExampleCommand(m_exampleSubsystem, false));
+
+    new JoystickButton( joystick, 2 ).whenPressed( new RunIntake( intake, true ) ).whenReleased( new RunIntake( intake, false ) );
 
     SmartDashboard.putData("ExampleCommand", new ExampleCommand(m_exampleSubsystem, true));
   }

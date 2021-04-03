@@ -14,12 +14,17 @@ public class Hardware {
     public static class ExampleSubsystem {
         public static BaseTalon rightLeader;
 
-        // simulation
+        /** simulation */
         public static TalonSRXSimCollection rightMotorControllerSim;
     }
     public static class Intake {
+        /** Pivot Talon */
         public static BaseTalon pivot;
+
+        /** Roller Talon */
         public static BaseTalon roller;
+
+        /** Funnel Talon */
         public static BaseTalon funnel;
 
         public static DigitalInput limitSwitchTop;

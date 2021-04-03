@@ -21,6 +21,7 @@ public class Intake extends SubsystemBase {
   private IntakeState state;
 
   /** Creates a new Intake. */
+
   public Intake() {
     if(Robot.isReal()) {
       Hardware.Intake.pivot = new TalonFX(Constants.Intake.PIVOT_ID);
@@ -50,6 +51,38 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+  }
+
+  public void deploying()
+  {
+    //Move pivot down until it reaches the bottom.
+    //Once pivot has reached he bottom, set the state to INTAKING
+  }
+
+  public void intake()
+  {
+    //run intake at a speed
+  }
+
+  public void stowing()
+  {
+    //move pivot up until it has reached the top
+    //Once pivot has reached the top, set the state to STOWED
+  }
+  
+  public void stopPivot()
+  {
+    //set speed of pivot to 0
+  }
+
+  public void stopFunnel()
+  {
+    //set speed of funnel to 0
+  }
+
+  public void stopRoller()
+  {
+    //set roller speed to 0
   }
 
   /**
