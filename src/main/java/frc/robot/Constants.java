@@ -32,9 +32,9 @@ public final class Constants {
         public static final double kElevatorClimbOutput = -.58;
         
         //Location Ticks
-        public static final double kClimbHeight = 370000;
-        public static final double kElevatorZero = 1000;
-        public static final int kClimbTicks = 80000;
+        public static final double kClimbHeight = 370_000;
+        public static final double kElevatorZero = 1_000;
+        public static final int kClimbTicks = 80_000;
 
         public static final double kServoRatchet = 0;
         public static final double kServoUnRatchet = 0.4;
@@ -43,10 +43,12 @@ public final class Constants {
         public static final double CARRIAGE_MASS = convertPoundsToKg(15);
         public static final double GEAR_REDUCTION = 10.0;
         public static final double PULLEY_RADIUS = Units.inchesToMeters(2);
-        public static final double MIN_HEIGHT = 1000.0, MAX_HEIGHT = 370000.0;
-        public static final double TICKS_PER_ROTATION = 4096;
-        public static final double Distance_PER_PULSE = 2.0 * Math.PI * PULLEY_RADIUS / GEAR_REDUCTION / TICKS_PER_ROTATION;
 
+        public static final double TICKS_PER_ROTATION = 4096;
+        public static final double DISTANCE_PER_PULSE = 2.0 * Math.PI * PULLEY_RADIUS / GEAR_REDUCTION / TICKS_PER_ROTATION;
+        public static final double MIN_HEIGHT = 1_000.0 * DISTANCE_PER_PULSE, MAX_HEIGHT = 370_000.0 * DISTANCE_PER_PULSE;
+        public static final int CHANNEL_A = 0, CHANNEL_B = 1;
+        
         private static double convertPoundsToKg(double pounds)
         {
             return pounds * 0.45359237; 
