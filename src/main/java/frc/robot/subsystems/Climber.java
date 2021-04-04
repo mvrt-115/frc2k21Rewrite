@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Hardware;
+import frc.robot.Robot;
 import frc.robot.utils.RollingAverage;
 
 public class Climber extends SubsystemBase {
@@ -39,19 +40,15 @@ public class Climber extends SubsystemBase {
     }
 
     Hardware.Climber.elevatorServo = new Servo(0);
+    
     Hardware.Climber.elevatorMaster.configFactoryDefault();
     Hardware.Climber.elevatorMaster.setInverted(Constants.kCompBot);
-
     Hardware.Climber.elevatorMaster.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor,
         Constants.kPIDIdx, Constants.kTimeoutMs);
     Hardware.Climber.elevatorMaster.setSelectedSensorPosition(0);
 
     currentConfig = new SupplyCurrentLimitConfiguration(true, 40, 1.3, 30);
-
-    // Hardware.bottomHopper.configSupplyCurrentLimit(currentConfig,
-    // Constants.kTimeoutMs);
-    // Hardware.topHopper.configSupplyCurrentLimit(currentConfig,
-    // Constants.kTimeoutMs);
+    Hardware.Climber.elevatorMaster.configSupplyCurrentLimit(currentConfig);
 
     currState = ElevatorState.ZEROED;
 
@@ -93,9 +90,22 @@ public class Climber extends SubsystemBase {
         Hardware.Climber.elevatorServo.setAngle(Constants.Climber.kServoRatchet);
         break;
       case MANUAL_OVERRIDE:
-        //TODO
+        Hardware.Climber.elevatorServo.setAngle(Constants.Climber.kServoUnRatchet);
+        Hardware.Climber.elevatorMaster.set(ControlMode.PercentOutput, Robot.getContainer().getLeft());
+        if(Hardware.Climber.elevatorMaster.getSelectedSensorPosition() > Constants.Climber.kClimbHeight || 
+          Hardware.Climber.elevatorBottomLimitSwitch.get())
+          Hardware.Climber.elevatorMaster.set(ControlMode.PercentOutput, 0);
     }
-
     heightAverage.add(Hardware.Climber.elevatorMaster.getSelectedSensorPosition());
+  }
+
+  public ElevatorState getElevatorState()
+  {
+    return this.currState;
+  }
+
+  public void setElevatorState(ElevatorState state)
+  {
+    this.currState = state;
   }
 }
