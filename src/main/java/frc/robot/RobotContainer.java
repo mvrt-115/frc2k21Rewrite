@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.ClimberCommand;
 import frc.robot.commands.ClimberManualCommand;
 import frc.robot.commands.ClimberManualDownCommand;
 import frc.robot.commands.ExampleCommand;
@@ -53,6 +54,8 @@ public class RobotContainer {
     SmartDashboard.putData("Manually Move Climber Down", new ClimberManualDownCommand(climber));
 
     new JoystickButton(operatorJoystick, 1).whenPressed(new ClimberManualDownCommand(climber));
+
+    SmartDashboard.putData("Move Climber Up", new ClimberCommand(climber));
 
     if(Math.abs(operatorJoystick.getRawAxis(1) - 0.1) > 0)
       new ClimberManualCommand(climber);

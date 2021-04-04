@@ -15,8 +15,10 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
+import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.system.plant.DCMotor;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -131,12 +133,21 @@ public class Climber extends SubsystemBase {
           Hardware.Climber.elevatorMaster.set(ControlMode.PercentOutput, 0);
     }
     heightAverage.add(sensorPosition);
+
+    log();
   }
 
   public void simulationPeriodic()
   {
     super.simulationPeriodic();
+    Hardware.Climber.elevatorSimulation.setInput(Hardware.Climber.elevatorMaster.getMotorOutputVoltage());
 
+    if(Hardware.Climber.elevatorServo.getAngle() != Constants.Climber.kServoRatchet)
+    Hardware.Climber.elevatorSimulation.update(0.020);
+
+    Hardware.Climber.elevatorEncoderSimulation.setDistance(Hardware.Climber.elevatorSimulation.getPositionMeters());
+
+    RoboRioSim.setVInCurrent(BatterySim.calculateDefaultBatteryLoadedVoltage(Hardware.Climber.elevatorSimulation.getCurrentDrawAmps()));
   }
   
   public ElevatorState getElevatorState()
