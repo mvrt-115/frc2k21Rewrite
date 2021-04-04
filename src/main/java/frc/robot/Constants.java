@@ -24,9 +24,10 @@ public final class Constants {
     public static class Climber
     {
         //PID Constants
+        //ToDo:zero constants out and manually do it
         public static final double kElevatorP = 0.5;
-        public static final double kElevatorI = 0;
-        public static final double kElevatorD = 0;
+        public static final double kElevatorI = 0.2;
+        public static final double kElevatorD = 0.2;
         public static final double kElevatorHoldOutput = -.2;
         public static final double kElevatorClimbOutput = -.58;
         
@@ -38,19 +39,17 @@ public final class Constants {
         public static final double kServoRatchet = 0;
         public static final double kServoUnRatchet = 0.4;
 
-        public static class ClimberSimulation
-        {
-            public static final double CARRIAGE_MASS = convertPoundsToKg(15);
-            public static final double GEAR_REDUCTION = 10.0;
-            public static final double PULLEY_RADIUS = Units.inchesToMeters(2);
-            public static final double MIN_HEIGHT = 1000.0/4096.0, MAX_HEIGHT = 370000.0/4096.0;
-            public static final double TICKS_PER_ROTATION = 4096;
-            public static final double Distance_PER_PULSE = 2.0 * Math.PI * PULLEY_RADIUS / GEAR_REDUCTION / TICKS_PER_ROTATION;
+        //TODO: FIND REAL VALUES FOR THESE NUMBERS
+        public static final double CARRIAGE_MASS = convertPoundsToKg(15);
+        public static final double GEAR_REDUCTION = 10.0;
+        public static final double PULLEY_RADIUS = Units.inchesToMeters(2);
+        public static final double MIN_HEIGHT = 1000.0, MAX_HEIGHT = 370000.0;
+        public static final double TICKS_PER_ROTATION = 4096;
+        public static final double Distance_PER_PULSE = 2.0 * Math.PI * PULLEY_RADIUS / GEAR_REDUCTION / TICKS_PER_ROTATION;
 
-            private static double convertPoundsToKg(double pounds)
-            {
-                return pounds * 0.45359237; 
-            }
+        private static double convertPoundsToKg(double pounds)
+        {
+            return pounds * 0.45359237; 
         }
     }
     public static final int kPIDIdx = 0;
