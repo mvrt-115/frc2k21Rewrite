@@ -78,18 +78,19 @@ public class Climber extends SubsystemBase {
         break;
       case ZEROING:
         Hardware.Climber.elevatorServo.setAngle(Constants.Climber.kServoUnRatchet);
-        Hardware.Climber.elevatorMaster.set(ControlMode.Position, Constants.Climber.kElevatorZero);
+        Hardware.Climber.elevatorMaster.set(ControlMode.Position, Constants.Climber.kElevatorZero, DemandType.ArbitraryFeedForward, Constants.Climber.kElevatorClimbOutput);
         if(Hardware.Climber.elevatorBottomLimitSwitch.get())
           currState = ElevatorState.ZEROED;
         break;
       case CLIMBING:
         Hardware.Climber.elevatorServo.setAngle(Constants.Climber.kServoUnRatchet);
-        Hardware.Climber.elevatorMaster.set(ControlMode.Position, Constants.Climber.kClimbHeight);
+        Hardware.Climber.elevatorMaster.set(ControlMode.Position, Constants.Climber.kClimbHeight, DemandType.ArbitraryFeedForward, Constants.Climber.kElevatorClimbOutput);
         if(Math.abs(Hardware.Climber.elevatorMaster.getSelectedSensorPosition() - heightAverage.getAverage()) >= 0.2)
           currState = ElevatorState.HOLD;
         break;
       case HOLD:
         Hardware.Climber.elevatorMaster.set(ControlMode.PercentOutput, 0.0);
+        Hardware.Climber.elevatorServo.setAngle(Constants.Climber.kServoRatchet);
         break;
       case MANUAL_OVERRIDE:
         //TODO
