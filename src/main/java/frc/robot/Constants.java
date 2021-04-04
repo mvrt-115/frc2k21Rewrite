@@ -15,18 +15,6 @@ package frc.robot;
 public final class Constants {
   /** Hopper subsystem constants*/
   public static class Hopper {
-    public static final double KP = 0.1;
-    public static final double KI = 0.01;
-    public static final double KD = 0.1;
-    
-    public static final int MANUAL_RPM = 1000;
-    
-    public static final int AUTOMATIC_BASE_RPM = 1000;
-    public static final int AUTOMATIC_SLOPE = 1;
-    
-    // public static final int AUTOMATIC_ONE_BALL = 1000;
-    // public static final int AUTOMATIC_TWO_BALL = 2000;
-    // public static final int AUTOMATIC_THREE_BALL = 3000;
-    // public static final int AUTOMATIC_FOUR_BALL = 4000;
+    public static final double OUT = 0.1; // output (add more constants if need to vary speed for different ball nums)
   }
 }
