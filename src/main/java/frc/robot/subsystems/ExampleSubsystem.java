@@ -9,7 +9,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Hardware;
@@ -58,8 +57,8 @@ public class ExampleSubsystem extends SubsystemBase {
    * Logs data about ExampleSubsystem
    */
   public void log(){
-    SmartDashboard.putString("ExampleSubsystemState", currentState.name());
-    SmartDashboard.putNumber("ExampleSubsystem rightLeader", Hardware.ExampleSubsystem.rightLeader.getMotorOutputVoltage());
+    //SmartDashboard.putString("ExampleSubsystemState", currentState.name());
+    //SmartDashboard.putNumber("ExampleSubsystem rightLeader", Hardware.ExampleSubsystem.rightLeader.getMotorOutputVoltage());
   }
 
   @Override

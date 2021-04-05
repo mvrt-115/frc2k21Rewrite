@@ -5,7 +5,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Hardware;
 import frc.robot.subsystems.Climber;
 
 public class ClimberCommand extends CommandBase {
@@ -20,10 +19,7 @@ public class ClimberCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if(!climber.getElevatorState().equals(Climber.ElevatorState.HOLD) || Hardware.Climber.elevatorBottomLimitSwitch.get())
-    {
       climber.setElevatorState(Climber.ElevatorState.CLIMBING);
-    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.
