@@ -27,7 +27,6 @@ public class Hardware {
         /** Funnel Talon */
         public static BaseTalon funnel;
 
-        public static DigitalInput limitSwitchTop;
         public static DigitalInput limitSwitchBottom;
 
         public static TalonSRXSimCollection pivotSim;
