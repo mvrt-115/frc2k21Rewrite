@@ -5,28 +5,25 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Robot;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Intake.IntakeState;
 
 public class RunIntake extends CommandBase {
 
-  boolean run;
+  JoystickButton button;
   Intake intake;
 
-  public RunIntake( Intake intake,  boolean run ) {
+  /**
+   * Command that runs the intake
+   * @param intake  The intake subsystem
+   * @param button  The button controlling the command (when pressed run intake, when released stop)
+   */
+  public RunIntake( Intake intake,  JoystickButton button ) {
 
-    this.run = run;
+    this.button = button;
     this.intake = intake;
-
-    if( run ) 
-      intake.setState( IntakeState.DEPLOYING );
-    else
-      intake.setState( 
-        ( intake.getState() == IntakeState.STOWED )
-        ? IntakeState.STOWED 
-        : IntakeState.STOWING
-      );
+    intake.setState( IntakeState.DEPLOYING );
 
     addRequirements( intake );
   }
@@ -37,41 +34,21 @@ public class RunIntake extends CommandBase {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    IntakeState state = intake.getState();
-    if( state == IntakeState.DISABLED ) return;
-
-    if( !run && state != IntakeState.STOWED )
-      intake.setState( IntakeState.STOWING );
-
-    switch( state )
-    {
-      case INTAKING:
-        intake.intake();
-        break;
-
-      case STOWING:
-        intake.stowing();
-        break;
-
-      case DEPLOYING:
-        intake.deploying();
-        break;
-
-      default: 
-        break;
-    }
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    intake.setState( IntakeState.DISABLED );
+    intake.setState( 
+        ( intake.getState() == IntakeState.DISABLED )
+        ? IntakeState.DISABLED
+        : IntakeState.STOWING
+      );
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Robot.disabled;
+    return !button.get();
   }
 }

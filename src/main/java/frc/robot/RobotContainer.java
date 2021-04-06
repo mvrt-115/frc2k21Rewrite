@@ -52,7 +52,8 @@ public class RobotContainer {
     // if you want to run a command when the button is released
     new JoystickButton(joystick, 1).whenPressed(new ExampleCommand(m_exampleSubsystem, true)).whenReleased(new ExampleCommand(m_exampleSubsystem, false));
 
-    new JoystickButton( joystick, 2 ).whenPressed( new RunIntake( intake, true ) ).whenReleased( new RunIntake( intake, false ) );
+    JoystickButton runIntakeButton =  new JoystickButton( joystick, 2 );
+    runIntakeButton.whenPressed( new RunIntake( intake, runIntakeButton ) );
 
     SmartDashboard.putData("ExampleCommand", new ExampleCommand(m_exampleSubsystem, true));
   }
