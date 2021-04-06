@@ -54,7 +54,6 @@ public class Intake extends SubsystemBase {
     Hardware.Intake.pivot.config_kP(0, Constants.Intake.P);
     Hardware.Intake.pivot.config_kI(0, Constants.Intake.I);
     Hardware.Intake.pivot.config_kD(0, Constants.Intake.D);
-    Hardware.Intake.pivot.config_kF(0, Constants.Intake.F);
 
     limitSwitchInitial = Hardware.Intake.limitSwitchBottom.get();
 
@@ -64,6 +63,7 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    feedForward = Constants.Intake.FF * Math.sin(Math.toRadians(getPivotTicks()));
     switch( state )
     {
       case INTAKING:

@@ -32,6 +32,6 @@ public final class Constants {
         public static final double P = 0.1;
         public static final double I = 0.1;
         public static final double D = 0.1;
-        public static final double F = 0.1;
+        public static final double FF = 0.1;
     }
 }
