@@ -21,11 +21,17 @@ public final class Constants {
         public static final int ROLLER_ID = 1;
         public static final int FUNNEL_ID = 2;
 
-        public static final double PIVOT_STOWED_DEGREES = 90;
+        public static final double PIVOT_STOWED_DEGREES = 0;
         public static final double PIVOT_DEPLOYED_DEGREES = 90;
 
-        public static final double kP = 0;
-        public static final double kI = 0;
-        public static final double kD = 0;
+        public static final double INTAKE_SPEED = 0;
+
+        public static final double PIVOT_TICKS_PER_REVOLUTION = 4096;
+        public static final double PIVOT_GEAR_RATIO = 1;
+
+        public static final double P = 0.1;
+        public static final double I = 0.1;
+        public static final double D = 0.1;
+        public static final double F = 0.1;
     }
 }
