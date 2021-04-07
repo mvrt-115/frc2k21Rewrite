@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.RunIntake;
+import frc.robot.commands.RunIntakeSmartDashboard;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Intake;
 
@@ -54,6 +55,9 @@ public class RobotContainer {
 
     JoystickButton runIntakeButton =  new JoystickButton( joystick, 2 );
     runIntakeButton.whenPressed( new RunIntake( intake, runIntakeButton ) );
+
+    SmartDashboard.putData("Start Intake", new RunIntakeSmartDashboard(intake, true));
+    SmartDashboard.putData("Stop Intake", new RunIntakeSmartDashboard(intake, false));
 
     SmartDashboard.putData("ExampleCommand", new ExampleCommand(m_exampleSubsystem, true));
   }
