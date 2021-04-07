@@ -21,9 +21,11 @@ import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.system.plant.DCMotor;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.ClimberMethods;
 import frc.robot.Constants;
 import frc.robot.Hardware;
 import frc.robot.Robot;
+import frc.robot.utils.ClimberInterface;
 import frc.robot.utils.RollingAverage;
 
 public class Climber extends SubsystemBase {
@@ -31,44 +33,47 @@ public class Climber extends SubsystemBase {
   private SupplyCurrentLimitConfiguration currentConfig;
   private RollingAverage heightAverage;
 
-  // Climbing = going to the height
-  // Hold = prevents the evelvator from moving by rotating the servo
-  // Zeroing = going down
+  private ClimberInterface climberMethods;
+
   public enum ElevatorState {
-    ZEROED, CLIMBING, HOLD, ZEROING, MANUAL_OVERRIDE
+    CLIMBING, HOLD, ZEROING, MANUAL_OVERRIDE
   };
 
   /** Creates a new Climber. */
-  public Climber() {
+  public Climber() 
+  {
+    //Setting the Talon ID's based on whether it is a competition robot or another one
     if (Constants.kCompBot) {
       Hardware.Climber.elevatorMaster = new TalonFX(22);
     } else {
       Hardware.Climber.elevatorMaster = new TalonFX(9);
     }
 
+    //Setting the Servo
     Hardware.Climber.elevatorServo = new Servo(0);
     
+    //Setting the motors
     Hardware.Climber.elevatorMaster.configFactoryDefault();
     Hardware.Climber.elevatorMaster.setInverted(Constants.kCompBot);
-    Hardware.Climber.elevatorMaster.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor,
-        Constants.kPIDIdx, Constants.kTimeoutMs);
+    Hardware.Climber.elevatorMaster.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx, Constants.kTimeoutMs);
     Hardware.Climber.elevatorMaster.setSelectedSensorPosition(0);
-
-    currentConfig = new SupplyCurrentLimitConfiguration(true, 40, 1.3, 30);
-    Hardware.Climber.elevatorMaster.configSupplyCurrentLimit(currentConfig);
-
-    currState = ElevatorState.ZEROED;
-
     Hardware.Climber.elevatorMaster.configPeakOutputForward(1);
     Hardware.Climber.elevatorMaster.configPeakOutputReverse(-1);
-
     Hardware.Climber.elevatorMaster.config_kP(Constants.kPIDIdx, Constants.Climber.kElevatorP);
     Hardware.Climber.elevatorMaster.config_kI(Constants.kPIDIdx, Constants.Climber.kElevatorI);
     Hardware.Climber.elevatorMaster.config_kD(Constants.kPIDIdx, Constants.Climber.kElevatorD);
 
+    //Making sure that the current is not too much
+    currentConfig = new SupplyCurrentLimitConfiguration(true, 40, 1.3, 30);
+    Hardware.Climber.elevatorMaster.configSupplyCurrentLimit(currentConfig);
+
+    currState = ElevatorState.HOLD;
+
+    //Creating the bottom limit switch
     Hardware.Climber.elevatorBottomLimitSwitch = new DigitalInput(2);
 
     heightAverage = new RollingAverage(5);
+    heightAverage.zero();
 
     if(!RobotBase.isReal())
     {
@@ -87,55 +92,51 @@ public class Climber extends SubsystemBase {
       Hardware.Climber.elevatorEncoder.reset();
       Hardware.Climber.elevatorEncoder.setDistancePerPulse(Constants.Climber.DISTANCE_PER_PULSE);
       Hardware.Climber.elevatorEncoderSimulation = new EncoderSim(Hardware.Climber.elevatorEncoder);
+
+      climberMethods = new ClimberMethods();
     }
   }
 
   @Override
   public void periodic() 
   {
-    double sensorPosition = 0;
-    if(RobotBase.isReal())
-    {
-      sensorPosition = Hardware.Climber.elevatorMaster.getSelectedSensorPosition();
-    }
-    else
-    {
-      sensorPosition = Hardware.Climber.elevatorEncoder.getDistance() / Constants.Climber.DISTANCE_PER_PULSE;
-    }
-
+    double sensorPosition = climberMethods.getDistanceTicks();
     switch(currState)
     {
-      case ZEROED:
-        currState = ElevatorState.HOLD;
-        break;
       case ZEROING:
         Hardware.Climber.elevatorServo.setAngle(Constants.Climber.kServoUnRatchet);
-        Hardware.Climber.elevatorMaster.set(ControlMode.Position, Constants.Climber.kElevatorZero, DemandType.ArbitraryFeedForward, Constants.Climber.kElevatorClimbOutput);
-        if(RobotBase.isReal() && Hardware.Climber.elevatorBottomLimitSwitch.get() || Math.abs(heightAverage.getAverage() - Constants.Climber.kElevatorZero) <= 0.2)
-          currState = ElevatorState.ZEROED;
+        Hardware.Climber.elevatorMaster.set(ControlMode.MotionMagic, Constants.Climber.kElevatorZero, DemandType.ArbitraryFeedForward, Constants.Climber.kElevatorClimbOutput);
+        if(climberMethods.atBottom(heightAverage))
+          currState = ElevatorState.HOLD;
         break;
+
       case CLIMBING:
         Hardware.Climber.elevatorServo.setAngle(Constants.Climber.kServoUnRatchet);
-        Hardware.Climber.elevatorMaster.set(ControlMode.Position, Constants.Climber.kClimbHeight, DemandType.ArbitraryFeedForward, 0);
-        /*if(Math.abs(Constants.Climber.kClimbHeight - heightAverage.getAverage()) <= 0.2)
-          currState = ElevatorState.HOLD;*/
+        Hardware.Climber.elevatorMaster.set(ControlMode.MotionMagic, Constants.Climber.kClimbHeight, DemandType.ArbitraryFeedForward, Constants.Climber.kElevatorClimbOutput);
+        if(climberMethods.atTop(heightAverage))
+          currState = ElevatorState.HOLD;
         break;
+
       case HOLD:
         Hardware.Climber.elevatorMaster.set(ControlMode.PercentOutput, 0.0);
         Hardware.Climber.elevatorServo.setAngle(Constants.Climber.kServoRatchet);
         break;
+
       case MANUAL_OVERRIDE:
         Hardware.Climber.elevatorServo.setAngle(Constants.Climber.kServoUnRatchet);
         Hardware.Climber.elevatorMaster.set(ControlMode.PercentOutput, Robot.getContainer().getLeft());
-        if(sensorPosition > Constants.Climber.kClimbHeight || 
-          Hardware.Climber.elevatorBottomLimitSwitch.get())
+        if(climberMethods.inBounds())
           Hardware.Climber.elevatorMaster.set(ControlMode.PercentOutput, 0);
+        break;
     }
-    heightAverage.add(sensorPosition);
 
-    SmartDashboard.putNumber("Elevator sensor position", sensorPosition);
-    SmartDashboard.putString("Elevator State", currState.toString());
+    heightAverage.add(sensorPosition);
     log();
+
+    //use interfaces/abstract classes for simulation
+    //have the same interface one is for simulation and one for real --> code is the same
+    //but then you just switch between simulation & real --> instead of putting if-else at the end,
+    //you are putting it at the start --> that way you do not have to repeatedly check(also reuse year to year)
   }
 
   public void simulationPeriodic()
@@ -143,7 +144,7 @@ public class Climber extends SubsystemBase {
     super.simulationPeriodic();
     Hardware.Climber.elevatorSimulation.setInput(Hardware.Climber.elevatorMaster.getMotorOutputVoltage());
 
-    //if(Hardware.Climber.elevatorServo.getAngle() != Constants.Climber.kServoRatchet)
+    if(Hardware.Climber.elevatorServo.getAngle() != Constants.Climber.kServoRatchet)
     Hardware.Climber.elevatorSimulation.update(0.020);
 
     Hardware.Climber.elevatorEncoderSimulation.setDistance(Hardware.Climber.elevatorSimulation.getPositionMeters());
@@ -164,9 +165,9 @@ public class Climber extends SubsystemBase {
   public void log()
   {
     SmartDashboard.putNumber("Current in Elevator", Hardware.Climber.elevatorMaster.getSupplyCurrent());
-    SmartDashboard.putNumber("Height of Elevator in ticks", RobotBase.isReal() ? Hardware.Climber.elevatorMaster.getSelectedSensorPosition() : Hardware.Climber.elevatorEncoder.getDistance()/Hardware.Climber.elevatorEncoder.getDistancePerPulse());
-    SmartDashboard.putNumber("Speed in ticks/100ms of Elevator", RobotBase.isReal() ? Hardware.Climber.elevatorMaster.getSelectedSensorVelocity() : -1);
+    SmartDashboard.putNumber("Height of Elevator in ticks", climberMethods.getDistanceTicks());
     SmartDashboard.putNumber("Servo Angle", Hardware.Climber.elevatorServo.getAngle());
     SmartDashboard.putBoolean("Bottom Limit Switch Value of Elevator", Hardware.Climber.elevatorBottomLimitSwitch.get());
+    SmartDashboard.putString("Elevator State", this.getElevatorState().toString());
   }
 }

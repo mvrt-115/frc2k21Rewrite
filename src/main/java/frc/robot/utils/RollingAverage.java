@@ -36,4 +36,14 @@ public class RollingAverage
         }
         values.add(element);
     }
+
+    public void zero()
+    {
+        values = new java.util.ArrayList<Double>(this.capacity);
+    }
+
+    public String toString()
+    {
+        return values.toString();
+    }
 }

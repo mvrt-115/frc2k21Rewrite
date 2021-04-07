@@ -46,8 +46,10 @@ public final class Constants {
 
         public static final double TICKS_PER_ROTATION = 4096;
         public static final double DISTANCE_PER_PULSE = 2.0 * Math.PI * PULLEY_RADIUS / GEAR_REDUCTION / TICKS_PER_ROTATION;
-        public static final double MIN_HEIGHT = 1_000.0 * DISTANCE_PER_PULSE, MAX_HEIGHT = 370_000.0 * DISTANCE_PER_PULSE;
+        public static final double MIN_HEIGHT = kElevatorZero * DISTANCE_PER_PULSE;
+        public static final double MAX_HEIGHT = kClimbHeight * DISTANCE_PER_PULSE;
         public static final int CHANNEL_A = 0, CHANNEL_B = 1;
+        public static final double ACCEPTABLE_AMOUNT = 0.2;
         
         private static double convertPoundsToKg(double pounds)
         {
