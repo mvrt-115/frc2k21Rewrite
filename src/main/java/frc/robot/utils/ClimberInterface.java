@@ -23,4 +23,5 @@ public interface ClimberInterface
     public abstract boolean atBottom(RollingAverage average);
     public abstract boolean atTop(RollingAverage average);
     public abstract boolean inBounds();
+    public abstract int getMotorID();
 }

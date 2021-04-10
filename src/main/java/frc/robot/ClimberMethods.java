@@ -15,11 +15,8 @@ public class ClimberMethods implements ClimberInterface
     public double getDistanceTicks()
     {
         if(isReal())
-        {
             return Hardware.Climber.elevatorMaster.getSelectedSensorPosition();
-        }
-
-        return Hardware.Climber.elevatorEncoder.getDistance() / Constants.Climber.DISTANCE_PER_PULSE;
+        return Hardware.Climber.elevatorSim.getPositionMeters()/Constants.Climber.DISTANCE_PER_PULSE;
     }
     
     public boolean atBottom(RollingAverage heightAverage)
@@ -40,5 +37,12 @@ public class ClimberMethods implements ClimberInterface
     public boolean inBounds()
     {
         return this.getDistanceTicks() <= Constants.Climber.kClimbHeight;
+    }
+
+    public int getMotorID()
+    {
+        if(Constants.kCompBot)
+            return 22;
+        return 9;
     }
 }
