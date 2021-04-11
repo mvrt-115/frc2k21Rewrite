@@ -7,13 +7,19 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.TalonSRXSimCollection;
+import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.simulation.BatterySim;
+import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
+import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.system.plant.DCMotor;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Hardware;
 import frc.robot.Robot;
 
 public class Intake extends SubsystemBase {
@@ -27,35 +33,60 @@ public class Intake extends SubsystemBase {
   private boolean limitSwitchInitial;
   private double feedForward;
 
+  /** Pivot Talon */
+  private BaseTalon pivot;
+  
+   /** Roller Talon */
+  private BaseTalon roller;
+  
+   /** Funnel Talon */
+  private BaseTalon funnel;
+  
+  private DigitalInput limitSwitchBottom;
+  
+  private TalonSRXSimCollection pivotControllerSim;
+
+  private DifferentialDrivetrainSim pivotSim;
+  
   /** Creates a new Intake. */
 
   public Intake() {
     // initialize differently based on if it is a real or simulated robot
     if(Robot.isReal()) {
-      Hardware.Intake.pivot = new TalonSRX(Constants.Intake.PIVOT_ID);
-      Hardware.Intake.roller = new TalonSRX(Constants.Intake.ROLLER_ID);
-      Hardware.Intake.funnel = new TalonSRX(Constants.Intake.FUNNEL_ID);
+      pivot = new TalonSRX(Constants.Intake.PIVOT_ID);
+      roller = new TalonSRX(Constants.Intake.ROLLER_ID);
+      funnel = new TalonSRX(Constants.Intake.FUNNEL_ID);
 
-      Hardware.Intake.pivot.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+      pivot.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
     } else {
-      Hardware.Intake.pivot = new WPI_TalonSRX(Constants.Intake.PIVOT_ID);
-      Hardware.Intake.roller = new WPI_TalonSRX(Constants.Intake.ROLLER_ID);
-      Hardware.Intake.funnel = new WPI_TalonSRX(Constants.Intake.FUNNEL_ID);
+      pivot = new WPI_TalonSRX(Constants.Intake.PIVOT_ID);
+      roller = new WPI_TalonSRX(Constants.Intake.ROLLER_ID);
+      funnel = new WPI_TalonSRX(Constants.Intake.FUNNEL_ID);
 
-      Hardware.Intake.pivotSim = ((WPI_TalonSRX)Hardware.Intake.pivot).getSimCollection();
+      pivotControllerSim = ((WPI_TalonSRX)pivot).getSimCollection();
+
+      pivotSim = new DifferentialDrivetrainSim(
+        DCMotor.getFalcon500(1), 
+        Constants.Intake.PIVOT_GEAR_RATIO, 
+        Constants.Intake.ROTATIONAL_INERTIA, 
+        Constants.Intake.ROBOT_MASS, 
+        Constants.Intake.WHEEL_RADIUS, 
+        Constants.Intake.TRACK_WIDTH, 
+        null
+      );
     }
 
     // reset to factory defaults
-    Hardware.Intake.pivot.configFactoryDefault();
-    Hardware.Intake.roller.configFactoryDefault();
-    Hardware.Intake.funnel.configFactoryDefault();
+    pivot.configFactoryDefault();
+    roller.configFactoryDefault();
+    funnel.configFactoryDefault();
 
     // configure PID constants and feed forward to compensate for gravity
-    Hardware.Intake.pivot.config_kP(0, Constants.Intake.P);
-    Hardware.Intake.pivot.config_kI(0, Constants.Intake.I);
-    Hardware.Intake.pivot.config_kD(0, Constants.Intake.D);
+    pivot.config_kP(0, Constants.Intake.P);
+    pivot.config_kI(0, Constants.Intake.I);
+    pivot.config_kD(0, Constants.Intake.D);
 
-    limitSwitchInitial = Hardware.Intake.limitSwitchBottom.get();
+    limitSwitchInitial = limitSwitchBottom.get();
 
     setState(IntakeState.DISABLED);
   }
@@ -89,11 +120,39 @@ public class Intake extends SubsystemBase {
     log();
   }
 
+  @Override
+  public void simulationPeriodic() {
+    super.simulationPeriodic();
+
+    // set the simulated inputs
+    pivotSim.setInputs(pivot.getMotorOutputVoltage(), pivot.getMotorOutputVoltage());
+
+    // sets the simulated position of the pivot
+    pivotControllerSim.setQuadratureRawPosition(metersToTicks(pivotSim.getLeftPositionMeters()));
+
+    //Does some funky math to determine the current voltage of the battery based on the current pull of the drivetrain motors
+    RoboRioSim.setVInVoltage(BatterySim.calculateDefaultBatteryLoadedVoltage(pivotSim.getCurrentDrawAmps()));
+  }
+
+  /**
+   * Converts meters into ticks
+   * @param meters  the amount of meters to be converted
+   * @return        the amount of ticks in the given amount of meters
+   */
+  public int metersToTicks(double meters) {
+    double wheelCircumference_Meters = 2 * Math.PI * Constants.Intake.WHEEL_RADIUS;
+    double rotations = meters / wheelCircumference_Meters;
+    double motorRotations = rotations * Constants.Intake.PIVOT_GEAR_RATIO;
+    int ticks = (int)(motorRotations * Constants.Intake.PIVOT_TICKS_PER_REVOLUTION);
+
+    return ticks;
+  }
+
   /**
    * Deploys the intake, if the intake has reached the bottom the intake is deployed and will begin to intake
    */
   public void deploy() {
-    if(Hardware.Intake.limitSwitchBottom.get() != limitSwitchInitial 
+    if(limitSwitchBottom.get() != limitSwitchInitial 
         || getPivotTicks() >= degreesToTicks(Constants.Intake.PIVOT_DEPLOYED_DEGREES)) {
       stopPivot();
       setState(IntakeState.INTAKING);
@@ -121,7 +180,7 @@ public class Intake extends SubsystemBase {
    */
   public void pivot(double target_degrees)
   {
-    Hardware.Intake.pivot.set(
+    pivot.set(
       ControlMode.Position, 
       degreesToTicks(target_degrees), 
       DemandType.ArbitraryFeedForward, 
@@ -134,8 +193,8 @@ public class Intake extends SubsystemBase {
    */
   public void intake()
   {
-    Hardware.Intake.funnel.set(ControlMode.PercentOutput, Constants.Intake.INTAKE_SPEED);
-    Hardware.Intake.roller.set(ControlMode.PercentOutput, Constants.Intake.INTAKE_SPEED);
+    funnel.set(ControlMode.PercentOutput, Constants.Intake.INTAKE_SPEED);
+    roller.set(ControlMode.PercentOutput, Constants.Intake.INTAKE_SPEED);
   }
   
   /**
@@ -143,7 +202,7 @@ public class Intake extends SubsystemBase {
    */
   public void stopPivot()
   {
-    Hardware.Intake.pivot.set(ControlMode.PercentOutput, 0);
+    pivot.set(ControlMode.PercentOutput, 0);
   }
 
   /**
@@ -151,8 +210,8 @@ public class Intake extends SubsystemBase {
    */
   public void stopIntake()
   {
-    Hardware.Intake.funnel.set(ControlMode.PercentOutput, 0);
-    Hardware.Intake.roller.set(ControlMode.PercentOutput, 0);
+    funnel.set(ControlMode.PercentOutput, 0);
+    roller.set(ControlMode.PercentOutput, 0);
   }
 
   /**
@@ -183,7 +242,7 @@ public class Intake extends SubsystemBase {
    * @return the current position of the pivot in ticks
    */
   public double getPivotTicks() {
-    return Hardware.Intake.pivot.getSelectedSensorPosition();
+    return pivot.getSelectedSensorPosition();
   }
 
   /**
@@ -202,6 +261,6 @@ public class Intake extends SubsystemBase {
     SmartDashboard.putString("Intake State", state.toString());
     SmartDashboard.putNumber("Intake Position (degrees)", ticksToDegrees(getPivotTicks()));
     SmartDashboard.putBoolean("Intake Running", getState() == IntakeState.INTAKING);
-    SmartDashboard.putNumber("Pivot Output", Hardware.Intake.pivot.getMotorOutputPercent());
+    SmartDashboard.putNumber("Pivot Output", pivot.getMotorOutputPercent());
   }
 }

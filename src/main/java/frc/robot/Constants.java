@@ -33,5 +33,10 @@ public final class Constants {
         public static final double I = 0.1;
         public static final double D = 0.1;
         public static final double FF = 0.1;
+
+        public static double ROTATIONAL_INERTIA = 1;
+        public static double ROBOT_MASS = 1;
+        public static double WHEEL_RADIUS = 1;
+        public static double TRACK_WIDTH = 1;
     }
 }
