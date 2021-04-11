@@ -110,7 +110,7 @@ public class Climber extends SubsystemBase
 
       case CLIMBING:
         Hardware.Climber.elevatorServo.setAngle(Constants.Climber.kServoUnRatchet);
-        Hardware.Climber.elevatorMaster.set(ControlMode.Position, Constants.Climber.kClimbHeight,
+        Hardware.Climber.elevatorMaster.set(ControlMode.MotionMagic, Constants.Climber.kClimbHeight,
             DemandType.ArbitraryFeedForward, Constants.Climber.kElevatorClimbOutput);
        if (climberMethods.atTop(heightAverage))
           currState = ElevatorState.HOLD;
@@ -166,10 +166,11 @@ public class Climber extends SubsystemBase
 
   public void log() 
   {
-    SmartDashboard.putNumber("Current in Elevator", Hardware.Climber.elevatorMaster.getSupplyCurrent());
+    SmartDashboard.putNumber("Current in Elevator", Hardware.Climber.elevatorSim.getCurrentDrawAmps());
     SmartDashboard.putNumber("Height of Elevator in ticks", climberMethods.getDistanceTicks());
     SmartDashboard.putNumber("Servo Angle", Hardware.Climber.elevatorServo.getAngle());
     SmartDashboard.putBoolean("Bottom Limit Switch Value of Elevator", Hardware.Climber.elevatorBottomLimitSwitch.get());
     SmartDashboard.putString("Elevator State", this.getElevatorState().toString());
+    SmartDashboard.putNumber("Motor Output[-1, 1]", Hardware.Climber.elevatorMaster.getMotorOutputPercent());
   }
 }

@@ -24,9 +24,9 @@ public final class Constants {
     public static class Climber
     {
         //PID Constants
-        public static final double kElevatorP = 0.5;
-        public static final double kElevatorI = 0;
-        public static final double kElevatorD = 0;
+        public static final double kElevatorP = 0.8;
+        public static final double kElevatorI = 0.4;
+        public static final double kElevatorD = 0.01;
         public static final double kElevatorHoldOutput = 0;
         public static final double kElevatorClimbOutput = 0;
         

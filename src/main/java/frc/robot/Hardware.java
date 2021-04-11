@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import edu.wpi.first.wpilibj.system.plant.DCMotor;
+import frc.robot.utils.DigitalInputWrapper;
 
 /** Add your docs here. */
 public class Hardware {
@@ -23,5 +24,6 @@ public class Hardware {
         public static TalonSRXSimCollection elevatorMasterSim;
         public static ElevatorSim elevatorSim;
         public static DCMotor elevatorMotor;
+        public static DigitalInputWrapper elevatorBottomLimitSwitchSim;
     }
 }
