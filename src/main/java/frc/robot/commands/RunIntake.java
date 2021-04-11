@@ -39,11 +39,7 @@ public class RunIntake extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    intake.setState( 
-        ( intake.getState() == IntakeState.DISABLED )
-        ? IntakeState.DISABLED
-        : IntakeState.STOWING
-      );
+    intake.setState(IntakeState.STOWING);
   }
 
   // Returns true when the command should end.
