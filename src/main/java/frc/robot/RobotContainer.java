@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.RunIntake;
-import frc.robot.commands.RunIntakeSmartDashboard;
 import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.Intake;
 
@@ -28,7 +27,9 @@ public class RobotContainer {
 
   private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem, true);
 
-  private final Intake intake = new Intake();
+  private final Intake intake;
+
+  private JoystickButton runIntakeButton;
 
   /** Main joystick */
   private Joystick joystick;
@@ -36,6 +37,8 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     joystick = new Joystick(0);
+    intake = new Intake();
+    runIntakeButton =  new JoystickButton( joystick, 2 );
 
     // Configure the button bindings
     configureButtonBindings();
@@ -51,13 +54,13 @@ public class RobotContainer {
     // new JoystickButton(joystick, 1).whenPressed(new ExampleCommand(m_exampleSubsystem, true));
 
     // if you want to run a command when the button is released
-    new JoystickButton(joystick, 1).whenPressed(new ExampleCommand(m_exampleSubsystem, true)).whenReleased(new ExampleCommand(m_exampleSubsystem, false));
+    // new JoystickButton(joystick, 1).whenPressed(new ExampleCommand(m_exampleSubsystem, true)).whenReleased(new ExampleCommand(m_exampleSubsystem, false));
 
-    JoystickButton runIntakeButton =  new JoystickButton( joystick, 2 );
-    runIntakeButton.whenPressed( new RunIntake( intake, runIntakeButton ) );
+    
+    runIntakeButton.whenPressed( new RunIntake( intake, true ) ).whenReleased( new RunIntake(intake, false));
 
-    SmartDashboard.putData("Start Intake", new RunIntakeSmartDashboard(intake, true));
-    SmartDashboard.putData("Stop Intake", new RunIntakeSmartDashboard(intake, false));
+    SmartDashboard.putData("Start Intake", new RunIntake(intake, true));
+    SmartDashboard.putData("Stop Intake", new RunIntake(intake, false));
 
     SmartDashboard.putData("ExampleCommand", new ExampleCommand(m_exampleSubsystem, true));
   }

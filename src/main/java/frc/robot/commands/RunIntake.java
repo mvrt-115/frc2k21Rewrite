@@ -5,23 +5,22 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Intake.IntakeState;
 
 public class RunIntake extends CommandBase {
 
-  private JoystickButton button;
+  private boolean startStop;
   private Intake intake;
 
   /**
    * Command that runs the intake
-   * @param intake  The intake subsystem
-   * @param button  The button controlling the command (when pressed run intake, when released stop)
+   * @param intake    The intake subsystem
+   * @param startStop Whether to start or stop the command
    */
-  public RunIntake( Intake intake,  JoystickButton button ) {
+  public RunIntake( Intake intake,  boolean startStop ) {
 
-    this.button = button;
+    this.startStop = startStop;
     this.intake = intake;
     intake.setState( IntakeState.DEPLOYING );
 
@@ -30,7 +29,12 @@ public class RunIntake extends CommandBase {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    if(startStop)
+      intake.setState(IntakeState.DEPLOYING);
+    else
+      intake.setState(IntakeState.STOWING);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -39,12 +43,11 @@ public class RunIntake extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    intake.setState(IntakeState.STOWING);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return !button.get();
+    return true;
   }
 }
