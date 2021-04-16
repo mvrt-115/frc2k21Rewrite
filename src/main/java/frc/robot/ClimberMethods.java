@@ -1,6 +1,9 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
+/**
+ * ClimberMethods.java
+ * @version 1.0
+ * @since 4/16/2021
+ * Provides implementation for the methods defined by ClimberInterface
+ */
 
 package frc.robot;
 
@@ -17,9 +20,9 @@ import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 import frc.robot.utils.ClimberInterface;
 import frc.robot.utils.RollingAverage;
 
-/** Add your docs here. */
 public class ClimberMethods implements ClimberInterface 
 {
+    //used for simulation PID
     double lastTime, lastError, errorSum;
 
     public ClimberMethods()
@@ -27,6 +30,9 @@ public class ClimberMethods implements ClimberInterface
         lastTime = lastError = errorSum = 0;
     }
 
+    /**
+     * @see ClimberInterface.java
+     */
     public double getDistanceTicks(BaseTalon elevatorMaster, ElevatorSim elevatorSim)
     {
         if(isReal())
@@ -34,6 +40,9 @@ public class ClimberMethods implements ClimberInterface
         return metersToTicks(elevatorSim.getPositionMeters());
     }
 
+    /**
+     * @see ClimberInterface.java
+     */
     public double getDistance(BaseTalon elevatorMaster, Encoder encoder)
     {
         if(isReal())
@@ -41,6 +50,9 @@ public class ClimberMethods implements ClimberInterface
         return encoder.getDistance();
     }
     
+    /**
+     * @see ClimberInterface.java
+     */
     public boolean atBottom(DigitalInput elevatorBottomLimitSwitch, RollingAverage heightAverage)
     {
         if(isReal())
@@ -51,26 +63,41 @@ public class ClimberMethods implements ClimberInterface
         return Math.abs(heightAverage.getAverage() - Constants.Climber.kElevatorZero) <= Constants.Climber.ACCEPTABLE_AMOUNT;
     }
 
+    /**
+     * @see ClimberInterface.java
+     */
     public boolean atTop(RollingAverage heightAverage)
     {
         return Math.abs(heightAverage.getAverage() - Constants.Climber.kClimbHeight) <= Constants.Climber.ACCEPTABLE_AMOUNT;
     }
 
+    /**
+     * @see ClimberInterface.java
+     */
     public double ticksToMeters(double ticks)
     {
         return ticks * Constants.Climber.DISTANCE_PER_PULSE;
     }
 
+    /**
+     * @see ClimberInterface.java
+     */
     public double metersToTicks(double meters)
     {
         return meters / Constants.Climber.DISTANCE_PER_PULSE;
     }
 
+    /**
+     * @see ClimberInterface.java
+     */
     public boolean inBounds(BaseTalon elevatorMaster, ElevatorSim elevatorSim)
     {
         return this.getDistanceTicks(elevatorMaster, elevatorSim) <= Constants.Climber.kClimbHeight;
     }
 
+    /**
+     * @see ClimberInterface.java
+     */
     public void setPosition(BaseTalon elevatorMaster, Encoder encoder, double position)
     {
         if(this.isReal())
@@ -92,6 +119,9 @@ public class ClimberMethods implements ClimberInterface
         }
     }
 
+    /**
+     * @see ClimberInterface.java
+     */
     public int getMotorID()
     {
         if(Constants.kCompBot)

@@ -7,6 +7,9 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.ClimberManualCommand;
+import frc.robot.utils.ClimberManualTrigger;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -18,7 +21,7 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private static RobotContainer m_robotContainer;
-
+  private static Trigger climberTrigger;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -28,6 +31,8 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+    climberTrigger = new ClimberManualTrigger();
+    climberTrigger.whenActive(new ClimberManualCommand(m_robotContainer.getClimber()));
   }
 
   /**

@@ -10,10 +10,8 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.ClimberUpCommand;
 import frc.robot.commands.ClimberDownCommand;
-import frc.robot.commands.ClimberManualCommand;
 import frc.robot.subsystems.Climber;
 
 /**
@@ -27,7 +25,6 @@ public class RobotContainer {
   private Joystick operatorJoystick;
 
   private final Climber climber = new Climber();
-  private final Trigger climberTrigger;
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -35,9 +32,6 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
-
-    climberTrigger = new Trigger();
-    climberTrigger.whenActive(new ClimberManualCommand(climber));
   }
 
   /**

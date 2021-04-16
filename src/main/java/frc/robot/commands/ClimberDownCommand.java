@@ -1,6 +1,9 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
+/**
+ * ClimberDownCommand.java
+ * @version 1.0
+ * @since 4/16/21
+ * This command is used for bringing the elevator down to almost the bottom.
+ */
 
 package frc.robot.commands;
 
@@ -8,31 +11,43 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Climber;
 
 public class ClimberDownCommand extends CommandBase {
-  /** Creates a new ClimberManualCommand. */
 
+  //The Climber subsystem that is used by this class
   private Climber climber;
+  
+  /**
+   * @param climber climber(subsystem) that is to be used
+   */
   public ClimberDownCommand(Climber climber) 
   {
     this.climber = climber;
     addRequirements(climber);
   }
 
-  // Called when the command is initially scheduled.
   @Override
+  /**
+   * Initializes the elevator state to zeroing so it is going down.
+   */
   public void initialize() {
     climber.setElevatorState(Climber.ElevatorState.ZEROING);
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
+  /**
+   * Does nothing
+   */
   public void execute() {}
 
-  // Called once the command ends or is interrupted.
   @Override
+  /**
+   * Does nothing
+   */
   public void end(boolean interrupted) {}
 
-  // Returns true when the command should end.
   @Override
+  /**
+   * @return boolean always returns true
+   */
   public boolean isFinished() {
     return true;
   }

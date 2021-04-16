@@ -1,6 +1,9 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
+/**
+ * ClimberUpCommand.java
+ * @version 1.0
+ * @since 4/16/21
+ * This command is used for moving the elevator up.
+ */
 
 package frc.robot.commands;
 
@@ -9,29 +12,42 @@ import frc.robot.subsystems.Climber;
 
 public class ClimberUpCommand extends CommandBase {
   
+  //The Climber subsystem that is used by this class
   private Climber climber;
+
+  /**
+   * @param climber the climber(sybsystem) used by this class
+   */
   public ClimberUpCommand(Climber climber) 
   {
     this.climber = climber;
     addRequirements(this.climber);
   }
 
-  // Called when the command is initially scheduled.
   @Override
+  /**
+   * Sets the elevator state to climbing
+   */
   public void initialize() {
       climber.setElevatorState(Climber.ElevatorState.CLIMBING);
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
+  /**
+   * Does nothing
+   */
   public void execute() {}
 
-  // Called once the command ends or is interrupted.
   @Override
+  /**
+   * Does nothing
+   */
   public void end(boolean interrupted) {}
 
-  // Returns true when the command should end.
   @Override
+  /**
+   * Always returns true
+   */
   public boolean isFinished() {
     return true;
   }

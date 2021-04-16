@@ -1,6 +1,10 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
+/**
+ * Climber.java
+ * @version 1.0
+ * @since 4/16/2021
+ * This climber class is used for representing and controlling an elevator that is to be used
+ * on the robot. It provides various methods and elevator states(enum) that are to be used.
+ */
 
 package frc.robot.subsystems;
 
@@ -30,23 +34,32 @@ import frc.robot.utils.RollingAverage;
 
 public class Climber extends SubsystemBase 
 {
-  private ElevatorState currState;
-  private SupplyCurrentLimitConfiguration currentConfig;
-  private RollingAverage heightAverage;
+  private ElevatorState currState;                          //current state of the elevator
+  private SupplyCurrentLimitConfiguration currentConfig;    //limiting the current flow into the elevator
+  private RollingAverage heightAverage;                     //averaging the height of the elevator
 
   private ClimberInterface climberMethods;
   
   private static BaseTalon elevatorMaster;
   private static Servo elevatorServo;
+  private static DigitalInput elevatorBottomLimitSwitch;
+
+  //The following are for simulation purposes only. They are set to null on a real object
   private static Encoder elevatorEncoder;
   private static EncoderSim elevatorEncoderSim;
   private static ElevatorSim elevatorSim;
   private static DCMotor elevatorMotor;
-  private static DigitalInput elevatorBottomLimitSwitch;
 
+  /**
+   * Enum ElevatorState that represents various states of the elevator
+   * CLIMBING: going to the setpoint height (going up)
+   * HOLD: holds the elevator at that state
+   * ZEROING: going to the bottom (going down)
+   * MANUAL_OVERRIDE: the climber is to be controlled with the joysticks
+   */
   public enum ElevatorState 
   {
-    CLIMBING, HOLD, ZEROING, ZEROED, MANUAL_OVERRIDE
+    CLIMBING, HOLD, ZEROING, MANUAL_OVERRIDE
   };
 
   private static int motorID;
@@ -60,6 +73,7 @@ public class Climber extends SubsystemBase
 
     motorID = climberMethods.getMotorID();
 
+    //for a real robot, only use a motor and a limit switch
     if (RobotBase.isReal()) 
     {
       elevatorMaster = new TalonFX(motorID);
@@ -88,6 +102,9 @@ public class Climber extends SubsystemBase
     reset();
   }
 
+  /**
+   * Resets all the variables above to zero.
+   */
   private void reset()
   {
     currState = ElevatorState.HOLD;
@@ -122,20 +139,17 @@ public class Climber extends SubsystemBase
     elevatorMaster.enableVoltageCompensation(true);
   }
 
-  public void setPIDConstants(int kPIDIdx, double p, double i, double d)
-  {
-    elevatorMaster.config_kP(kPIDIdx, p);
-    elevatorMaster.config_kI(kPIDIdx, i);
-    elevatorMaster.config_kD(kPIDIdx, d);
-  }
-
   @Override
+  /**
+   * This method is called constantly.
+   */
   public void periodic() 
   {
     double sensorPosition = climberMethods.getDistanceTicks(elevatorMaster, elevatorSim);
 
     switch(currState)
     {
+      //Sets the servo to unratched state and moves the climber up
       case CLIMBING:
         elevatorServo.setAngle(Constants.Climber.kServoUnRatchet);
         climberMethods.setPosition(elevatorMaster, elevatorEncoder, Constants.Climber.kClimbHeight);
@@ -143,31 +157,33 @@ public class Climber extends SubsystemBase
           currState = ElevatorState.HOLD;
         break;
 
-      case ZEROED:
-        currState = ElevatorState.HOLD;
-        break;
-
+      //Sets the servo to unratched state and moves the climber down
       case ZEROING:
         elevatorServo.setAngle(Constants.Climber.kServoUnRatchet);
         climberMethods.setPosition(elevatorMaster, elevatorEncoder, Constants.Climber.kElevatorZero);
         if(Math.abs(heightAverage.getAverage() - Constants.Climber.kElevatorZero) < 0.02)
-          currState = ElevatorState.ZEROED;
+          currState = ElevatorState.HOLD;
         break;
       
+      //Sets the servo to ratched state so that the elevator would not move
       case HOLD:
         elevatorServo.setAngle(Constants.Climber.kServoRatchet);
         elevatorMaster.set(ControlMode.PercentOutput, 0.0);
         break;
 
+      //Sets the servo to unratched state and allows the joysticks to control the robot
+      //if the climber is at the full top, it automatically moves it down
+      //if the climber is at the full bottom, it automatically moves it up
+      //otherwise, the climber is controlled by the user
       case MANUAL_OVERRIDE:
         elevatorServo.setAngle(Constants.Climber.kServoUnRatchet);
         if(sensorPosition == Constants.Climber.kClimbHeight)
         {
-          elevatorMaster.set(ControlMode.PercentOutput, 0.0);  
+          elevatorMaster.set(ControlMode.PercentOutput, -0.1);  
         }
         else if(sensorPosition == Constants.Climber.kElevatorZero)
         {
-          elevatorMaster.set(ControlMode.PercentOutput, 0.5);
+          elevatorMaster.set(ControlMode.PercentOutput, 0.1);
         }
         else
         {
@@ -180,13 +196,19 @@ public class Climber extends SubsystemBase
     log();
   }
 
+  /**
+   * This method is used for simulating the robot.
+   */
   public void simulationPeriodic() 
   {
     super.simulationPeriodic();
+
+    //sets the state of the limit switch
     if(elevatorSim.getPositionMeters() <= .03)
       ((DigitalInputWrapper)elevatorBottomLimitSwitch).set(true); 
     else ((DigitalInputWrapper)elevatorBottomLimitSwitch).set(false);
 
+    //if the servo state is not ratched, then updates the climber simulation
     if(elevatorServo.getAngle() != Constants.Climber.kServoRatchet)
     {
       elevatorSim.setInput(elevatorMaster.getMotorOutputVoltage());
@@ -196,16 +218,27 @@ public class Climber extends SubsystemBase
     }
   }
 
+  /**
+   * @return ElevatorState the current state of the elevator
+   */
   public ElevatorState getElevatorState() 
   {
     return this.currState;
   }
 
+  /**
+   * @param ElevatorState the state to set the elevator
+   */
   public void setElevatorState(ElevatorState state) 
   {
     this.currState = state;
   }
 
+  /**
+   * Logs information such as the height of the elevator in ticks, the servo angle, 
+   * the value of the bottom limit switch, the elevator state, the motor output,
+   * and if this is a simulation or not.
+   */
   public void log() 
   {
     SmartDashboard.putNumber("Height of Elevator in ticks", climberMethods.getDistanceTicks(elevatorMaster, elevatorSim));

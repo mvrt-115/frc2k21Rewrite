@@ -1,6 +1,9 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
+/**
+ * ClimberManualCommand.java
+ * @version 1.0
+ * @since 4/16/21
+ * This command is used for manually controlling the elevator with the joystick.
+ */
 
 package frc.robot.commands;
 
@@ -9,34 +12,46 @@ import frc.robot.Robot;
 import frc.robot.subsystems.Climber;
 
 public class ClimberManualCommand extends CommandBase {
+  
+  //The Climber subsystem that is used by this class
   private Climber climber;
 
+  /**
+   * @param climber the elevator(subsystem)
+   */
   public ClimberManualCommand(Climber climber)
   {
     this.climber = climber;
     addRequirements(this.climber);
   }
 
-  // Called when the command is initially scheduled.
   @Override
+  /**
+   * Sets the elevator state to manual override
+   */
   public void initialize() {
-    System.out.println("in");
     this.climber.setElevatorState(Climber.ElevatorState.MANUAL_OVERRIDE);
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
+  /**
+   * Does nothing
+   */
   public void execute() {}
 
-  // Called once the command ends or is interrupted.
   @Override
+  /**
+   * Sets the elevator state to hold
+   */
   public void end(boolean interrupted) 
   {
     this.climber.setElevatorState(Climber.ElevatorState.HOLD);
   }
 
-  // Returns true when the command should end.
   @Override
+  /**
+   * Returns true when the joystick input is 0
+   */
   public boolean isFinished() {
     return Robot.getContainer().getLeft() == 0;
   }

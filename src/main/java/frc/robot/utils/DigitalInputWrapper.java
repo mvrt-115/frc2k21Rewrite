@@ -1,7 +1,9 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
+/**
+ * DigitalInputWrapper.java
+ * @version 1.0
+ * @since 4/16/2021
+ * This class is to simulate a limit switch
+ */
 package frc.robot.utils;
 
 import edu.wpi.first.hal.SimBoolean;
@@ -15,6 +17,9 @@ public class DigitalInputWrapper extends DigitalInput
     private SimBoolean simSensor;
     private SimDevice simDigitalInput;
 
+    /**
+     * @param channel the limit switch chanell
+     */
     public DigitalInputWrapper(int channel)
     {
         super(channel);
@@ -27,6 +32,9 @@ public class DigitalInputWrapper extends DigitalInput
         }
     }
 
+    /**
+     * Returns if the limit switch is triggered or not
+     */
     public boolean get()
     {
         if(simDigitalInput != null)
@@ -34,6 +42,9 @@ public class DigitalInputWrapper extends DigitalInput
         return super.get();
     }
 
+    /**
+     * @param boolean val to set the current limit switch
+     */
     public void set(boolean val)
     {
         if(simDigitalInput != null)
