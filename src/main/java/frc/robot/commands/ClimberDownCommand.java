@@ -7,11 +7,11 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Climber;
 
-public class ClimberManualDownCommand extends CommandBase {
+public class ClimberDownCommand extends CommandBase {
   /** Creates a new ClimberManualCommand. */
 
   private Climber climber;
-  public ClimberManualDownCommand(Climber climber) 
+  public ClimberDownCommand(Climber climber) 
   {
     this.climber = climber;
     addRequirements(climber);

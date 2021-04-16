@@ -10,9 +10,10 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.ClimberCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commands.ClimberUpCommand;
+import frc.robot.commands.ClimberDownCommand;
 import frc.robot.commands.ClimberManualCommand;
-import frc.robot.commands.ClimberManualDownCommand;
 import frc.robot.subsystems.Climber;
 
 /**
@@ -26,6 +27,7 @@ public class RobotContainer {
   private Joystick operatorJoystick;
 
   private final Climber climber = new Climber();
+  private final Trigger climberTrigger;
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -33,6 +35,9 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+
+    climberTrigger = new Trigger();
+    climberTrigger.whenActive(new ClimberManualCommand(climber));
   }
 
   /**
@@ -45,14 +50,11 @@ public class RobotContainer {
     // new JoystickButton(joystick, 1).whenPressed(new ExampleCommand(m_exampleSubsystem, true));
 
     // if you want to run a command when the button is released
-    SmartDashboard.putData("Manually Move Climber Down", new ClimberManualDownCommand(climber));
+    SmartDashboard.putData("Manually Move Climber Down", new ClimberDownCommand(climber));
+    SmartDashboard.putData("Move Climber Up", new ClimberUpCommand(climber));
 
-    new JoystickButton(operatorJoystick, 1).whenPressed(new ClimberManualDownCommand(climber));
-
-    SmartDashboard.putData("Move Climber Up", new ClimberCommand(climber));
-
-    if(Math.abs(operatorJoystick.getRawAxis(1) - 0.1) > 0)
-      new ClimberManualCommand(climber);
+    new JoystickButton(operatorJoystick, 1).whenPressed(new ClimberDownCommand(climber));
+    new JoystickButton(operatorJoystick, 2).whenPressed(new ClimberUpCommand(climber));
   }
 
   /**
@@ -68,5 +70,10 @@ public class RobotContainer {
   public double getLeft()
   {
     return operatorJoystick.getRawAxis(1);
+  }
+
+  public Climber getClimber()
+  {
+    return climber;
   }
 }

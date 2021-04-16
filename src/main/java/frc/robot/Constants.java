@@ -24,20 +24,18 @@ public final class Constants {
     public static class Climber
     {
         //PID Constants
-        public static final double kElevatorP = 0.8;
-        public static final double kElevatorI = 0.4;
-        public static final double kElevatorD = 0.01;
-        public static final double kElevatorHoldOutput = 0;
+        public static final double kElevatorP = 1;
+        public static final double kElevatorI = 0.04;
+        public static final double kElevatorD = 0.4;
         public static final double kElevatorClimbOutput = 0;
         
         //Location Ticks
-        public static final double kClimbHeight = 370_000;
+        public static final double kClimbHeight = 37_000;
         public static final double kElevatorZero = 1_000;
 
         public static final double kServoRatchet = 0;
         public static final double kServoUnRatchet = 0.4;
 
-        //TODO: FIND REAL VALUES FOR THESE NUMBERS
         public static final double CARRIAGE_MASS = convertPoundsToKg(15);
         public static final double GEAR_REDUCTION = 10.0;
         public static final double PULLEY_RADIUS = Units.inchesToMeters(2);

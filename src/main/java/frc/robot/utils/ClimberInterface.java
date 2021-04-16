@@ -4,7 +4,12 @@
 
 package frc.robot.utils;
 
+import com.ctre.phoenix.motorcontrol.can.BaseTalon;
+
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.simulation.ElevatorSim;
 
 /** Add your docs here. */
 public interface ClimberInterface 
@@ -19,9 +24,13 @@ public interface ClimberInterface
         return RobotBase.isSimulation();
     }
 
-    public abstract double getDistanceTicks();
-    public abstract boolean atBottom(RollingAverage average);
+    public abstract double getDistanceTicks(BaseTalon elevatorMaster, ElevatorSim elevatorSim);
+    public abstract boolean atBottom(DigitalInput elevatorBottomLimitSwitch, RollingAverage average);
     public abstract boolean atTop(RollingAverage average);
-    public abstract boolean inBounds();
+    public abstract boolean inBounds(BaseTalon elevatorMaster, ElevatorSim elevatorSim);
+    public abstract void setPosition(BaseTalon elevatorMaster, Encoder encoder, double position);
     public abstract int getMotorID();
+    public abstract double getDistance(BaseTalon elevatorMaster, Encoder encoder);
+    public abstract double ticksToMeters(double ticks);
+    public abstract double metersToTicks(double meters);
 }

@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Robot;
 import frc.robot.subsystems.Climber;
 
 public class ClimberManualCommand extends CommandBase {
@@ -19,6 +20,7 @@ public class ClimberManualCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    System.out.println("in");
     this.climber.setElevatorState(Climber.ElevatorState.MANUAL_OVERRIDE);
   }
 
@@ -28,11 +30,14 @@ public class ClimberManualCommand extends CommandBase {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) 
+  {
+    this.climber.setElevatorState(Climber.ElevatorState.HOLD);
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    return Robot.getContainer().getLeft() == 0;
   }
 }
