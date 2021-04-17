@@ -18,13 +18,12 @@ public class RunIntake extends CommandBase {
    * @param intake    The intake subsystem
    * @param startStop Whether to start or stop the command
    */
-  public RunIntake( Intake intake,  boolean startStop ) {
+  public RunIntake(Intake intake,  boolean startStop) {
 
     this.startStop = startStop;
     this.intake = intake;
-    intake.setState( IntakeState.DEPLOYING );
 
-    addRequirements( intake );
+    addRequirements(intake);
   }
 
   // Called when the command is initially scheduled.

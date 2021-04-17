@@ -57,7 +57,7 @@ public class RobotContainer {
     // new JoystickButton(joystick, 1).whenPressed(new ExampleCommand(m_exampleSubsystem, true)).whenReleased(new ExampleCommand(m_exampleSubsystem, false));
 
     
-    runIntakeButton.whenPressed( new RunIntake( intake, true ) ).whenReleased( new RunIntake(intake, false));
+    runIntakeButton.whenPressed(new RunIntake(intake, true)).whenReleased(new RunIntake(intake, false));
 
     SmartDashboard.putData("Start Intake", new RunIntake(intake, true));
     SmartDashboard.putData("Stop Intake", new RunIntake(intake, false));

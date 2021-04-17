@@ -94,7 +94,7 @@ public class Intake extends SubsystemBase {
     roller.enableVoltageCompensation(true);
     funnel.enableVoltageCompensation(true);
 
-    limitSwitchBottom = new DigitalInput(1);
+    limitSwitchBottom = new DigitalInput(Constants.Intake.LIMIT_SWITCH_ID);
 
     isBreakBeamOpen = limitSwitchBottom.get();
 
@@ -104,8 +104,7 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    feedForward = Constants.Intake.FF * Math.sin(Math.toRadians(getPivotTicks()));
-    switch( state )
+    switch(state)
     {
       case INTAKING:
         intake();
@@ -153,14 +152,16 @@ public class Intake extends SubsystemBase {
    * Deploys the intake, if the intake has reached the bottom the intake is deployed and will begin to intake
    */
   public void deploy() {
+    feedForward = Constants.Intake.FF;
+
     if(limitSwitchBottom.get() != isBreakBeamOpen 
-        || Math.abs(ticksToDegrees(getPivotTicks()) - Constants.Intake.PIVOT_DEPLOYED_DEGREES) 
-        <= Constants.Intake.MARGIN_OF_ERROR_DEGREES) {
+        || Math.abs(getPivotTicks() - Constants.Intake.PIVOT_DEPLOYED_TICKS) 
+        <= Constants.Intake.MARGIN_OF_ERROR_TICKS) {
       stopPivot();
       setState(IntakeState.INTAKING);
       intake();
     } else {
-      pivot(Constants.Intake.PIVOT_DEPLOYED_DEGREES);
+      pivot(Constants.Intake.PIVOT_DEPLOYED_TICKS);
     }    
   }
 
@@ -168,26 +169,28 @@ public class Intake extends SubsystemBase {
    * Stows the intake until the intake has reached the top
    */
   public void stow() {
-    if(Math.abs(ticksToDegrees(getPivotTicks()) - Constants.Intake.PIVOT_STOWED_DEGREES) 
-        <= Constants.Intake.MARGIN_OF_ERROR_DEGREES) {
+    feedForward = -Constants.Intake.FF;
+    
+    if(Math.abs(getPivotTicks() - Constants.Intake.PIVOT_STOWED_TICKS) 
+        <= Constants.Intake.MARGIN_OF_ERROR_TICKS) {
       stopPivot();
       setState(IntakeState.DISABLED);
     } else {
-      pivot(Constants.Intake.PIVOT_STOWED_DEGREES);
+      pivot(Constants.Intake.PIVOT_STOWED_TICKS);
     }    
   }
 
   /**
    * Pivots the intake to a desired target angle
-   * @param target_degrees  The target angle in degrees
+   * @param target_ticks  The target angle in ticks
    */
-  public void pivot(double target_degrees)
-  {
+  public void pivot(double target_ticks) {
     if(Robot.isSimulation())
       feedForward = 0;
+
     pivot.set(
       ControlMode.Position, 
-      degreesToTicks(target_degrees), 
+      target_ticks, 
       DemandType.ArbitraryFeedForward, 
       feedForward
     );
@@ -196,25 +199,22 @@ public class Intake extends SubsystemBase {
   /**
    * Runs the intake by running it at a constant speed
    */
-  public void intake()
-  {
-    funnel.set(ControlMode.PercentOutput, Constants.Intake.INTAKE_SPEED);
-    roller.set(ControlMode.PercentOutput, Constants.Intake.INTAKE_SPEED);
+  public void intake() {
+    funnel.set(ControlMode.PercentOutput, Constants.Intake.FUNNEL_SPEED);
+    roller.set(ControlMode.PercentOutput, Constants.Intake.ROLLER_SPEED);
   }
   
   /**
    * Stops the pivot motor
    */
-  public void stopPivot()
-  {
+  public void stopPivot() {
     pivot.set(ControlMode.PercentOutput, 0);
   }
 
   /**
    * Stops the intake motors
    */
-  public void stopIntake()
-  {
+  public void stopIntake() {
     funnel.set(ControlMode.PercentOutput, 0);
     roller.set(ControlMode.PercentOutput, 0);
   }
@@ -251,23 +251,12 @@ public class Intake extends SubsystemBase {
   }
 
   /**
-   * Converts ticks to degrees
-   * @param ticks a position in ticks
-   * @return      the angle in degrees of the position
-   */
-  public double ticksToDegrees(double ticks) {
-    return 360 * ticks / (Constants.Intake.PIVOT_TICKS_PER_REVOLUTION * Constants.Intake.PIVOT_GEAR_RATIO);
-  }
-
-  /**
    * Logs data about the subsystem to smart dashboard
    */
   public void log() {
     SmartDashboard.putString("Intake State", state.toString());
-    SmartDashboard.putNumber("Intake Position (degrees)", ticksToDegrees(getPivotTicks()));
     SmartDashboard.putBoolean("Intake Running", getState() == IntakeState.INTAKING);
-    SmartDashboard.putNumber("Pivot Output", pivot.getMotorOutputPercent());
-    SmartDashboard.putNumber("Target Ticks", ticksToDegrees(90));
-    SmartDashboard.putNumber("Current Ticks", getPivotTicks());
+    SmartDashboard.putNumber("Intake Pivot Output", pivot.getMotorOutputPercent());
+    SmartDashboard.putNumber("Intake Current Ticks", getPivotTicks());
   }
 }
