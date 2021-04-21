@@ -25,12 +25,13 @@ import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.system.plant.DCMotor;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.ClimberMethods;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.utils.DigitalInputWrapper;
+import frc.robot.utils.RealClimber;
 import frc.robot.utils.ClimberInterface;
 import frc.robot.utils.RollingAverage;
+import frc.robot.utils.SimulatedClimber;
 
 public class Climber extends SubsystemBase 
 {
@@ -67,17 +68,18 @@ public class Climber extends SubsystemBase
   /** Creates a new Climber. */
   public Climber() 
   {
-    climberMethods = new ClimberMethods();
     elevatorServo = new Servo(0);
     heightAverage = new RollingAverage(5);
 
-    motorID = climberMethods.getMotorID();
+    motorID = ClimberInterface.getMotorID();
 
     //for a real robot, only use a motor and a limit switch
     if (RobotBase.isReal()) 
     {
       elevatorMaster = new TalonFX(motorID);
       elevatorBottomLimitSwitch = new DigitalInput(2);
+
+      climberMethods = new RealClimber(elevatorMaster);
     }
     else
     {
@@ -97,15 +99,17 @@ public class Climber extends SubsystemBase
       elevatorEncoder = new Encoder(0, 1);
       elevatorEncoderSim = new EncoderSim(elevatorEncoder);
       elevatorBottomLimitSwitch = new DigitalInputWrapper(2);
+
+      climberMethods = new SimulatedClimber(elevatorMaster, elevatorSim, elevatorEncoder);
     }
 
-    reset();
+    setDefaultParameters();
   }
 
   /**
    * Resets all the variables above to zero.
    */
-  private void reset()
+  private void setDefaultParameters()
   {
     currState = ElevatorState.HOLD;
 
@@ -145,14 +149,15 @@ public class Climber extends SubsystemBase
    */
   public void periodic() 
   {
-    double sensorPosition = climberMethods.getDistanceTicks(elevatorMaster, elevatorSim);
+    double sensorPosition = climberMethods.getDistanceTicks();
 
+    //Have methods into the individual climber classes to make it more readable 
     switch(currState)
     {
       //Sets the servo to unratched state and moves the climber up
       case CLIMBING:
         elevatorServo.setAngle(Constants.Climber.kServoUnRatchet);
-        climberMethods.setPosition(elevatorMaster, elevatorEncoder, Constants.Climber.kClimbHeight);
+        climberMethods.setPosition(Constants.Climber.kClimbHeight);
         if(Math.abs(heightAverage.getAverage() - Constants.Climber.kClimbHeight) < 0.02)
           currState = ElevatorState.HOLD;
         break;
@@ -160,7 +165,7 @@ public class Climber extends SubsystemBase
       //Sets the servo to unratched state and moves the climber down
       case ZEROING:
         elevatorServo.setAngle(Constants.Climber.kServoUnRatchet);
-        climberMethods.setPosition(elevatorMaster, elevatorEncoder, Constants.Climber.kElevatorZero);
+        climberMethods.setPosition(Constants.Climber.kElevatorZero);
         if(Math.abs(heightAverage.getAverage() - Constants.Climber.kElevatorZero) < 0.02)
           currState = ElevatorState.HOLD;
         break;
@@ -203,8 +208,10 @@ public class Climber extends SubsystemBase
   {
     super.simulationPeriodic();
 
+    //it should work if not casting (use minimum casting) --> casting is not the best way to do it
+    //something else that could probably be done better
     //sets the state of the limit switch
-    if(elevatorSim.getPositionMeters() <= .03)
+    if(elevatorSim.getPositionMeters() == 0)
       ((DigitalInputWrapper)elevatorBottomLimitSwitch).set(true); 
     else ((DigitalInputWrapper)elevatorBottomLimitSwitch).set(false);
 
@@ -241,11 +248,11 @@ public class Climber extends SubsystemBase
    */
   public void log() 
   {
-    SmartDashboard.putNumber("Height of Elevator in ticks", climberMethods.getDistanceTicks(elevatorMaster, elevatorSim));
+    SmartDashboard.putNumber("Height of Elevator in ticks", climberMethods.getDistanceTicks());
     SmartDashboard.putNumber("Servo Angle", elevatorServo.getAngle());
     SmartDashboard.putBoolean("Bottom Limit Switch Value of Elevator", elevatorBottomLimitSwitch.get());
     SmartDashboard.putString("Elevator State", this.getElevatorState().toString());
     SmartDashboard.putNumber("Motor Output[-1, 1]", elevatorMaster.getMotorOutputPercent());
-    SmartDashboard.putBoolean("Simulating?", !climberMethods.isReal());
+    SmartDashboard.putBoolean("Simulating?", !ClimberInterface.isReal());
   }
 }
