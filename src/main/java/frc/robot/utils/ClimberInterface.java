@@ -8,16 +8,10 @@
 package frc.robot.utils;
 
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
-
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.simulation.ElevatorSim;
+import edu.wpi.first.wpilibj.Servo;
 import frc.robot.Constants;
 
-//make it a subsystem interface
-//move DigitalInput and RollingAverage here
-//parameters that are passed are not really inherent to the climber itself
-//maybe even move the hardware into the classes
 public interface ClimberInterface 
 {
     /**
@@ -59,24 +53,34 @@ public interface ClimberInterface
     }
 
     /**
-     * @param BaseTalon elevatorMaster used if the robot is real
-     * @param ElevatorSim used if the elevator is a simulation 
+     * Sets the required inversions, PID, and other necessary things for the climber motor controller
+     * @param elevatorMaster
+     */
+    public static void set(BaseTalon elevatorMaster)
+    {
+        elevatorMaster.setInverted(Constants.kCompBot);
+        elevatorMaster.setSelectedSensorPosition(0);
+        elevatorMaster.configPeakOutputForward(1);
+        elevatorMaster.configPeakOutputReverse(-1);
+        elevatorMaster.config_kP(Constants.kPIDIdx, Constants.Climber.kElevatorP);
+        elevatorMaster.config_kI(Constants.kPIDIdx, Constants.Climber.kElevatorI);
+        elevatorMaster.config_kD(Constants.kPIDIdx, Constants.Climber.kElevatorD);
+        elevatorMaster.configVoltageCompSaturation(10, Constants.kTimeoutMs);
+        elevatorMaster.enableVoltageCompensation(true);
+    }
+
+    /**
      * @return true if the robot is in between top and bottom setpoints; false otherwise
      */
-    public default boolean inBounds(BaseTalon elevatorMaster, ElevatorSim elevatorSim)
+    public default boolean inBounds()
     {
         return this.getDistanceTicks() <= Constants.Climber.kClimbHeight;
     }
 
     /**
-     * @param DigitalInput elevatorBottomLimitSwitch used if the robot is real
-     * @param RollingAverage average used if the robot is a simulation
      * @return true if the robot is at the bottom
      */
-    public static boolean atBottom(DigitalInput elevatorBottomLimitSwitch)
-    {
-        return elevatorBottomLimitSwitch.get();
-    }
+    public abstract boolean atBottom();
 
     /**
      * @param RollingAverage average used if the robot is at the top
@@ -101,4 +105,32 @@ public interface ClimberInterface
      * @return the distance that the elevator has travelled in meters
      */
     public abstract double getDistance();
+
+    /**
+     * Zeroes the elevator to go to the minimum height
+     */
+    public abstract void zero();
+    
+    /**
+     * Moves the elevator to the max height
+     */
+    public abstract void climb();
+
+    /**
+     * Stops the elevator
+     */
+    public abstract void stop();
+
+    /**
+     * The user manually controls the motor
+     */
+    public abstract void setMotorOutputPercent(double percent);
+    
+    /**
+     * Simulates the limit switch
+     * @throws UnsupporedOperationEception
+     */
+    public abstract void simulate(Servo servo) throws UnsupportedOperationException;
+
+    public abstract double getMotorOutputPercent();
 }

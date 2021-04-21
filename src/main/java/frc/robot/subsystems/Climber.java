@@ -8,26 +8,12 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
-import com.ctre.phoenix.motorcontrol.can.BaseTalon;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Servo;
-import edu.wpi.first.wpilibj.simulation.BatterySim;
-import edu.wpi.first.wpilibj.simulation.ElevatorSim;
-import edu.wpi.first.wpilibj.simulation.EncoderSim;
-import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.system.plant.DCMotor;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
-import frc.robot.utils.DigitalInputWrapper;
 import frc.robot.utils.RealClimber;
 import frc.robot.utils.ClimberInterface;
 import frc.robot.utils.RollingAverage;
@@ -35,21 +21,13 @@ import frc.robot.utils.SimulatedClimber;
 
 public class Climber extends SubsystemBase 
 {
-  private ElevatorState currState;                          //current state of the elevator
-  private SupplyCurrentLimitConfiguration currentConfig;    //limiting the current flow into the elevator
-  private RollingAverage heightAverage;                     //averaging the height of the elevator
+  private ElevatorState currState;          //current state of the elevator
+  private RollingAverage heightAverage;     //averaging the height of the elevator
 
-  private ClimberInterface climberMethods;
+  private ClimberInterface climberMethods;  //based on real or simulation, does different things
   
-  private static BaseTalon elevatorMaster;
-  private static Servo elevatorServo;
-  private static DigitalInput elevatorBottomLimitSwitch;
-
-  //The following are for simulation purposes only. They are set to null on a real object
-  private static Encoder elevatorEncoder;
-  private static EncoderSim elevatorEncoderSim;
-  private static ElevatorSim elevatorSim;
-  private static DCMotor elevatorMotor;
+  private static Servo elevatorServo;       //servo is used for ratcheting or unratheting the elevator
+  private static int motorID;               //motorID of the motor
 
   /**
    * Enum ElevatorState that represents various states of the elevator
@@ -63,8 +41,6 @@ public class Climber extends SubsystemBase
     CLIMBING, HOLD, ZEROING, MANUAL_OVERRIDE
   };
 
-  private static int motorID;
-
   /** Creates a new Climber. */
   public Climber() 
   {
@@ -73,74 +49,14 @@ public class Climber extends SubsystemBase
 
     motorID = ClimberInterface.getMotorID();
 
-    //for a real robot, only use a motor and a limit switch
     if (RobotBase.isReal()) 
-    {
-      elevatorMaster = new TalonFX(motorID);
-      elevatorBottomLimitSwitch = new DigitalInput(2);
-
-      climberMethods = new RealClimber(elevatorMaster);
-    }
+      climberMethods = new RealClimber(motorID, 2);
     else
-    {
-      elevatorMotor = DCMotor.getVex775Pro(1);
-      elevatorSim = new ElevatorSim
-      (
-        elevatorMotor, 
-        Constants.Climber.GEAR_REDUCTION,
-        Constants.Climber.CARRIAGE_MASS, 
-        Constants.Climber.PULLEY_RADIUS, 
-        Constants.Climber.MIN_HEIGHT,
-        Constants.Climber.MAX_HEIGHT, 
-        null
-      );
+      climberMethods = new SimulatedClimber(motorID, 2);
 
-      elevatorMaster = new WPI_TalonSRX(motorID);
-      elevatorEncoder = new Encoder(0, 1);
-      elevatorEncoderSim = new EncoderSim(elevatorEncoder);
-      elevatorBottomLimitSwitch = new DigitalInputWrapper(2);
-
-      climberMethods = new SimulatedClimber(elevatorMaster, elevatorSim, elevatorEncoder);
-    }
-
-    setDefaultParameters();
-  }
-
-  /**
-   * Resets all the variables above to zero.
-   */
-  private void setDefaultParameters()
-  {
     currState = ElevatorState.HOLD;
 
     heightAverage.zero();
-
-    if (RobotBase.isReal()) 
-    {
-      elevatorMaster.configFactoryDefault();
-      
-      ((TalonFX)(elevatorMaster)).configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx, Constants.kTimeoutMs);
-
-      currentConfig = new SupplyCurrentLimitConfiguration(true, 40, 1.3, 30);
-      ((TalonFX) (elevatorMaster)).configSupplyCurrentLimit(currentConfig);
-      elevatorBottomLimitSwitch = new DigitalInput(2);
-    } 
-    else 
-    {
-      elevatorMaster.configFactoryDefault();
-      elevatorEncoder.reset();
-      elevatorEncoder.setDistancePerPulse(Constants.Climber.DISTANCE_PER_PULSE);
-    }
-    
-    elevatorMaster.setInverted(Constants.kCompBot);
-    elevatorMaster.setSelectedSensorPosition(0);
-    elevatorMaster.configPeakOutputForward(1);
-    elevatorMaster.configPeakOutputReverse(-1);
-    elevatorMaster.config_kP(Constants.kPIDIdx, Constants.Climber.kElevatorP);
-    elevatorMaster.config_kI(Constants.kPIDIdx, Constants.Climber.kElevatorI);
-    elevatorMaster.config_kD(Constants.kPIDIdx, Constants.Climber.kElevatorD);
-    elevatorMaster.configVoltageCompSaturation(10, Constants.kTimeoutMs);
-    elevatorMaster.enableVoltageCompensation(true);
   }
 
   @Override
@@ -157,7 +73,7 @@ public class Climber extends SubsystemBase
       //Sets the servo to unratched state and moves the climber up
       case CLIMBING:
         elevatorServo.setAngle(Constants.Climber.kServoUnRatchet);
-        climberMethods.setPosition(Constants.Climber.kClimbHeight);
+        climberMethods.climb();
         if(Math.abs(heightAverage.getAverage() - Constants.Climber.kClimbHeight) < 0.02)
           currState = ElevatorState.HOLD;
         break;
@@ -165,7 +81,7 @@ public class Climber extends SubsystemBase
       //Sets the servo to unratched state and moves the climber down
       case ZEROING:
         elevatorServo.setAngle(Constants.Climber.kServoUnRatchet);
-        climberMethods.setPosition(Constants.Climber.kElevatorZero);
+        climberMethods.zero();
         if(Math.abs(heightAverage.getAverage() - Constants.Climber.kElevatorZero) < 0.02)
           currState = ElevatorState.HOLD;
         break;
@@ -173,7 +89,7 @@ public class Climber extends SubsystemBase
       //Sets the servo to ratched state so that the elevator would not move
       case HOLD:
         elevatorServo.setAngle(Constants.Climber.kServoRatchet);
-        elevatorMaster.set(ControlMode.PercentOutput, 0.0);
+        climberMethods.stop();
         break;
 
       //Sets the servo to unratched state and allows the joysticks to control the robot
@@ -182,19 +98,17 @@ public class Climber extends SubsystemBase
       //otherwise, the climber is controlled by the user
       case MANUAL_OVERRIDE:
         elevatorServo.setAngle(Constants.Climber.kServoUnRatchet);
+
         if(sensorPosition == Constants.Climber.kClimbHeight)
-        {
-          elevatorMaster.set(ControlMode.PercentOutput, -0.1);  
-        }
+          climberMethods.setMotorOutputPercent(-0.1);
+        
         else if(sensorPosition == Constants.Climber.kElevatorZero)
-        {
-          elevatorMaster.set(ControlMode.PercentOutput, 0.1);
-        }
+          climberMethods.setMotorOutputPercent(0.1);
+        
         else
-        {
-          elevatorMaster.set(ControlMode.PercentOutput, Robot.getContainer().getLeft());
-        }
-        break;
+          climberMethods.setMotorOutputPercent(Robot.getContainer().getLeft());
+        
+          break;
     }
 
     heightAverage.add(sensorPosition);
@@ -208,20 +122,15 @@ public class Climber extends SubsystemBase
   {
     super.simulationPeriodic();
 
-    //it should work if not casting (use minimum casting) --> casting is not the best way to do it
-    //something else that could probably be done better
-    //sets the state of the limit switch
-    if(elevatorSim.getPositionMeters() == 0)
-      ((DigitalInputWrapper)elevatorBottomLimitSwitch).set(true); 
-    else ((DigitalInputWrapper)elevatorBottomLimitSwitch).set(false);
-
-    //if the servo state is not ratched, then updates the climber simulation
-    if(elevatorServo.getAngle() != Constants.Climber.kServoRatchet)
+    //Never goes in the catch statement because this is a simulation
+    try
     {
-      elevatorSim.setInput(elevatorMaster.getMotorOutputVoltage());
-      elevatorSim.update(0.020);
-      elevatorEncoderSim.setDistance(elevatorSim.getPositionMeters());
-      RoboRioSim.setVInVoltage(BatterySim.calculateDefaultBatteryLoadedVoltage(elevatorSim.getCurrentDrawAmps()));
+      climberMethods.simulate(elevatorServo);
+    } 
+    catch(UnsupportedOperationException e) 
+    {
+      System.err.println("Not sure how to simulate a real robots :) :) :)");
+      System.exit(1);
     }
   }
 
@@ -250,9 +159,9 @@ public class Climber extends SubsystemBase
   {
     SmartDashboard.putNumber("Height of Elevator in ticks", climberMethods.getDistanceTicks());
     SmartDashboard.putNumber("Servo Angle", elevatorServo.getAngle());
-    SmartDashboard.putBoolean("Bottom Limit Switch Value of Elevator", elevatorBottomLimitSwitch.get());
+    SmartDashboard.putBoolean("Bottom Limit Switch Value of Elevator", climberMethods.atBottom());
     SmartDashboard.putString("Elevator State", this.getElevatorState().toString());
-    SmartDashboard.putNumber("Motor Output[-1, 1]", elevatorMaster.getMotorOutputPercent());
+    SmartDashboard.putNumber("Motor Output[-1, 1]", climberMethods.getMotorOutputPercent());
     SmartDashboard.putBoolean("Simulating?", !ClimberInterface.isReal());
   }
 }
