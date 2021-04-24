@@ -108,7 +108,7 @@ public class Climber extends SubsystemBase
         else
           climberMethods.setMotorOutputPercent(Robot.getContainer().getLeft());
         
-          break;
+        break;
     }
 
     heightAverage.add(sensorPosition);
@@ -129,7 +129,7 @@ public class Climber extends SubsystemBase
     } 
     catch(UnsupportedOperationException e) 
     {
-      System.err.println("Not sure how to simulate a real robots :) :) :)");
+      System.err.println("Not sure how to simulate a real robot :) :) :)");
       System.exit(1);
     }
   }
