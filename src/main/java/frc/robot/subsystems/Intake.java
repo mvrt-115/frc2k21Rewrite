@@ -98,11 +98,15 @@ public class Intake extends SubsystemBase {
 
     isBreakBeamOpen = limitSwitchBottom.get();
 
+    feedForward = 0;
+
     setState(IntakeState.DISABLED);
   }
 
   @Override
   public void periodic() {
+    feedForward = Constants.Intake.FF * Math.cos(Math.toRadians(ticksToDegrees(getPivotTicks())));
+
     // This method will be called once per scheduler run
     switch(state)
     {
@@ -111,6 +115,7 @@ public class Intake extends SubsystemBase {
         break;
 
       case STOWING:
+        stopIntake();
         stow();
         break;
 
@@ -152,8 +157,6 @@ public class Intake extends SubsystemBase {
    * Deploys the intake, if the intake has reached the bottom the intake is deployed and will begin to intake
    */
   public void deploy() {
-    feedForward = Constants.Intake.FF;
-
     if(limitSwitchBottom.get() != isBreakBeamOpen 
         || Math.abs(getPivotTicks() - Constants.Intake.PIVOT_DEPLOYED_TICKS) 
         <= Constants.Intake.MARGIN_OF_ERROR_TICKS) {
@@ -168,9 +171,7 @@ public class Intake extends SubsystemBase {
   /**
    * Stows the intake until the intake has reached the top
    */
-  public void stow() {
-    feedForward = -Constants.Intake.FF;
-    
+  public void stow() {    
     if(Math.abs(getPivotTicks() - Constants.Intake.PIVOT_STOWED_TICKS) 
         <= Constants.Intake.MARGIN_OF_ERROR_TICKS) {
       stopPivot();
@@ -239,7 +240,7 @@ public class Intake extends SubsystemBase {
    * @return        the amount of ticks in that angle
    */
   public int degreesToTicks(double degrees) {
-    return (int)(degrees / 360 * Constants.Intake.PIVOT_TICKS_PER_REVOLUTION * Constants.Intake.PIVOT_GEAR_RATIO);
+    return (int)((degrees - 90) * Constants.Intake.PIVOT_MAX_TICKS / 100);
   }
 
   /**
@@ -251,6 +252,15 @@ public class Intake extends SubsystemBase {
   }
 
   /**
+   * Converts ticks to degrees
+   * @param ticks the amount of ticks
+   * @return      the amount of degrees fround from the given ticks
+   */
+  public double ticksToDegrees(double ticks) {
+    return 90 + (ticks / Constants.Intake.PIVOT_MAX_TICKS * 100);
+  }
+
+  /**
    * Logs data about the subsystem to smart dashboard
    */
   public void log() {
@@ -258,5 +268,7 @@ public class Intake extends SubsystemBase {
     SmartDashboard.putBoolean("Intake Running", getState() == IntakeState.INTAKING);
     SmartDashboard.putNumber("Intake Pivot Output", pivot.getMotorOutputPercent());
     SmartDashboard.putNumber("Intake Current Ticks", getPivotTicks());
+    SmartDashboard.putNumber("Intake Current Angle", ticksToDegrees(getPivotTicks()));
+    SmartDashboard.putNumber("Intake Feed Forward", feedForward);
   }
 }
