@@ -6,7 +6,7 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.TalonSRXSimCollection;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
-/** Add your docs here. */
+
 public class Hardware {
     public static class ExampleSubsystem {
         public static BaseTalon rightLeader;
