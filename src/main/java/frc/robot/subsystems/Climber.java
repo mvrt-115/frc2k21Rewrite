@@ -26,8 +26,8 @@ public class Climber extends SubsystemBase
 
   private ClimberInterface climberMethods;  //based on real or simulation, does different things
   
-  private Servo elevatorServo;       //servo is used for ratcheting or unratheting the elevator
-  private int motorID;               //motorID of the motor
+  private Servo elevatorServo;              //servo is used for ratcheting or unratheting the elevator
+  private int motorID;                      //motorID of the motor
 
   /**
    * Enum ElevatorState that represents various states of the elevator
