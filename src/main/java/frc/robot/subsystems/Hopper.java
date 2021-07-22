@@ -35,6 +35,8 @@ public class Hopper extends SubsystemBase {
   // last time a ball passed top/bottom breakbeam
   public double lastBotTime;
   public double lastTopTime;
+
+  double topStart = -1;
   
   /** Creates a new Hopper. */
   public Hopper() {
@@ -78,6 +80,11 @@ public class Hopper extends SubsystemBase {
     
     prevBotState = breakbeamBot.get();
     prevTopState = breakbeamTop.get();
+
+    if(topStart != -1 && Timer.getFPGATimestamp() - topStart > 0.2) {
+      stopTopMotor();
+      topStart = -1;
+    }
     
     log();
   }
@@ -111,6 +118,8 @@ public class Hopper extends SubsystemBase {
     // } else {
     //   stop();
     // }
+    
+    
     if(balls < 3)
       runBottomMotor(0.8);
     else
@@ -121,11 +130,13 @@ public class Hopper extends SubsystemBase {
     // }
 
     if(balls == 2 || balls == 3) {
-      if(!breakbeamTop.get())
+      if(breakbeamTop.get())
         runTopMotor(0.3);
       else
         stopTopMotor();
     }
+
+
   }
 
   
