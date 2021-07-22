@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 /** 
 * The hopper subsystem brings the balls from the intake
@@ -26,15 +27,14 @@ public class Hopper extends SubsystemBase {
   public DigitalInput breakbeamTop, breakbeamBot;
   
   // amount of balls currently in hopper  
-  private int ballsInHopper;
+  private int balls;
   
-  public boolean prevBreakbeamBotState = true;
-  public boolean prevBreakbeamTopState = true;
+  public boolean prevBotState = true;
+  public boolean prevTopState = true;
 
+  // last time a ball passed top/bottom breakbeam
   public double lastBotTime;
   public double lastTopTime;
-
-  double topStart = -1;
   
   /** Creates a new Hopper. */
   public Hopper() {
@@ -47,7 +47,10 @@ public class Hopper extends SubsystemBase {
     lastTopTime = Timer.getFPGATimestamp();
     lastBotTime = Timer.getFPGATimestamp();
 
-    ballsInHopper = 0;
+    balls = 0;
+
+    top.configVoltageCompSaturation(Constants.kVoltageCompensation);
+    bottom.configVoltageCompSaturation(Constants.kVoltageCompensation);
 
     bottom.enableVoltageCompensation(true);
     top.enableVoltageCompensation(true);
@@ -58,25 +61,23 @@ public class Hopper extends SubsystemBase {
   public void periodic() {
    
     //if the breakbeamBot goes from unbroken to broken, then increase the amount of balls
-    if(breakbeamBot.get() && !prevBreakbeamBotState){
+    if(!breakbeamBot.get() && prevBotState){
       if(Timer.getFPGATimestamp() - lastBotTime > .3){
-        ballsInHopper++;
-        //System.out.println("Balls increased: " + ballsInHopper);
+        balls++;
         lastBotTime = Timer.getFPGATimestamp();
       }
     }
     
     //if the breakbeamTop goes from broken to unbroken, then decrease the amount of balls
-    if(!breakbeamTop.get() && prevBreakbeamTopState){
+    if(breakbeamTop.get() && !prevTopState){
       if(Timer.getFPGATimestamp() - lastTopTime > .3){
         lastTopTime = Timer.getFPGATimestamp();
-        //System.out.println("Balls decreased: " + ballsInHopper);
-        ballsInHopper--;
+        balls--;
      }
     }      
     
-    prevBreakbeamBotState = breakbeamBot.get();
-    prevBreakbeamTopState = breakbeamTop.get();
+    prevBotState = breakbeamBot.get();
+    prevTopState = breakbeamTop.get();
     
     log();
   }
@@ -110,15 +111,20 @@ public class Hopper extends SubsystemBase {
     // } else {
     //   stop();
     // }
+    if(balls < 3)
+      runBottomMotor(0.8);
+    else
+      stop();
 
-    if(ballsInHopper < 3) {
-      runBottomMotor(0.3);
-    } else {
-      runBottomMotor(0);
-    }
+    // if(balls == 1) {
+    //   runBottomMotor(0.87);
+    // }
 
-    if(ballsInHopper == 1) {
-      runTopMotor(0.3);
+    if(balls == 2 || balls == 3) {
+      if(!breakbeamTop.get())
+        runTopMotor(0.3);
+      else
+        stopTopMotor();
     }
   }
 
@@ -153,9 +159,7 @@ public class Hopper extends SubsystemBase {
     SmartDashboard.putBoolean("Bot breakbeam", breakbeamBot.get());
     SmartDashboard.putBoolean("Top breakbeam", breakbeamTop.get());
     
-    SmartDashboard.putNumber("Balls in Hopper", ballsInHopper);
-
-   // System.out.println(ballsInHopper);
+    SmartDashboard.putNumber("Balls in Hopper", balls);
   }
   
   /**
@@ -163,9 +167,10 @@ public class Hopper extends SubsystemBase {
    * @return Returns the balls in the hopper
    */
   public int getBallsInHopper() {
-    return ballsInHopper;
+    return balls;
   }
-  public void setBallsInHopper(int balls) {
-    ballsInHopper = balls;
+
+  public void setBallsInHopper(int newBalls) {
+    balls = newBalls;
   }
 }
