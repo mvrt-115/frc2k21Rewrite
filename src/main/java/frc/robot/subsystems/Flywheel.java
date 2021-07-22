@@ -54,7 +54,7 @@ public class Flywheel extends SubsystemBase{
         flywheelLeader.configFactoryDefault();
         flywheelFollower.configFactoryDefault();
 
-        flywheelLeader.configVoltageCompSaturation(Constants.Flywheel.MAX_VOLTAGE_COMPENSATION, Constants.kTimeoutMs);
+        flywheelLeader.configVoltageCompSaturation(Constants.kVoltageCompensation);
         flywheelLeader.enableVoltageCompensation(true);
 
         flywheelLeader.setInverted(false);

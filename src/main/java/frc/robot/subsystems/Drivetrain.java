@@ -102,10 +102,10 @@ public class Drivetrain extends SubsystemBase {
 
     align = false;
 
-    leftFront.configVoltageCompSaturation(Constants.Drivetrain.kVoltageCompensation);
-    rightFront.configVoltageCompSaturation(Constants.Drivetrain.kVoltageCompensation);
-    leftBack.configVoltageCompSaturation(Constants.Drivetrain.kVoltageCompensation);
-    rightBack.configVoltageCompSaturation(Constants.Drivetrain.kVoltageCompensation);
+    leftFront.configVoltageCompSaturation(Constants.kVoltageCompensation);
+    rightFront.configVoltageCompSaturation(Constants.kVoltageCompensation);
+    leftBack.configVoltageCompSaturation(Constants.kVoltageCompensation);
+    rightBack.configVoltageCompSaturation(Constants.kVoltageCompensation);
 
     leftFront.enableVoltageCompensation(true);
     rightFront.enableVoltageCompensation(true);

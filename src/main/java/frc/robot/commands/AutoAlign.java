@@ -2,7 +2,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.RobotContainer;
+import frc.robot.subsystems.Drivetrain;
 
 /**
  * A command that aligns the robot to the target using the limelight system
@@ -11,13 +11,16 @@ import frc.robot.RobotContainer;
  */
 public class AutoAlign extends CommandBase {
 
+  Drivetrain  drivetrain;
+
   /**
    * Makes sure that the drivetrain subsystem object exists for use in the
    * command
    */
-  public AutoAlign() {
+  public AutoAlign(Drivetrain _drivetrain) {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(RobotContainer.drivetrain);
+    addRequirements(_drivetrain);
+    drivetrain = _drivetrain;
   }
 
   // Called when the command is initially scheduled.
@@ -27,7 +30,7 @@ public class AutoAlign extends CommandBase {
   @Override
   public void initialize() 
   {
-    RobotContainer.drivetrain.resetGyro();
+    drivetrain.resetGyro();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -38,8 +41,8 @@ public class AutoAlign extends CommandBase {
   @Override
   public void execute() 
   {
-    double angleError = RobotContainer.drivetrain.getHorizontalAngleError();
-    RobotContainer.drivetrain.alignToTarget(angleError);
+    double angleError = drivetrain.getHorizontalAngleError();
+    drivetrain.alignToTarget(angleError);
   }
 
   // Called once the command ends or is interrupted.
@@ -51,7 +54,7 @@ public class AutoAlign extends CommandBase {
   @Override
   public void end(boolean interrupted) 
   {
-    RobotContainer.drivetrain.stopDrivetrainMotors();
+    drivetrain.stopDrivetrainMotors();
   }
 
   // Returns true when the command should end.

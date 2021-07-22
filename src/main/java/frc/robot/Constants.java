@@ -14,7 +14,9 @@ package frc.robot;
  */
 public final class Constants {
     public static final int kPIDIdx = 0;
-	public static final int kTimeoutMs = 10;
+    public static final int kTimeoutMs = 10;
+    
+    public static final double kVoltageCompensation = 10.0; // Volts
 
     public static class ExampleSubsystem {
         public static final double SPEED = 0.5;
@@ -93,8 +95,6 @@ public final class Constants {
                 
         public static final double kRobotMass = 125.0; // kg
         public static final double kRotationalInertia = 20.0;
-
-        public static final double kVoltageCompensation = 10.0; // Volts
 
         public static final double kAlignP = 0.01;
         public static final double kAlignI = 0.013;
