@@ -9,16 +9,22 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Flywheel;
+import frc.robot.subsystems.Hopper;
+import frc.robot.subsystems.Flywheel.FlywheelState;
 
 public class SmartShoot extends CommandBase {
   private Flywheel flywheel;
+  private Hopper hopper;
 
   /**
    * Creates a new SmartShoot.
    */
-  public SmartShoot(Flywheel _flywheel) {
+  public SmartShoot(Flywheel _flywheel, Hopper _hopper) {
 
     flywheel = _flywheel;
+    hopper = _hopper;
+
+    addRequirements(flywheel, hopper);
 
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -26,13 +32,20 @@ public class SmartShoot extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    flywheel.setTargetRPM(flywheel.getRPM());
+    
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-  } 
+      flywheel.setTargetRPM(flywheel.getRPM());
+      if(flywheel.getFlywheelState() == FlywheelState.ATSPEED) {
+        hopper.runTopMotor(0.2);
+        hopper.runBottomMotor(0.8);
+      }
+  
+    
+  }
 
   // Called once the command ends or is interrupted.
   @Override
@@ -42,6 +55,6 @@ public class SmartShoot extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    return false;
   }
 }

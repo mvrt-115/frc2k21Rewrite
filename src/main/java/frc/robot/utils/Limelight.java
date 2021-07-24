@@ -6,7 +6,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 public class Limelight {
     public static final double kLimelightMountAngle = 15; //degrees
     public static final double kLimelightHeight = 45;  
-    public static final double kTargetHeight = 70;//98.25;
+    public static final double kTargetHeight = 98.25;
 
 
     public static enum LED_STATE {

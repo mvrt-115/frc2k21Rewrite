@@ -146,7 +146,6 @@ public class Drivetrain extends SubsystemBase {
    * @param quickTurn     (boolean) status of quickTurnButton
    */
   public void cheesyIshDrive(double throttle, double wheel, boolean quickTurn) {
-
 		throttle = handleDeadband(throttle, Constants.Drivetrain.kThrottleDeadband);
 		wheel = handleDeadband(wheel, Constants.Drivetrain.kWheelDeadband);
 

@@ -135,7 +135,7 @@ public class Intake extends SubsystemBase {
       stopPivot();
       setState(IntakeState.DISABLED);
     } else {
-      pivot(30);
+      pivot(Constants.Intake.PIVOT_STOWED_TICKS);
     }    
   }
 

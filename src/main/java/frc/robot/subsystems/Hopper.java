@@ -81,9 +81,11 @@ public class Hopper extends SubsystemBase {
     prevBotState = breakbeamBot.get();
     prevTopState = breakbeamTop.get();
 
-    if(topStart != -1 && Timer.getFPGATimestamp() - topStart > 0.2) {
+    if(topStart != -1 && Timer.getFPGATimestamp() - topStart > 1) {
       stopTopMotor();
       topStart = -1;
+    } else if(topStart != -1) {
+      runTopMotor(0.2);
     }
     
     log();
@@ -104,39 +106,28 @@ public class Hopper extends SubsystemBase {
    *    stop all motors
    */
   public void runHopper() {
-    // if(ballsInHopper < 3) {
-    //   runBottomMotor(0.65);
+    if(balls < 3) {
+      runBottomMotor(0.65);
 
-    //   if(!prevBreakbeamBotState && breakbeamBot.get()) {
-    //     runTopMotor(0.65);
-    //   }
-    //   else if(ballsInHopper == 2 && breakbeamTop.get()) // if break beam is not broken
-    //     runTopMotor(0.65);
-    //   else
-    //     stopTopMotor();
-      
-    // } else {
-    //   stop();
-    // }
-    
-    
-    if(balls < 3)
-      runBottomMotor(0.8);
-    else
-      stop();
-
-    // if(balls == 1) {
-    //   runBottomMotor(0.87);
-    // }
-
-    if(balls == 2 || balls == 3) {
-      if(breakbeamTop.get())
-        runTopMotor(0.3);
-      else
+      if(!breakbeamBot.get() && (balls == 0 || balls == 1)) {
+        topStart = Timer.getFPGATimestamp();
+      }
+       if(balls == 2 && breakbeamTop.get()) // if break beam is not broken
+         runTopMotor(0.25);
+       else
         stopTopMotor();
+      
+    } else {
+      stop();
     }
 
 
+    if(balls == 3) {
+      if(!breakbeamBot.get())
+        runBottomMotor(0.8);
+      else 
+        runBottomMotor(0);
+    }
   }
 
   

@@ -54,7 +54,7 @@ public final class Constants {
 
         public static final double MARGIN_OF_ERROR_TICKS = 150;
 
-        public static final double P = 0.53;
+        public static final double P = 0.7;
         public static final double I = 0;
         public static final double D = 0;
         public static final double FF = 0.25;

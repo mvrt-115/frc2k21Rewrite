@@ -71,24 +71,23 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, this::getQuickTurn));
 
     // run intake button
-    runIntake.whenPressed(new RunIntake(intake, true)).whenReleased(new RunIntake(intake, false));
+    runIntake.whenPressed(new RunIntake(intake, hopper, true)).whenReleased(new RunIntake(intake, hopper, false));
 
-    // hopper button
-    hopperUp.whenPressed(new HopperManual(hopper, 0.35, 0.35)).whenReleased(new HopperManual(hopper, 0, 0));
+    // // hopper button
+    // hopperUp.whenPressed(new HopperManual(hopper, 0.35, 0.35)).whenReleased(new HopperManual(hopper, 0, 0));
 
-    // backwards hopper button
-    hopperDown.whenPressed(new HopperManual(hopper, -0.35, -0.35)).whenReleased(new HopperManual(hopper, 0, 0));
+    // // backwards hopper button
+    // hopperDown.whenPressed(new HopperManual(hopper, -0.35, -0.35)).whenReleased(new HopperManual(hopper, 0, 0));
 
     // shoot flywheel with limelight
-    shootToTarget.whenPressed(new SmartShoot(flywheel)).whenReleased(new SetFlywheelRPM(flywheel, 0));
-    ;
+    shootToTarget.whenPressed(new SmartShoot(flywheel, hopper)).whenReleased(new SetFlywheelRPM(flywheel, 0));
 
-    // // shoot flywheel at set rpm
-    // new JoystickButton(joystick, 7).whenPressed(new SetFlywheelRPM(flywheel, 6000))
-    //     .whenReleased(new SetFlywheelRPM(flywheel, 0));
+     // shoot flywheel at set rpm
+    //  new JoystickButton(joystick, 7).whenPressed(new SetFlywheelRPM(flywheel, 6000))
+    //      .whenReleased(new SetFlywheelRPM(flywheel, 0));
 
     // auto hpper
-    autoHopper.whenPressed(new HopperAutomatic(hopper)).whenReleased(new HopperManual(hopper, 0, 0));
+    // autoHopper.whenPressed(new HopperAutomatic(hopper)).whenReleased(new HopperManual(hopper, 0, 0));
     // Align robot to target
     autoAlign.whenPressed(new AutoAlign(drivetrain)).whenReleased(new StopDrivetrain(drivetrain));
 
