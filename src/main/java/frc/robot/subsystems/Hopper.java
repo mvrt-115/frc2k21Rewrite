@@ -43,7 +43,7 @@ public class Hopper extends SubsystemBase {
     bottom = new TalonFX(2);
     top = new TalonFX(7);
     
-    breakbeamBot = new DigitalInput(9);
+    breakbeamBot = new DigitalInput(7);
     breakbeamTop = new DigitalInput(8);
 
     lastTopTime = Timer.getFPGATimestamp();
@@ -71,7 +71,7 @@ public class Hopper extends SubsystemBase {
     }
     
     //if the breakbeamTop goes from broken to unbroken, then decrease the amount of balls
-    if(breakbeamTop.get() && !prevTopState){
+    if(!breakbeamTop.get() && prevTopState){
       if(Timer.getFPGATimestamp() - lastTopTime > .3){
         lastTopTime = Timer.getFPGATimestamp();
         balls--;
@@ -87,6 +87,9 @@ public class Hopper extends SubsystemBase {
     } else if(topStart != -1) {
       runTopMotor(0.2);
     }
+
+    if(balls < 0 || balls > 4)
+      balls = 0;
     
     log();
   }

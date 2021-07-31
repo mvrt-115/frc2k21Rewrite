@@ -67,8 +67,8 @@ public final class Constants {
     public static class Drivetrain{
         //Constants
         //zero and ask mech for vals
-        public static final double kLimelightFF = 0.042;
-        public static final double kLimelightP = 0.04;
+        // public static final double kLimelightFF = 0.042;
+        // public static final double kLimelightP = 0.04;
 
         public static final double kTrackScrubFactor = 1.0469745223;
         public static final double kTrackWidthInches = 24.2; // inches

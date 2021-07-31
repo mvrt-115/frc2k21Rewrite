@@ -40,13 +40,15 @@ public class RobotContainer {
   public final Drivetrain drivetrain = new Drivetrain();
 
   /** Main joystick */
+   
   public Joystick joystick = new Joystick(0);
 
   // joystick buttons
+
   public JoystickButton quickturn = new JoystickButton(joystick, 5);
-  public JoystickButton runIntake = new JoystickButton(joystick, 1);
-  public JoystickButton autoHopper = new JoystickButton(joystick, 6);
-  public JoystickButton autoAlign = new JoystickButton(joystick, 8);
+  public JoystickButton runIntake = new JoystickButton(joystick, 6);
+  // public JoystickButton autoHopper = new JoystickButton(joystick, 6);
+  // public JoystickButton autoAlign = new JoystickButton(joystick, 8);
   public JoystickButton hopperUp = new JoystickButton(joystick, 2);
   public JoystickButton hopperDown = new JoystickButton(joystick, 3);
   public JoystickButton shootToTarget = new JoystickButton(joystick, 4);
@@ -58,6 +60,7 @@ public class RobotContainer {
     configureButtonBindings();
   }
 
+  // #AkashPalla #NotOurPresident
   /**
    * Use this method to define your button->command mappings. Buttons can be
    * created by instantiating a {@link GenericHID} or one of its subclasses
@@ -74,13 +77,13 @@ public class RobotContainer {
     runIntake.whenPressed(new RunIntake(intake, hopper, true)).whenReleased(new RunIntake(intake, hopper, false));
 
     // // hopper button
-    // hopperUp.whenPressed(new HopperManual(hopper, 0.35, 0.35)).whenReleased(new HopperManual(hopper, 0, 0));
+    hopperUp.whenPressed(new HopperManual(hopper, 0.35, 0.35)).whenReleased(new HopperManual(hopper, 0, 0));
 
     // // backwards hopper button
-    // hopperDown.whenPressed(new HopperManual(hopper, -0.35, -0.35)).whenReleased(new HopperManual(hopper, 0, 0));
+    hopperDown.whenPressed(new HopperManual(hopper, -0.35, -0.35)).whenReleased(new HopperManual(hopper, 0, 0));
 
     // shoot flywheel with limelight
-    shootToTarget.whenPressed(new SmartShoot(flywheel, hopper)).whenReleased(new SetFlywheelRPM(flywheel, 0));
+    shootToTarget.whenPressed(new SmartShoot(flywheel, hopper)).whenReleased(new SetFlywheelRPM(flywheel, 0)).whenReleased(new HopperManual(hopper, 0, 0));
 
      // shoot flywheel at set rpm
     //  new JoystickButton(joystick, 7).whenPressed(new SetFlywheelRPM(flywheel, 6000))
@@ -89,8 +92,8 @@ public class RobotContainer {
     // auto hpper
     // autoHopper.whenPressed(new HopperAutomatic(hopper)).whenReleased(new HopperManual(hopper, 0, 0));
     // Align robot to target
-    autoAlign.whenPressed(new AutoAlign(drivetrain)).whenReleased(new StopDrivetrain(drivetrain));
-
+    // autoAlign.whenPressed(new AutoAlign(drivetrain)).whenReleased(new StopDrivetrain(drivetrain));
+    // adithya patil was here
   }
 
   /**

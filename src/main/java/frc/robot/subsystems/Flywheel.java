@@ -54,8 +54,11 @@ public class Flywheel extends SubsystemBase{
         flywheelLeader.configFactoryDefault();
         flywheelFollower.configFactoryDefault();
 
-        // flywheelLeader.configVoltageCompSaturation(Constants.kVoltageCompensation);
-        // flywheelLeader.enableVoltageCompensation(true);
+        flywheelLeader.configVoltageCompSaturation(Constants.kVoltageCompensation);
+        flywheelFollower.configVoltageCompSaturation(Constants.kVoltageCompensation);
+
+        flywheelLeader.enableVoltageCompensation(true);
+        flywheelFollower.enableVoltageCompensation(true);
 
         flywheelLeader.setInverted(false);
         flywheelFollower.setInverted(false);
@@ -169,8 +172,6 @@ public class Flywheel extends SubsystemBase{
     public double getRPM() {
         //finds distance from the target in inches
         double distance_in = (Hardware.limelight.getDistanceFromTarget());
-
-        SmartDashboard.putNumber("distance", distance_in);
 
         //mult height and dist by constant and add constant rpm
         return 3.5 * distance_in + 4700;

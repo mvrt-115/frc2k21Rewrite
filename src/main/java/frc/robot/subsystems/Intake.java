@@ -70,6 +70,10 @@ public class Intake extends SubsystemBase {
     roller.configVoltageCompSaturation(Constants.kVoltageCompensation);
     funnel.configVoltageCompSaturation(Constants.kVoltageCompensation);
 
+    pivot.enableVoltageCompensation(true);
+    roller.enableVoltageCompensation(true);
+    funnel.enableVoltageCompensation(true);
+
 
     limitSwitchBottom = new DigitalInput(Constants.Intake.LIMIT_SWITCH_ID);
 
