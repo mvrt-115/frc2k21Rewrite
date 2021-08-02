@@ -7,8 +7,6 @@
 
 package frc.robot;
 
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
-
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -16,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
+import frc.robot.utils.RollingAverage;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -26,15 +25,8 @@ import frc.robot.subsystems.*;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
-
-  private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
-
   public final Hopper hopper = new Hopper();
   private final Intake intake = new Intake();
-
-  TalonFX flywheelMaster = new TalonFX(11);
-  TalonFX flywheelFollower = new TalonFX(12);
 
   public final Flywheel flywheel = new Flywheel();
   public final Drivetrain drivetrain = new Drivetrain();
@@ -52,6 +44,9 @@ public class RobotContainer {
   public JoystickButton hopperUp = new JoystickButton(joystick, 2);
   public JoystickButton hopperDown = new JoystickButton(joystick, 3);
   public JoystickButton shootToTarget = new JoystickButton(joystick, 4);
+
+  public RollingAverage throttle = new RollingAverage(50);
+  public RollingAverage wheel = new RollingAverage(10);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -102,7 +97,11 @@ public class RobotContainer {
    * @return double from -1 to 1 representing power going back or forth
    */
   public double getThrottle() {
-    return -joystick.getRawAxis(5);
+    // aDiTyA : 0.7, axis 5
+    // AbHiK: 0.6, axis 1
+    // jAcOb: 0.7 axis 5
+    throttle.updateValue(-joystick.getRawAxis(1) * 0.6);
+    return throttle.getAverage();
   }
 
   /**
@@ -111,7 +110,10 @@ public class RobotContainer {
    * @return double from -1 to 1 representing power towards turning
    */
   public double getWheel() {
-    return joystick.getRawAxis(0);
+    // aditya + jAcOb: axis 0
+    // abhik: axis 4
+    wheel.updateValue(joystick.getRawAxis(4));
+    return wheel.getAverage();
   }
 
   /**
@@ -130,6 +132,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return m_autoCommand;
+    return null;
   }
 }
