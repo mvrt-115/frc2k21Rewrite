@@ -94,10 +94,10 @@ public class Drivetrain extends SubsystemBase {
       leftBack.configSupplyCurrentLimit(currentLimit, Constants.kTimeoutMs);
       rightBack.configSupplyCurrentLimit(currentLimit, Constants.kTimeoutMs);
 
-      leftFront.configOpenloopRamp(0.4);
-      rightFront.configOpenloopRamp(0.4);
-      leftBack.configOpenloopRamp(0.4);
-      rightBack.configOpenloopRamp(0.4);
+      leftFront.configOpenloopRamp(1.0);
+      rightFront.configOpenloopRamp(1.0);
+      leftBack.configOpenloopRamp(1.0);
+      rightBack.configOpenloopRamp(1.0);
 
       // no motor runs inverted
       leftFront.setInverted(false);
