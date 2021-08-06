@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
+import frc.robot.utils.JoystickTriggerButton;
 import frc.robot.utils.RollingAverage;
 
 /**
@@ -43,7 +44,7 @@ public class RobotContainer {
   // public JoystickButton autoAlign = new JoystickButton(joystick, 8);
   public JoystickButton autoAlign = new JoystickButton(joystick, 4);
   public JoystickButton hopperDown = new JoystickButton(joystick, 3);
-  public JoystickButton shootToTarget = new JoystickButton(joystick, 2);
+  public JoystickTriggerButton shootToTarget = new JoystickTriggerButton(joystick, 3);
   public JoystickButton resetHopper = new JoystickButton(joystick, 7);
 
   public RollingAverage throttle = new RollingAverage(50);
@@ -79,7 +80,7 @@ public class RobotContainer {
     hopperDown.whenPressed(new HopperManual(hopper, -0.35, -0.35)).whenReleased(new HopperManual(hopper, 0, 0));
 
     // shoot flywheel with limelight
-    shootToTarget.whenPressed(new SmartShoot(flywheel, hopper)).whenReleased(new SetFlywheelRPM(flywheel, 0)).whenReleased(new HopperManual(hopper, 0, 0));
+    shootToTarget.whenActive(new SmartShoot(flywheel, hopper)).whenInactive(new SetFlywheelRPM(flywheel, 0));
 
     resetHopper.whenPressed(new ResetBallsHopper(hopper));
 
