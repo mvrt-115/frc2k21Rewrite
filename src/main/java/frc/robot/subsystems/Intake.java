@@ -74,7 +74,6 @@ public class Intake extends SubsystemBase {
     roller.enableVoltageCompensation(true);
     funnel.enableVoltageCompensation(true);
 
-
     limitSwitchBottom = new DigitalInput(Constants.Intake.LIMIT_SWITCH_ID);
 
     limitSwitchInitial = limitSwitchBottom.get();
@@ -172,7 +171,7 @@ public class Intake extends SubsystemBase {
   public void stopPivot()
   {
     // pivot.set(ControlMode.PercentOutput, 0);
-    pivot.set(ControlMode.PercentOutput, -0.1);
+    pivot.set(ControlMode.PercentOutput, -0.15);
   }
 
   /**

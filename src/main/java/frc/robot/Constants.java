@@ -52,12 +52,12 @@ public final class Constants {
         public static final double PIVOT_TICKS_PER_REVOLUTION = 4096;
         public static final double PIVOT_GEAR_RATIO = 10;
 
-        public static final double MARGIN_OF_ERROR_TICKS = 150;
+        public static final double MARGIN_OF_ERROR_TICKS = 80;
 
         public static final double P = 0.7;
         public static final double I = 0;
         public static final double D = 0;
-        public static final double FF = 0.25;
+        public static final double FF = 0.2;
         public static final double ROTATIONAL_INERTIA = 0.1;
         public static final double PIVOT_MASS = 68.03;
         public static final double PIVOT_LENGTH = 0.1;

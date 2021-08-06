@@ -81,11 +81,15 @@ public class Flywheel extends SubsystemBase{
      * @param desiredVelocity -- desired RPM
      */
     public void setTargetRPM(double desiredVelocity) {
-        targetRPM = desiredVelocity;
+       
+        targetRPM = Math.min(6500, desiredVelocity);
+        
         if (desiredVelocity == 0)
             setFlywheelState(FlywheelState.OFF);
-        else
+        else{
+            
             setFlywheelState(FlywheelState.SPINNINGUP);
+        }
     } 
 
     /**
@@ -99,6 +103,7 @@ public class Flywheel extends SubsystemBase{
 
     /**
      * Get RPM of motor
+     * 
      * @return RPM
      */
     public double getWheelRPM() {
