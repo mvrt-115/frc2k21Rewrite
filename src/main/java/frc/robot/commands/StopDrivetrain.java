@@ -15,10 +15,10 @@ public class StopDrivetrain extends CommandBase {
   /**
    * Creates a new StopDrivetrain.
    */
-  public StopDrivetrain(Drivetrain _drivetrain) {
+  public StopDrivetrain(Drivetrain drivetrain) {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(_drivetrain);
-    drivetrain = _drivetrain;
+    addRequirements(drivetrain);
+    this.drivetrain = drivetrain;
   }
 
   // Called when the command is initially scheduled.

@@ -20,14 +20,14 @@ public class JoystickDrive extends CommandBase {
    * Makes sure that the Drivetrain.java subsystem object exists for use in the
    * command
    */
-  public JoystickDrive(Drivetrain _drivetrain, Supplier<Double> _throttle, Supplier<Double> _wheel, Supplier<Boolean> _quickturn) {
+  public JoystickDrive(Drivetrain drivetrain, Supplier<Double> throttle, Supplier<Double> wheel, Supplier<Boolean> quickturn) {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(_drivetrain);
+    addRequirements(drivetrain);
 
-    drivetrain = _drivetrain;
-    throttle = _throttle;
-    wheel = _wheel;
-    quickturn = _quickturn;
+    this.drivetrain = drivetrain;
+    this.throttle = throttle;
+    this.wheel = wheel;
+    this.quickturn = quickturn;
   }
 
   // Called when the command is initially scheduled.

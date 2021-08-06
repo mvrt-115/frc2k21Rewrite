@@ -10,9 +10,9 @@ import frc.robot.subsystems.Hopper;
 public class ResetBallsHopper extends CommandBase {
   Hopper hopper;
   /** Creates a new ResetBallsHopper. */
-  public ResetBallsHopper(Hopper _hopper) {
+  public ResetBallsHopper(Hopper hopper) {
     // Use addRequirements() here to declare subsystem dependencies.
-    hopper = _hopper;
+    this.hopper = hopper;
     addRequirements(hopper);
   }
 

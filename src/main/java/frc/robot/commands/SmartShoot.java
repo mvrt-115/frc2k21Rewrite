@@ -19,10 +19,10 @@ public class SmartShoot extends CommandBase {
   /**
    * Creates a new SmartShoot.
    */
-  public SmartShoot(Flywheel _flywheel, Hopper _hopper) {
+  public SmartShoot(Flywheel flywheel, Hopper hopper) {
 
-    flywheel = _flywheel;
-    hopper = _hopper;
+    this.flywheel = flywheel;
+    this.hopper = hopper;
 
     addRequirements(flywheel, hopper);
 

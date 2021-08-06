@@ -233,10 +233,9 @@ public class Drivetrain extends SubsystemBase {
   /**
    * Takes given error and calculates motor output through a PID system for
    * alignment, and then applies it to the motors
-   * 
-   * @param horizontalAngleError angular error to target
    */
-  public double alignToTarget(double horizontalAngleError) {
+  public double alignToTarget() {
+    double horizontalAngleError = getHorizontalAngleError();
     // find change in error / change in time
     double dt = Timer.getFPGATimestamp() - lastTime;
     double de = horizontalAngleError - lastHorizontalAngleError;
@@ -275,10 +274,6 @@ public class Drivetrain extends SubsystemBase {
 
     odometry.update(getGyroAngle(), getDistance(leftFront, leftBack), getDistance(rightFront, rightBack));
     pose = odometry.getPoseMeters();
-
-    if (align) {
-      alignToTarget(getHorizontalAngleError());
-    }
 
     log();
   }
@@ -325,15 +320,9 @@ public class Drivetrain extends SubsystemBase {
    */
   public void stopDrivetrainMotors() {
     setDrivetrainMotorSpeed(0, 0);
-    align = false;
   }
 
-  public void align() {
-    align = true;
-  }
-
-  // ***************************************RESET
-  // METHODS***************************************//
+  // ***************************************RESET METHODS***************************************//
 
   /**
    * Sets gyroscope readings to zero

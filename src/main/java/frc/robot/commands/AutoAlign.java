@@ -17,10 +17,10 @@ public class AutoAlign extends CommandBase {
    * Makes sure that the drivetrain subsystem object exists for use in the
    * command
    */
-  public AutoAlign(Drivetrain _drivetrain) {
+  public AutoAlign(Drivetrain drivetrain) {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(_drivetrain);
-    drivetrain = _drivetrain;
+    addRequirements(drivetrain);
+    this.drivetrain = drivetrain;
   }
 
   // Called when the command is initially scheduled.
@@ -41,8 +41,7 @@ public class AutoAlign extends CommandBase {
   @Override
   public void execute() 
   {
-    double angleError = drivetrain.getHorizontalAngleError();
-    drivetrain.alignToTarget(angleError);
+    drivetrain.alignToTarget();
   }
 
   // Called once the command ends or is interrupted.
@@ -66,6 +65,6 @@ public class AutoAlign extends CommandBase {
    */
   @Override
   public boolean isFinished() {
-    return false;
+    return Math.abs(drivetrain.getHorizontalAngleError()) < 3;
   }
 }
