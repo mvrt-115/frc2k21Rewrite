@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.utils.JoystickTriggerButton;
+import frc.robot.utils.Limelight;
 import frc.robot.utils.RollingAverage;
 
 /**
@@ -28,9 +29,11 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   public final Hopper hopper = new Hopper();
   private final Intake intake = new Intake();
+  public final Limelight limelight = new Limelight();
 
-  public final Flywheel flywheel = new Flywheel();
-  public final Drivetrain drivetrain = new Drivetrain();
+  public final Flywheel flywheel = new Flywheel(limelight);  
+  public final Drivetrain drivetrain = new Drivetrain(limelight);
+  
 
   /** Main joystick */
    

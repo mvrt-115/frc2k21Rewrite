@@ -32,7 +32,7 @@ public class SmartShoot extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    flywheel.setTargetRPM(flywheel.getRPM());
+    flywheel.setTargetRPM(flywheel.getRequiredRPM());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -55,6 +55,6 @@ public class SmartShoot extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return flywheel.getFlywheelState() == FlywheelState.ATSPEED;
   }
 }

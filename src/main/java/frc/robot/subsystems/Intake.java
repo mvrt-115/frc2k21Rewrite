@@ -66,13 +66,15 @@ public class Intake extends SubsystemBase {
 
     pivot.enableVoltageCompensation(true);
 
-    pivot.configVoltageCompSaturation(Constants.kVoltageCompensation);
-    roller.configVoltageCompSaturation(Constants.kVoltageCompensation);
-    funnel.configVoltageCompSaturation(Constants.kVoltageCompensation);
+    pivot.configVoltageCompSaturation(Constants.MAX_VOLTAGE);
+    roller.configVoltageCompSaturation(Constants.MAX_VOLTAGE);
+    funnel.configVoltageCompSaturation(Constants.MAX_VOLTAGE);
 
     pivot.enableVoltageCompensation(true);
     roller.enableVoltageCompensation(true);
     funnel.enableVoltageCompensation(true);
+
+    pivot.setNeutralMode(NeutralMode.Brake);
 
     limitSwitchBottom = new DigitalInput(Constants.Intake.LIMIT_SWITCH_ID);
 
@@ -105,7 +107,6 @@ public class Intake extends SubsystemBase {
       case DISABLED:
         stopIntake();
         stopPivot();
-        pivot.setNeutralMode(NeutralMode.Brake);
         break;
 
       default: 
@@ -170,8 +171,8 @@ public class Intake extends SubsystemBase {
    */
   public void stopPivot()
   {
-    // pivot.set(ControlMode.PercentOutput, 0);
-    pivot.set(ControlMode.PercentOutput, -0.15);
+    // apply slight voltage to keep intake from falling down
+    pivot.set(ControlMode.PercentOutput, -0.2);
   }
 
   /**
@@ -219,7 +220,7 @@ public class Intake extends SubsystemBase {
    */
   public void log() {
     SmartDashboard.putString("Intake State", state.toString());
-    SmartDashboard.putNumber("Intake Current Ticks", getPivotTicks());
+    SmartDashboard.putNumber("Intake Position", getPivotTicks());
   }
 
   /**

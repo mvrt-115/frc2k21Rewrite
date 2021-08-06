@@ -1,9 +1,3 @@
-/**
- * Flywheel.java
- * @version 1.0
- * @since 4/17/21
- * Flywheel Subsystem
- */
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -14,7 +8,7 @@ import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
-import frc.robot.Hardware;
+import frc.robot.utils.Limelight;
 import frc.robot.utils.RollingAverage;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -37,11 +31,12 @@ public class Flywheel extends SubsystemBase{
     private FlywheelState currState;
     private double targetRPM = 0;
     private RollingAverage flywheelRPM;
+    private Limelight limelight;
     
     /**
      * Make new Flywheel object/subsystem
      */
-    public Flywheel() {
+    public Flywheel(Limelight limelight) {
         // Checks if robot is real
         if (RobotBase.isReal()) {
             flywheelLeader = new TalonFX(11);
@@ -50,12 +45,13 @@ public class Flywheel extends SubsystemBase{
             flywheelLeader.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
             flywheelFollower.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
         }
+        this.limelight = limelight;
 
         flywheelLeader.configFactoryDefault();
         flywheelFollower.configFactoryDefault();
 
-        flywheelLeader.configVoltageCompSaturation(Constants.kVoltageCompensation);
-        flywheelFollower.configVoltageCompSaturation(Constants.kVoltageCompensation);
+        flywheelLeader.configVoltageCompSaturation(Constants.MAX_VOLTAGE);
+        flywheelFollower.configVoltageCompSaturation(Constants.MAX_VOLTAGE);
 
         flywheelLeader.enableVoltageCompensation(true);
         flywheelFollower.enableVoltageCompensation(true);
@@ -66,14 +62,15 @@ public class Flywheel extends SubsystemBase{
         flywheelFollower.follow(flywheelLeader);
 
         // Sets up PIDF
-        flywheelLeader.config_kP(Constants.kPIDIdx, Constants.Flywheel.P);
-        flywheelLeader.config_kI(Constants.kPIDIdx, Constants.Flywheel.I);
-        flywheelLeader.config_kD(Constants.kPIDIdx, Constants.Flywheel.D);
-        flywheelLeader.config_kF(Constants.kPIDIdx, Constants.Flywheel.F);
+        flywheelLeader.config_kP(Constants.PID_IDX, Constants.Flywheel.P);
+        flywheelLeader.config_kI(Constants.PID_IDX, Constants.Flywheel.I);
+        flywheelLeader.config_kD(Constants.PID_IDX, Constants.Flywheel.D);
+        flywheelLeader.config_kF(Constants.PID_IDX, Constants.Flywheel.F);
 
         targetRPM = 0;
         currState = FlywheelState.OFF;
         flywheelRPM = new RollingAverage(Constants.Flywheel.RPM_STORED);
+        
     }
 
     /**
@@ -87,7 +84,6 @@ public class Flywheel extends SubsystemBase{
         if (desiredVelocity == 0)
             setFlywheelState(FlywheelState.OFF);
         else{
-            
             setFlywheelState(FlywheelState.SPINNINGUP);
         }
     } 
@@ -96,8 +92,8 @@ public class Flywheel extends SubsystemBase{
      * Updates Smart Dasboard log for Flywheel values
      */
     public void log() {
-        SmartDashboard.putNumber("Flywheel RPM", getWheelRPM());
-        SmartDashboard.putNumber("Flywheel Needed RPM", getRPM());
+        SmartDashboard.putNumber("Flywheel RPM", getCurrentRPM());
+        SmartDashboard.putNumber("Flywheel Needed RPM", getRequiredRPM());
         SmartDashboard.putString("Flywheel State", currState.toString());
     }
 
@@ -106,14 +102,23 @@ public class Flywheel extends SubsystemBase{
      * 
      * @return RPM
      */
-    public double getWheelRPM() {
-        return flywheelLeader.getSelectedSensorVelocity() * 600 / Constants.Flywheel.TICKS_PER_REVOLUTION
-                / Constants.Flywheel.GEAR_RATIO;
+    public double getCurrentRPM() {
+        return flywheelRPM.getAverage();
+    }
+
+    /**
+     * Converts ticks per 100 ms to RPM
+     * @param ticks the ticks per 100 ms
+     * @return      the speed of in RPM
+     */
+    public double ticksToRPM(double ticks) {
+        return ticks * 600 / Constants.Flywheel.TICKS_PER_REVOLUTION
+        / Constants.Flywheel.GEAR_RATIO;
     }
 
     /**
      * Set flywheel state 
-     * @param newState OFF, ATSPEED
+     * @param newState OFF, ATSPEED, SPINNING_UP
      */
     public void setFlywheelState(FlywheelState newState) {
         this.currState = newState;
@@ -122,7 +127,7 @@ public class Flywheel extends SubsystemBase{
             targetRPM = 0;
         }
         else if (newState == FlywheelState.ATSPEED) {
-            targetRPM = getRPM();
+            targetRPM = getRequiredRPM();
         }
     }
 
@@ -139,7 +144,7 @@ public class Flywheel extends SubsystemBase{
      */
     public void periodic() {
         // updates Rolling Average
-        flywheelRPM.updateValue(getWheelRPM());
+        flywheelRPM.updateValue(ticksToRPM(flywheelLeader.getSelectedSensorPosition()));
         log();
 
        
@@ -171,12 +176,12 @@ public class Flywheel extends SubsystemBase{
     }
 
     /**
-     * Function to get necessary RPM from Hardware.limelight distance
+     * Function to get necessary RPM from limelight distance
      * @return necessary RPM 
      */
-    public double getRPM() {
+    public double getRequiredRPM() {
         //finds distance from the target in inches
-        double distance_in = (Hardware.limelight.getDistanceFromTarget());
+        double distance_in = (limelight.getDistanceFromTarget());
 
         //mult height and dist by constant and add constant rpm
         return 3.5 * distance_in + 4700;

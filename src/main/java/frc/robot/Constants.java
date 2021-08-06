@@ -13,13 +13,15 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    public static final int kPIDIdx = 0;
-    public static final int kTimeoutMs = 10;
+    public static final int PID_IDX = 0;
+    public static final int TIMEOUT_MS = 10;
     
-    public static final double kVoltageCompensation = 10.0; // Volts
+    public static final double MAX_VOLTAGE = 10.0; // Volts
 
-    public static class ExampleSubsystem {
-        public static final double SPEED = 0.5;
+    public static class Limelight {
+        public static final double MOUNT_ANGLE = 15; //degrees
+        public static final double HEIGHT_IN = 45; // inches  
+        public static final double TARGET_HEIGHT_IN = 98.25;
     }
     public static class Flywheel {
         public static final double P = 0.17;
@@ -96,10 +98,10 @@ public final class Constants {
         public static final double kRobotMass = 125.0; // kg
         public static final double kRotationalInertia = 20.0;
 
-        public static final double kAlignP = 0.01;
-        public static final double kAlignI = 0.013;
-        public static final double kAlignD = 0.0222;
-        public static final double kAlignff = 0.0025;
+        public static final double kAlignP = 0.0055;
+        public static final double kAlignI = 0;
+        public static final double kAlignD = 0;
+        public static final double kAlignff = 0.0033;
 
         public static final double kAcceptableAlignError = 1.5; 
 

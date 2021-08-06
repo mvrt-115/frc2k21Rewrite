@@ -51,20 +51,47 @@ public class Hopper extends SubsystemBase {
 
     balls = 0;
 
-    top.configVoltageCompSaturation(Constants.kVoltageCompensation);
-    bottom.configVoltageCompSaturation(Constants.kVoltageCompensation);
+    top.configVoltageCompSaturation(Constants.MAX_VOLTAGE);
+    bottom.configVoltageCompSaturation(Constants.MAX_VOLTAGE);
 
     bottom.enableVoltageCompensation(true);
     top.enableVoltageCompensation(true);
   }
+
+  /**
+   * Resets the hopper (sets the amount of balls in the hopper to 0)
+   */
   public void resetBalls() {
     balls = 0;
   }
 
   
   @Override
-  public void periodic() {
-   
+  public void periodic() {  
+    
+    countBalls();
+
+    adjustTopBelt();
+    
+    log();
+  }
+
+  /**
+   * If a ball has just entered the hopper, run the top hopper a bit to make it go up and not jam the hopper
+   */
+  public void adjustTopBelt() {
+    if(topStart != -1 && Timer.getFPGATimestamp() - topStart > 1) {
+      stopTopMotor();
+      topStart = -1;
+    } else if(topStart != -1) {
+      runTopMotor(0.2);
+    }
+  }
+
+  /**
+   * checks if a ball has entered or left the hopper and counts accordingly
+   */
+  public void countBalls() {
     //if the breakbeamBot goes from unbroken to broken, then increase the amount of balls
     if(!breakbeamBot.get() && prevBotState){
       if(Timer.getFPGATimestamp() - lastBotTime > .3){
@@ -81,20 +108,11 @@ public class Hopper extends SubsystemBase {
      }
     }      
     
+    // makes sure that the hopper doesnt miscount balls, so the amount of balls is always between 0 and 5
+    balls = Math.min(Math.max(0, balls), 5);
+
     prevBotState = breakbeamBot.get();
     prevTopState = breakbeamTop.get();
-
-    if(topStart != -1 && Timer.getFPGATimestamp() - topStart > 1) {
-      stopTopMotor();
-      topStart = -1;
-    } else if(topStart != -1) {
-      runTopMotor(0.2);
-    }
-
-    if(balls < 0 || balls > 4)
-      balls = 0;
-    
-    log();
   }
   
 
@@ -102,7 +120,7 @@ public class Hopper extends SubsystemBase {
    * Runs the hopper
    * 
    * if less than 3 balls in hopper (the last ball will just sit on the ground)
-   *    run the bottom motor
+   *    run the bottom motor if the intake is intaking balls
    * 
    *    if there already is a ball at the top of the bottom section
    *        run the top motor until the top break beam is hit
@@ -110,12 +128,15 @@ public class Hopper extends SubsystemBase {
    *        stop the top motor
    * otherwise
    *    stop all motors
+   * 
+   * @param intaking  whether or not the intake is running
    */
   public void runHopper(boolean intaking) {
     if(balls <= 3) {
       if(intaking)
         runBottomMotor(0.65);
 
+      // gets the hopper to adjust the top belt to prevent jamming
       if(!breakbeamBot.get() && (balls == 0 || balls == 1)) {
         topStart = Timer.getFPGATimestamp();
       }
@@ -127,14 +148,6 @@ public class Hopper extends SubsystemBase {
     } else {
       stop();
     }
-
-
-    // if(balls == 3) {
-    //   if(!breakbeamBot.get())
-    //     runBottomMotor(0.8);
-    //   else 
-    //     runBottomMotor(0);
-    // }
   }
 
   
@@ -165,10 +178,9 @@ public class Hopper extends SubsystemBase {
   }
   
   public void log() {
-    SmartDashboard.putBoolean("Bot breakbeam", breakbeamBot.get());
-    SmartDashboard.putBoolean("Top breakbeam", breakbeamTop.get());
-    
-    SmartDashboard.putNumber("Balls in Hopper", balls);
+    SmartDashboard.putBoolean("Bottom breakbeam", breakbeamBot.get());
+    SmartDashboard.putBoolean("Top breakbeam", breakbeamTop.get());    
+    SmartDashboard.putNumber("Balls", balls);
   }
   
   /**

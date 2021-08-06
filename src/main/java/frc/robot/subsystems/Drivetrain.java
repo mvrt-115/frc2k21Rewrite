@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Hardware;
+import frc.robot.utils.Limelight;
 
 /**
  * Subystem having methods responsible for any actions relating to the
@@ -62,15 +62,15 @@ public class Drivetrain extends SubsystemBase {
   private double totalHorizontalAngleError; // tracks the total error to calculate I in PID of alignment
   private double lastHorizontalAngleError; // tracks last error to calculate D in PID of alignment
 
-  private boolean align;
-
   private SupplyCurrentLimitConfiguration currentLimit;
+  private Limelight limelight;
+  private AHRS gyro;
 
   /**
    * Initializes all fields based on whether it is a simulation or the code has
    * been deployed to a robot, and resets both the odometry and gyroscope
    */
-  public Drivetrain() {
+  public Drivetrain(Limelight limelight) {
     // initializes if real (plugged into a robot)
     if (RobotBase.isReal()) {
       leftFront = new TalonFX(46);
@@ -89,45 +89,31 @@ public class Drivetrain extends SubsystemBase {
       // 3.8 seconds trigger current limiting
       currentLimit = new SupplyCurrentLimitConfiguration(true, 40, 50, 3.8);
 
-      leftFront.configSupplyCurrentLimit(currentLimit, Constants.kTimeoutMs);
-      rightFront.configSupplyCurrentLimit(currentLimit, Constants.kTimeoutMs);
-      leftBack.configSupplyCurrentLimit(currentLimit, Constants.kTimeoutMs);
-      rightBack.configSupplyCurrentLimit(currentLimit, Constants.kTimeoutMs);
+      leftFront.configSupplyCurrentLimit(currentLimit, Constants.TIMEOUT_MS);
+      rightFront.configSupplyCurrentLimit(currentLimit, Constants.TIMEOUT_MS);
+      leftBack.configSupplyCurrentLimit(currentLimit, Constants.TIMEOUT_MS);
+      rightBack.configSupplyCurrentLimit(currentLimit, Constants.TIMEOUT_MS);
 
       leftFront.configOpenloopRamp(1.0);
       rightFront.configOpenloopRamp(1.0);
       leftBack.configOpenloopRamp(1.0);
       rightBack.configOpenloopRamp(1.0);
 
-      // no motor runs inverted
       leftFront.setInverted(false);
       leftBack.setInverted(false);
       rightFront.setInverted(true);
       rightBack.setInverted(true);
 
-      ((TalonFX) leftFront).configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx,
-          Constants.kTimeoutMs);
-      ((TalonFX) rightFront).configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx,
-          Constants.kTimeoutMs);
-      ((TalonFX) leftBack).configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx,
-          Constants.kTimeoutMs);
-      ((TalonFX) rightBack).configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx,
-          Constants.kTimeoutMs);
+      ((TalonFX) leftFront).configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.PID_IDX,
+          Constants.TIMEOUT_MS);
+      ((TalonFX) rightFront).configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.PID_IDX,
+          Constants.TIMEOUT_MS);
+      ((TalonFX) leftBack).configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.PID_IDX,
+          Constants.TIMEOUT_MS);
+      ((TalonFX) rightBack).configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.PID_IDX,
+          Constants.TIMEOUT_MS);
     }
-
-    align = false;
-
-    leftFront.configVoltageCompSaturation(Constants.kVoltageCompensation);
-    rightFront.configVoltageCompSaturation(Constants.kVoltageCompensation);
-    leftBack.configVoltageCompSaturation(Constants.kVoltageCompensation);
-    rightBack.configVoltageCompSaturation(Constants.kVoltageCompensation);
-
-    leftFront.enableVoltageCompensation(true);
-    rightFront.enableVoltageCompensation(true);
-    leftBack.enableVoltageCompensation(true);
-    rightBack.enableVoltageCompensation(true);
-
-    Hardware.gyro = new AHRS(SPI.Port.kMXP);
+    gyro = new AHRS(SPI.Port.kMXP);
 
     odometry = new DifferentialDriveOdometry(getGyroAngle());
 
@@ -142,8 +128,21 @@ public class Drivetrain extends SubsystemBase {
     leftPIDController = new PIDController(Constants.Drivetrain.kDriveP, Constants.Drivetrain.kDriveI,
         Constants.Drivetrain.kDriveD);
 
+    leftFront.configVoltageCompSaturation(Constants.MAX_VOLTAGE);
+    rightFront.configVoltageCompSaturation(Constants.MAX_VOLTAGE);
+    leftBack.configVoltageCompSaturation(Constants.MAX_VOLTAGE);
+    rightBack.configVoltageCompSaturation(Constants.MAX_VOLTAGE);
+
+    leftFront.enableVoltageCompensation(true);
+    rightFront.enableVoltageCompensation(true);
+    leftBack.enableVoltageCompensation(true);
+    rightBack.enableVoltageCompensation(true);
+
+    
+
     leftBack.follow(leftFront);
     rightBack.follow(rightFront);
+    this.limelight = limelight;
 
     resetGyro();
     resetEncoderValues();
@@ -250,7 +249,7 @@ public class Drivetrain extends SubsystemBase {
         + Constants.Drivetrain.kAlignI * totalHorizontalAngleError + Constants.Drivetrain.kAlignD * slope;
 
     // if error is greater than constant value, add FF term
-    if (horizontalAngleError > 1.5) {
+    if (horizontalAngleError > 3) {
       turnSpeed += Math.copySign(Constants.Drivetrain.kAlignff, horizontalAngleError);
     }
 
@@ -288,8 +287,7 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("Curr X Position", pose.getTranslation().getX());
     SmartDashboard.putNumber("Curr Y Position", pose.getTranslation().getY());
     SmartDashboard.putNumber("Horizontal Error", getHorizontalAngleError());
-    SmartDashboard.putBoolean("Aligning", align);
-    SmartDashboard.putNumber("NavX", Hardware.gyro.getAngle());
+    SmartDashboard.putNumber("NavX", gyro.getAngle());
   }
 
   // ***********************************OUTPUT-SETTING
@@ -328,7 +326,7 @@ public class Drivetrain extends SubsystemBase {
    * Sets gyroscope readings to zero
    */
   public void resetGyro() {
-    Hardware.gyro.reset();
+    gyro.reset();
   }
 
   /**
@@ -356,7 +354,7 @@ public class Drivetrain extends SubsystemBase {
    * @return Rotation2d of current rotation
    */
   public Rotation2d getGyroAngle() {
-    return Rotation2d.fromDegrees(-Hardware.gyro.getAngle());
+    return Rotation2d.fromDegrees(-gyro.getAngle());
   }
 
   /**
@@ -365,7 +363,7 @@ public class Drivetrain extends SubsystemBase {
    * @return angular error (double)
    */
   public double getHorizontalAngleError() {
-    return Hardware.limelight.getTX();
+    return limelight.getTX();
   }
 
   /**
