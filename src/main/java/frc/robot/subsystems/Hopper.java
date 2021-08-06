@@ -43,8 +43,8 @@ public class Hopper extends SubsystemBase {
     bottom = new TalonFX(2);
     top = new TalonFX(7);
     
-    breakbeamBot = new DigitalInput(7);
-    breakbeamTop = new DigitalInput(8);
+    breakbeamBot = new DigitalInput(9);
+    breakbeamTop = new DigitalInput(7);
 
     lastTopTime = Timer.getFPGATimestamp();
     lastBotTime = Timer.getFPGATimestamp();
@@ -56,6 +56,9 @@ public class Hopper extends SubsystemBase {
 
     bottom.enableVoltageCompensation(true);
     top.enableVoltageCompensation(true);
+  }
+  public void resetBalls() {
+    balls = 0;
   }
 
   
@@ -108,9 +111,10 @@ public class Hopper extends SubsystemBase {
    * otherwise
    *    stop all motors
    */
-  public void runHopper() {
-    if(balls < 3) {
-      runBottomMotor(0.65);
+  public void runHopper(boolean intaking) {
+    if(balls <= 3) {
+      if(intaking)
+        runBottomMotor(0.65);
 
       if(!breakbeamBot.get() && (balls == 0 || balls == 1)) {
         topStart = Timer.getFPGATimestamp();
@@ -125,12 +129,12 @@ public class Hopper extends SubsystemBase {
     }
 
 
-    if(balls == 3) {
-      if(!breakbeamBot.get())
-        runBottomMotor(0.8);
-      else 
-        runBottomMotor(0);
-    }
+    // if(balls == 3) {
+    //   if(!breakbeamBot.get())
+    //     runBottomMotor(0.8);
+    //   else 
+    //     runBottomMotor(0);
+    // }
   }
 
   

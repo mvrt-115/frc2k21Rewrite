@@ -41,12 +41,13 @@ public class RobotContainer {
   public JoystickButton runIntake = new JoystickButton(joystick, 6);
   // public JoystickButton autoHopper = new JoystickButton(joystick, 6);
   // public JoystickButton autoAlign = new JoystickButton(joystick, 8);
-  public JoystickButton hopperUp = new JoystickButton(joystick, 2);
+  public JoystickButton autoAlign = new JoystickButton(joystick, 4);
   public JoystickButton hopperDown = new JoystickButton(joystick, 3);
-  public JoystickButton shootToTarget = new JoystickButton(joystick, 4);
+  public JoystickButton shootToTarget = new JoystickButton(joystick, 2);
+  public JoystickButton resetHopper = new JoystickButton(joystick, 7);
 
   public RollingAverage throttle = new RollingAverage(50);
-  public RollingAverage wheel = new RollingAverage(10);
+  public RollingAverage wheel = new RollingAverage(15);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -69,10 +70,10 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, this::getQuickTurn));
 
     // run intake button
-    runIntake.whenPressed(new RunIntake(intake, hopper, true)).whenReleased(new RunIntake(intake, hopper, false));
+    runIntake.whenPressed(new RunIntake(intake, true)).whenReleased(new RunIntake(intake, false));
 
     // // hopper button
-    hopperUp.whenPressed(new HopperManual(hopper, 0.35, 0.35)).whenReleased(new HopperManual(hopper, 0, 0));
+    autoAlign.whenPressed(new AutoAlign(drivetrain)).whenReleased(new StopDrivetrain(drivetrain));
 
     // // backwards hopper button
     hopperDown.whenPressed(new HopperManual(hopper, -0.35, -0.35)).whenReleased(new HopperManual(hopper, 0, 0));
@@ -80,7 +81,11 @@ public class RobotContainer {
     // shoot flywheel with limelight
     shootToTarget.whenPressed(new SmartShoot(flywheel, hopper)).whenReleased(new SetFlywheelRPM(flywheel, 0)).whenReleased(new HopperManual(hopper, 0, 0));
 
-     // shoot flywheel at set rpm
+    resetHopper.whenPressed(new ResetBallsHopper(hopper));
+
+    hopper.setDefaultCommand(new HopperAutomatic(hopper, intake));
+
+    // shoot flywheel at set rpm
     //  new JoystickButton(joystick, 7).whenPressed(new SetFlywheelRPM(flywheel, 6000))
     //      .whenReleased(new SetFlywheelRPM(flywheel, 0));
 
@@ -89,6 +94,8 @@ public class RobotContainer {
     // Align robot to target
     // autoAlign.whenPressed(new AutoAlign(drivetrain)).whenReleased(new StopDrivetrain(drivetrain));
     // adithya patil was here
+    // jacob gino was also here
+    // hi vincent, make sure to tell the rookies where you eat lunch to be good director
   }
 
   /**
@@ -100,7 +107,7 @@ public class RobotContainer {
     // aDiTyA : 0.7, axis 5
     // AbHiK: 0.6, axis 1
     // jAcOb: 0.7 axis 5
-    throttle.updateValue(-joystick.getRawAxis(1) * 0.6);
+    throttle.updateValue(-joystick.getRawAxis(5) * 0.6);
     return throttle.getAverage();
   }
 
@@ -112,7 +119,7 @@ public class RobotContainer {
   public double getWheel() {
     // aditya + jAcOb: axis 0
     // abhik: axis 4
-    wheel.updateValue(joystick.getRawAxis(4));
+    wheel.updateValue(joystick.getRawAxis(0) * 0.8);
     return wheel.getAverage();
   }
 

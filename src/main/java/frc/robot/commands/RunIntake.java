@@ -5,7 +5,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Intake.IntakeState;
 
@@ -13,20 +12,18 @@ public class RunIntake extends CommandBase {
 
   private boolean startStop;
   private Intake intake;
-  private Hopper hopper;
 
   /**
    * Command that runs the intake
    * @param intake    The intake subsystem
    * @param startStop Whether to start or stop the command
    */
-  public RunIntake( Intake intake, Hopper hopper,  boolean startStop ) {
+  public RunIntake( Intake intake,  boolean startStop ) {
 
     this.startStop = startStop;
     this.intake = intake;
-    this.hopper = hopper;
 
-    addRequirements( intake, hopper );
+    addRequirements( intake );
   }
 
   // Called when the command is initially scheduled.
@@ -40,12 +37,9 @@ public class RunIntake extends CommandBase {
     if(startStop) {
       if(intake.getState() != IntakeState.INTAKING)
         intake.setState(IntakeState.DEPLOYING);
-      else
-        hopper.runHopper();
     }
     else {
       intake.setState(IntakeState.STOWING);
-      hopper.stop();
     }
   }
 

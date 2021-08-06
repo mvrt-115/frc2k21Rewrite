@@ -6,16 +6,20 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Hopper;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Intake.IntakeState;
 
 /**
  * HopperAutomatic runs the motors until 
  */
 public class HopperAutomatic extends CommandBase {
   private Hopper hopper;
+  private Intake intake;
 
   /** Creates a new HopperAutomatic. */
-  public HopperAutomatic(Hopper hopper) {
+  public HopperAutomatic(Hopper hopper, Intake intake) {
     this.hopper = hopper;
+    this.intake = intake;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(hopper);
@@ -28,7 +32,7 @@ public class HopperAutomatic extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    hopper.runHopper();
+    hopper.runHopper(intake.getState() != IntakeState.DISABLED);
   }
   
   // Called once the command ends or is interrupted.
