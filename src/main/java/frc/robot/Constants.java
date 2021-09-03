@@ -56,9 +56,9 @@ public final class Constants {
 
         public static final double MARGIN_OF_ERROR_TICKS = 80;
 
-        public static final double P = 0.7;
+        public static final double P = 0.5;
         public static final double I = 0;
-        public static final double D = 0;
+        public static final double D = 0.3;
         public static final double FF = 0.2;
         public static final double ROTATIONAL_INERTIA = 0.1;
         public static final double PIVOT_MASS = 68.03;
@@ -69,8 +69,8 @@ public final class Constants {
     public static class Drivetrain{
         //Constants
         //zero and ask mech for vals
-        // public static final double kLimelightFF = 0.042;
-        // public static final double kLimelightP = 0.04;
+        public static final double kLimelightFF = 0.042;
+        public static final double kLimelightP = 0.04;
 
         public static final double kTrackScrubFactor = 1.0469745223;
         public static final double kTrackWidthInches = 24.2; // inches

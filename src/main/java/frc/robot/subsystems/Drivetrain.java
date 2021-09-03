@@ -249,7 +249,7 @@ public class Drivetrain extends SubsystemBase {
         + Constants.Drivetrain.kAlignI * totalHorizontalAngleError + Constants.Drivetrain.kAlignD * slope;
 
     // if error is greater than constant value, add FF term
-    if (horizontalAngleError > 3) {
+    if (horizontalAngleError > 0.9) {
       turnSpeed += Math.copySign(Constants.Drivetrain.kAlignff, horizontalAngleError);
     }
 

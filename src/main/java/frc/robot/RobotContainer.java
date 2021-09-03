@@ -42,7 +42,7 @@ public class RobotContainer {
   // joystick buttons
 
   public JoystickButton quickturn = new JoystickButton(joystick, 5);
-  public JoystickButton runIntake = new JoystickButton(joystick, 6);
+  public JoystickButton runIntake = new JoystickButton(joystick, 1);
   // public JoystickButton autoHopper = new JoystickButton(joystick, 6);
   // public JoystickButton autoAlign = new JoystickButton(joystick, 8);
   public JoystickButton autoAlign = new JoystickButton(joystick, 4);
@@ -102,6 +102,9 @@ public class RobotContainer {
     // autoAlign.whenPressed(new AutoAlign(drivetrain)).whenReleased(new StopDrivetrain(drivetrain));
     // adithya patil was here
     // jacob gino was also here
+    // Deruiter is goated
+    // Codingbat for life. Lets go commonEnd.java is the best excerise
+    // Vincent dont forget to do APUSH and Conlin hw
   }
 
   /**
