@@ -35,6 +35,8 @@ public class Climber extends SubsystemBase
    * HOLD: holds the elevator at that state
    * ZEROING: going to the bottom (going down)
    * MANUAL_OVERRIDE: the climber is to be controlled with the joysticks
+   * SERVO_TEST: to test the servo
+   * SERVO_TEST_REST: does nothing (needed to stop moving)
    */
   public enum ElevatorState 
   {
