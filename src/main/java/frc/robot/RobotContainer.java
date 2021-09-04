@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.ClimberUpCommand;
 import frc.robot.commands.ClimberDownCommand;
+import frc.robot.commands.ClimberTestServo;
 import frc.robot.subsystems.Climber;
 
 /**
@@ -28,7 +29,7 @@ public class RobotContainer {
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    operatorJoystick = new Joystick(1);
+    operatorJoystick = new Joystick(0);
 
     // Configure the button bindings
     configureButtonBindings();
@@ -46,9 +47,11 @@ public class RobotContainer {
     // if you want to run a command when the button is released
     SmartDashboard.putData("Manually Move Climber Down", new ClimberDownCommand(climber));
     SmartDashboard.putData("Move Climber Up", new ClimberUpCommand(climber));
-
+    SmartDashboard.putData("Test Servo", new ClimberTestServo(climber));
+    
     new JoystickButton(operatorJoystick, 1).whenPressed(new ClimberDownCommand(climber));
     new JoystickButton(operatorJoystick, 2).whenPressed(new ClimberUpCommand(climber));
+    new JoystickButton(operatorJoystick, 3).whenPressed(new ClimberTestServo(climber));
   }
 
   /**

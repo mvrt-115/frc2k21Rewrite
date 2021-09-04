@@ -38,7 +38,7 @@ public class Climber extends SubsystemBase
    */
   public enum ElevatorState 
   {
-    CLIMBING, HOLD, ZEROING, MANUAL_OVERRIDE
+    CLIMBING, HOLD, ZEROING, MANUAL_OVERRIDE, SERVO_TEST, SERVO_TEST_REST
   };
 
   /** Creates a new Climber. */
@@ -72,7 +72,7 @@ public class Climber extends SubsystemBase
     {
       //Sets the servo to unratched state and moves the climber up
       case CLIMBING:
-        elevatorServo.setAngle(Constants.Climber.kServoUnRatchet);
+        elevatorServo.set(Constants.Climber.kServoUnRatchet);
         climberMethods.climb();
         if(Math.abs(heightAverage.getAverage() - Constants.Climber.kClimbHeight) < 0.02)
           currState = ElevatorState.HOLD;
@@ -80,7 +80,7 @@ public class Climber extends SubsystemBase
 
       //Sets the servo to unratched state and moves the climber down
       case ZEROING:
-        elevatorServo.setAngle(Constants.Climber.kServoUnRatchet);
+        elevatorServo.set(Constants.Climber.kServoUnRatchet);
         climberMethods.zero();
         if(Math.abs(heightAverage.getAverage() - Constants.Climber.kElevatorZero) < 0.02)
           currState = ElevatorState.HOLD;
@@ -88,7 +88,7 @@ public class Climber extends SubsystemBase
       
       //Sets the servo to ratched state so that the elevator would not move
       case HOLD:
-        elevatorServo.setAngle(Constants.Climber.kServoRatchet);
+        elevatorServo.set(Constants.Climber.kServoRatchet);
         climberMethods.stop();
         break;
 
@@ -97,7 +97,7 @@ public class Climber extends SubsystemBase
       //if the climber is at the full bottom, it automatically moves it up
       //otherwise, the climber is controlled by the user
       case MANUAL_OVERRIDE:
-        elevatorServo.setAngle(Constants.Climber.kServoUnRatchet);
+        elevatorServo.set(Constants.Climber.kServoUnRatchet);
 
         if(sensorPosition == Constants.Climber.kClimbHeight)
           climberMethods.setMotorOutputPercent(-0.1);
@@ -109,6 +109,19 @@ public class Climber extends SubsystemBase
           climberMethods.setMotorOutputPercent(Robot.getContainer().getLeft());
         
         break;
+
+        //testing the servo : do the opposite of what the current position is
+        case SERVO_TEST:
+          if(elevatorServo.get() == Constants.Climber.kServoRatchet) 
+            elevatorServo.set(Constants.Climber.kServoUnRatchet);
+          else
+            elevatorServo.set(Constants.Climber.kServoRatchet);
+          currState = ElevatorState.SERVO_TEST_REST;
+          break;
+        
+        //do nothing
+        case SERVO_TEST_REST:
+          break;
     }
 
     heightAverage.add(sensorPosition);
