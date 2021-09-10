@@ -79,7 +79,7 @@ public class Flywheel extends SubsystemBase{
      */
     public void setTargetRPM(double desiredVelocity) {
        
-        targetRPM = Math.min(6500, desiredVelocity);
+        targetRPM = Math.min(8000, desiredVelocity);
         
         if (desiredVelocity == 0)
             setFlywheelState(FlywheelState.OFF);
@@ -144,7 +144,7 @@ public class Flywheel extends SubsystemBase{
      */
     public void periodic() {
         // updates Rolling Average
-        flywheelRPM.updateValue(ticksToRPM(flywheelLeader.getSelectedSensorPosition()));
+        flywheelRPM.updateValue(ticksToRPM(flywheelLeader.getSelectedSensorVelocity()));
         log();
 
        
@@ -184,7 +184,7 @@ public class Flywheel extends SubsystemBase{
         double distance_in = (limelight.getDistanceFromTarget());
 
         //mult height and dist by constant and add constant rpm
-        return 3.5 * distance_in + 4700;
+        return 2.5 * distance_in + 4000;
 
     }
     /**

@@ -1,3 +1,4 @@
+
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
@@ -24,9 +25,9 @@ public final class Constants {
         public static final double TARGET_HEIGHT_IN = 98.25;
     }
     public static class Flywheel {
-        public static final double P = 0.17;
+        public static final double P = 0.187;
         public static final double I = 0;
-        public static final double D = 7;
+        public static final double D = 6.8;
         public static final double F = 0.058;
         public static final double GEAR_RATIO = 20.0 / 34.0;
         public static final double ACCEPTABLE_ERROR = 100;
@@ -98,13 +99,14 @@ public final class Constants {
         public static final double kRobotMass = 125.0; // kg
         public static final double kRotationalInertia = 20.0;
 
-        public static final double kAlignP = 0.0055;
-        public static final double kAlignI = 0;
-        public static final double kAlignD = 0;
+        public static final double kAlignP = 0.0051;
+        public static final double kAlignI = 0.00051;
+        public static final double kAlignD = 0.0018;
         public static final double kAlignff = 0.0033;
 
         public static final double kAcceptableAlignError = 1.5; 
 
         public static final double kIntegralRange = 1;
     }
+
 }

@@ -80,6 +80,8 @@ public class Intake extends SubsystemBase {
 
     limitSwitchInitial = limitSwitchBottom.get();
 
+    pivot.setSelectedSensorPosition(0);
+
     setState(IntakeState.DISABLED);
     //System.out.println(state);
   }

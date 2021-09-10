@@ -78,7 +78,7 @@ public class Hopper extends SubsystemBase {
   }
 
   public void fitTwoBalls() {
-    if (topStart2 != -1 && Timer.getFPGATimestamp() - topStart2 > 0.3) {
+    if (topStart2 != -1 && Timer.getFPGATimestamp() - topStart2 > 0.1) {
       stopTopMotor();
       topStart2 = -1;
     } else if (topStart2 != -1) {
@@ -152,8 +152,8 @@ public class Hopper extends SubsystemBase {
       }
       if (balls == 3 && breakbeamTop.get()) // if break beam is not broken
         runTopMotor(0.25);
-      else if (balls == 2 && breakbeamTop.get())
-        topStart2 = Timer.getFPGATimestamp();
+      // else if (balls == 2 && breakbeamTop.get())
+      //   topStart2 = Timer.getFPGATimestamp();
       else
         stopTopMotor();
 
