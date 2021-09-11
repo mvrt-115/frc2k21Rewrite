@@ -1,5 +1,5 @@
 /**
- * ClimberManualCommand.java
+ * ClimberTestServoRatchet.java
  * @version 1.0
  * @since 4/16/21
  * This command is used for testing the elevator servo.
@@ -11,12 +11,12 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Climber.ElevatorState;
 
-public class ClimberTestServo extends CommandBase {
+public class ClimberTestServoRatchet extends CommandBase {
 
   private Climber climber;
   
   /** Creates a new ClimberTestServo. */
-  public ClimberTestServo(Climber climber) 
+  public ClimberTestServoRatchet(Climber climber) 
   {
     this.climber = climber;
     addRequirements(climber);
@@ -25,7 +25,7 @@ public class ClimberTestServo extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    climber.setElevatorState(ElevatorState.SERVO_TEST);
+    climber.setElevatorState(ElevatorState.SERVO_TEST_RATCHET);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

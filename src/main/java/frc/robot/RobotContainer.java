@@ -12,7 +12,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.ClimberUpCommand;
 import frc.robot.commands.ClimberDownCommand;
-import frc.robot.commands.ClimberTestServo;
+import frc.robot.commands.ClimberTestServoRatchet;
+import frc.robot.commands.ClimberTestServoUnRatchet;
 import frc.robot.subsystems.Climber;
 
 /**
@@ -47,11 +48,13 @@ public class RobotContainer {
     // if you want to run a command when the button is released
     SmartDashboard.putData("Manually Move Climber Down", new ClimberDownCommand(climber));
     SmartDashboard.putData("Move Climber Up", new ClimberUpCommand(climber));
-    SmartDashboard.putData("Test Servo", new ClimberTestServo(climber));
-    
+    SmartDashboard.putData("Test Servo Ratchet", new ClimberTestServoRatchet(climber));
+    SmartDashboard.putData("Test Servo Unratchet", new ClimberTestServoUnRatchet(climber));
+
     new JoystickButton(operatorJoystick, 1).whenPressed(new ClimberDownCommand(climber));
     new JoystickButton(operatorJoystick, 2).whenPressed(new ClimberUpCommand(climber));
-    new JoystickButton(operatorJoystick, 3).whenPressed(new ClimberTestServo(climber));
+    new JoystickButton(operatorJoystick, 3).whenPressed(new ClimberTestServoRatchet(climber));
+    new JoystickButton(operatorJoystick, 4).whenPressed(new ClimberTestServoUnRatchet(climber));
   }
 
   /**

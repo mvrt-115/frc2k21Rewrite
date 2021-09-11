@@ -40,7 +40,7 @@ public class Climber extends SubsystemBase
    */
   public enum ElevatorState 
   {
-    CLIMBING, HOLD, ZEROING, MANUAL_OVERRIDE, SERVO_TEST, SERVO_TEST_REST
+    CLIMBING, HOLD, ZEROING, MANUAL_OVERRIDE, SERVO_TEST_RATCHET, SERVO_TEST_UNRATCHET, SERVO_TEST_REST
   };
 
   /** Creates a new Climber. */
@@ -112,15 +112,18 @@ public class Climber extends SubsystemBase
         
         break;
 
-        //testing the servo : do the opposite of what the current position is
-        case SERVO_TEST:
-          if(elevatorServo.get() == Constants.Climber.kServoRatchet) 
-            elevatorServo.set(Constants.Climber.kServoUnRatchet);
-          else
+        //testing the servo: ratchets it
+        case SERVO_TEST_RATCHET:
             elevatorServo.set(Constants.Climber.kServoRatchet);
           currState = ElevatorState.SERVO_TEST_REST;
           break;
         
+        //testing the servo: ratchets it
+        case SERVO_TEST_UNRATCHET:
+            elevatorServo.set(Constants.Climber.kServoUnRatchet);
+          currState = ElevatorState.SERVO_TEST_REST;
+          break;
+
         //do nothing
         case SERVO_TEST_REST:
           break;

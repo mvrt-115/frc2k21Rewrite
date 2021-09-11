@@ -33,7 +33,7 @@ public final class Constants
 
         //Servo angles
         public static final double kServoRatchet = 0;
-        public static final double kServoUnRatchet = 0.4;
+        public static final double kServoUnRatchet = 1;
 
         //Other usefull constants
         public static final double TICKS_PER_ROTATION = 4096;
