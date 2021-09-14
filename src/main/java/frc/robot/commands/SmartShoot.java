@@ -42,6 +42,9 @@ public class SmartShoot extends CommandBase {
       if(flywheel.getFlywheelState() == FlywheelState.ATSPEED) {
         hopper.runTopMotor(0.4);
         hopper.runBottomMotor(0.8);
+      } else {
+        hopper.runTopMotor(0);
+        hopper.runBottomMotor(0);
       }
   
     

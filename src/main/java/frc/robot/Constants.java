@@ -30,7 +30,7 @@ public final class Constants {
         public static final double D = 6.8;
         public static final double F = 0.058;
         public static final double GEAR_RATIO = 20.0 / 34.0;
-        public static final double ACCEPTABLE_ERROR = 100;
+        public static final double ACCEPTABLE_ERROR = 50;
         public static final int RPM_STORED = 5;
         public static final int MAX_VOLTAGE_COMPENSATION = 10;
         public static final int TICKS_PER_REVOLUTION = 2048;   

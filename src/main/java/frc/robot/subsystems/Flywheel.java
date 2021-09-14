@@ -184,7 +184,7 @@ public class Flywheel extends SubsystemBase{
         double distance_in = (limelight.getDistanceFromTarget());
 
         //mult height and dist by constant and add constant rpm
-        return 2.5 * distance_in + 4000;
+        return 8 /( distance_in * distance_in) + 4000;
 
     }
     /**
