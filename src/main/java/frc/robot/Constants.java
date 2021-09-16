@@ -33,6 +33,9 @@ public final class Constants {
         public static final int RPM_STORED = 5;
         public static final int MAX_VOLTAGE_COMPENSATION = 10;
         public static final int TICKS_PER_REVOLUTION = 2048;   
+        public static final int FLYWHEEL_RADIUS_IN = 6;
+        public static final int FLYWHEEL_ANGLE_DEG = 70;
+        public static final int FLYWHEEL_VELOCITY_COMP_MPS2 = 0; // in/s^2
     }
     public static class Intake {
         public static final int PIVOT_ID = 3;

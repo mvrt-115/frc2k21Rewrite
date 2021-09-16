@@ -180,12 +180,34 @@ public class Flywheel extends SubsystemBase{
      * @return necessary RPM 
      */
     public double getRequiredRPM() {
-        //finds distance from the target in inches
+        // finds distance from the target in inches
         double distance_in = (limelight.getDistanceFromTarget());
 
-        //mult height and dist by constant and add constant rpm
-        return 3.5 * distance_in + 4700;
+        double g = 9.81; // m/s^2 to in/s^2
+        double angle = limelight.getTY();
+        angle = Math.toRadians(angle);
 
+        double h = distance_in * Math.sin(angle);
+        h /= 39.3701;
+        double dx = distance_in * Math.cos(angle);
+        dx /= 39.3701;
+
+        double flywheel_r = Constants.Flywheel.FLYWHEEL_RADIUS_IN;
+        double flywheel_a = Constants.Flywheel.FLYWHEEL_ANGLE_DEG;
+        flywheel_a = Math.toRadians(flywheel_a);
+
+        double numerator = (g * dx * dx);
+        double denom1 = -1 * h + dx * Math.tan(Math.toRadians(flywheel_a));
+        double denom2 = 2 * Math.cos(Math.toRadians(flywheel_a)) * Math.cos(Math.toRadians(flywheel_a));
+        double velocity_projectile = Math.sqrt(numerator / (denom1 * denom2))
+                + Constants.Flywheel.FLYWHEEL_VELOCITY_COMP_MPS2;
+        velocity_projectile *= 39.3701;
+
+        double rpm = 60 * velocity_projectile / (flywheel_r * 2 * Math.PI);
+
+        SmartDashboard.putNumber("distance", distance_in);
+
+        return rpm;
     }
     /**
      * @param target -- the target RPM
