@@ -25,15 +25,18 @@ public final class Constants {
         public static final double TARGET_HEIGHT_IN = 98.25;
     }
     public static class Flywheel {
-        public static final double P = 0.187;
+        public static final double P = 0.21;
         public static final double I = 0;
-        public static final double D = 6.8;
+        public static final double D = 6.9;
         public static final double F = 0.058;
         public static final double GEAR_RATIO = 20.0 / 34.0;
-        public static final double ACCEPTABLE_ERROR = 50;
+        public static final double ACCEPTABLE_ERROR = 100;
         public static final int RPM_STORED = 5;
         public static final int MAX_VOLTAGE_COMPENSATION = 10;
-        public static final int TICKS_PER_REVOLUTION = 2048;   
+        public static final int TICKS_PER_REVOLUTION = 2048;
+        public static final double FLYWHEEL_VELOCITY_COMP_MPS2 = 0;
+        public static final double FLYWHEEL_RADIUS_IN = 2;
+        public static final double FLYWHEEL_ANGLE_DEG = 70;   
     }
     public static class Intake {
         public static final int PIVOT_ID = 3;
@@ -47,7 +50,7 @@ public final class Constants {
         public static final int FUNNEL_SIM_ID = 4;
 
         public static final double PIVOT_STOWED_TICKS = 100;
-        public static final double PIVOT_DEPLOYED_TICKS = 700;
+        public static final double PIVOT_DEPLOYED_TICKS = 1000;
 
         public static final double ROLLER_SPEED = 0.7;
         public static final double FUNNEL_SPEED = 0.3;
@@ -57,9 +60,9 @@ public final class Constants {
 
         public static final double MARGIN_OF_ERROR_TICKS = 80;
 
-        public static final double P = 0.5;
+        public static final double P = 0.541;
         public static final double I = 0;
-        public static final double D = 0.3;
+        public static final double D = 0.33;
         public static final double FF = 0.2;
         public static final double ROTATIONAL_INERTIA = 0.1;
         public static final double PIVOT_MASS = 68.03;

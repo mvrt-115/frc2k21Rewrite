@@ -78,11 +78,11 @@ public class Hopper extends SubsystemBase {
   }
 
   public void fitTwoBalls() {
-    if (topStart2 != -1 && Timer.getFPGATimestamp() - topStart2 > 0.1) {
+    if (topStart2 != -1 && Timer.getFPGATimestamp() - topStart2 > 0.5 && Timer.getFPGATimestamp() - topStart2 < 0.7) {
       stopTopMotor();
       topStart2 = -1;
     } else if (topStart2 != -1) {
-      runTopMotor(0.2);
+      runTopMotor(0.3);
     }
   }
 
@@ -91,12 +91,16 @@ public class Hopper extends SubsystemBase {
    * up and not jam the hopper
    */
   public void adjustTopBelt() {
-    if (topStart != -1 && Timer.getFPGATimestamp() - topStart > 1) {
+    if (topStart != -1 && Timer.getFPGATimestamp() - topStart > 1 && Timer.getFPGATimestamp() - topStart < 1.2) {
       stopTopMotor();
       topStart = -1;
+      SmartDashboard.putString("TopBelt", "stopped");
     } else if (topStart != -1) {
-      runTopMotor(0.2);
+      runTopMotor(0.3);
+      SmartDashboard.putString("TopBelt", "moving");
     }
+
+    SmartDashboard.putString("TopBelt", "poopy");
   }
 
   /**
@@ -143,19 +147,35 @@ public class Hopper extends SubsystemBase {
    */
   public void runHopper(boolean intaking) {
     if (balls <= 4) {
-      if (intaking)
+      if (intaking) {
         runBottomMotor(0.65);
+        runTopMotor(0.5);
+      }
+
+      if(!breakbeamBot.get())
+        stopTopMotor();
+        
 
       // gets the hopper to adjust the top belt to prevent jamming
-      if (!breakbeamBot.get() && (balls == 0 || balls == 1)) {
+      if (!breakbeamBot.get() && ( balls == 2)) {
+        runTopMotor(0.5);
         topStart = Timer.getFPGATimestamp();
       }
+
+      if (!breakbeamBot.get() && ( balls == 3)) {
+        runTopMotor(0.5);
+        topStart = Timer.getFPGATimestamp();
+      }
+
+
+      if (!breakbeamBot.get() && ( balls == 1)) {
+        runTopMotor(0.5);
+        topStart2 = Timer.getFPGATimestamp();
+      }
       if (balls == 3 && breakbeamTop.get()) // if break beam is not broken
-        runTopMotor(0.25);
+        runTopMotor(0.5);
       // else if (balls == 2 && breakbeamTop.get())
-      //   topStart2 = Timer.getFPGATimestamp();
-      else
-        stopTopMotor();
+      //    topStart2 = Timer.getFPGATimestamp();s
 
     } else {
       stop();

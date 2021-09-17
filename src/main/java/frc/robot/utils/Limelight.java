@@ -103,7 +103,6 @@ public class Limelight extends SubsystemBase {
    * @return  the horizontal distance from the target in inches
    */
   public double getDistanceFromTarget() {
-    getTY();
     double height = Constants.Limelight.TARGET_HEIGHT_IN - Constants.Limelight.HEIGHT_IN;
     double offsetAngle = Math.toRadians(Constants.Limelight.MOUNT_ANGLE + ty.getAverage());
     double distance = height / Math.tan(offsetAngle);

@@ -151,6 +151,7 @@ public class Intake extends SubsystemBase {
    */
   public void pivot(double target_ticks)
   {
+    SmartDashboard.putNumber("Intake Target", target_ticks);
     pivot.set(
       ControlMode.Position, 
       target_ticks, 

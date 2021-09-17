@@ -156,12 +156,15 @@ public class Flywheel extends SubsystemBase{
             break;
         case SPINNINGUP:
             flywheelLeader.set(ControlMode.Velocity, rpmToTicks(targetRPM));
+            SmartDashboard.putNumber("target rpm", targetRPM);
             // Checks if flywheel velocity is within acceptable error
             if (allWithinError(targetRPM, Constants.Flywheel.ACCEPTABLE_ERROR)) {
                 setFlywheelState(FlywheelState.ATSPEED);
             }
             break;
         case ATSPEED:
+            // if(!allWithinError(targetRPM, Constants.Flywheel.ACCEPTABLE_ERROR))
+            //     setFlywheelState(FlywheelState.SPINNINGUP);
             break;
         }
     }
@@ -183,9 +186,31 @@ public class Flywheel extends SubsystemBase{
         //finds distance from the target in inches
         double distance_in = (limelight.getDistanceFromTarget());
 
-        //mult height and dist by constant and add constant rpm
-        return 8 /( distance_in * distance_in) + 4000;
+        double g = 9.81; // m/s^2 to in/s^2
+        double angle = limelight.getTY();
+        angle = Math.toRadians(angle);
 
+        double h = distance_in * Math.sin(angle);
+        h /= 39.3701;
+        double dx = distance_in * Math.cos(angle);
+        dx /= 39.3701;
+
+        double flywheel_r = Constants.Flywheel.FLYWHEEL_RADIUS_IN;
+        double flywheel_a = Constants.Flywheel.FLYWHEEL_ANGLE_DEG;
+        flywheel_a = Math.toRadians(flywheel_a);
+
+        double numerator = (g * dx * dx);
+        double denom1 = -1 * h + dx * Math.tan(Math.toRadians(flywheel_a));
+        double denom2 = 2 * Math.cos(Math.toRadians(flywheel_a)) * Math.cos(Math.toRadians(flywheel_a));
+        double velocity_projectile = Math.sqrt(numerator / (denom1 * denom2))
+                + Constants.Flywheel.FLYWHEEL_VELOCITY_COMP_MPS2;
+        velocity_projectile *= 39.3701;
+
+        double rpm = 60 * velocity_projectile / (flywheel_r * 2 * Math.PI);
+
+        SmartDashboard.putNumber("distance", distance_in);
+
+        return rpm;
     }
     /**
      * @param target -- the target RPM
