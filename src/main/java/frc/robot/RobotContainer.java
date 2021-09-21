@@ -42,7 +42,7 @@ public class RobotContainer {
   // joystick buttons
 
   public JoystickButton quickturn = new JoystickButton(joystick, 5);
-  // public JoystickButton runIntake = new JoystickButton(joystick, 1);
+  public JoystickButton runIntake = new JoystickButton(joystick, 1);
   public JoystickButton autoHopper = new JoystickButton(joystick, 6);
   // public JoystickButton autoAlign = new JoystickButton(joystick, 8);
   public JoystickButton autoAlign = new JoystickButton(joystick, 4);
@@ -77,7 +77,7 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, this::getQuickTurn));
 
     // run intake button
-    // runIntake.whenPressed(new RunIntake(intake, true)).whenReleased(new RunIntake(intake, false));
+    runIntake.whenPressed(new RunIntake(intake, true)).whenReleased(new RunIntake(intake, false));
 
     // // hopper button
     autoAlign.whenPressed(new AutoAlign(drivetrain)).whenReleased(new StopDrivetrain(drivetrain));
