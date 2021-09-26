@@ -50,20 +50,20 @@ public final class Constants {
         public static final int FUNNEL_SIM_ID = 4;
 
         public static final double PIVOT_STOWED_TICKS = 100;
-        public static final double PIVOT_DEPLOYED_TICKS = 1000;
+        public static final double PIVOT_DEPLOYED_TICKS = 900;
 
         public static final double ROLLER_SPEED = 0.7;
-        public static final double FUNNEL_SPEED = 0.3;
+        public static final double FUNNEL_SPEED = 0.6;
 
         public static final double PIVOT_TICKS_PER_REVOLUTION = 4096;
         public static final double PIVOT_GEAR_RATIO = 10;
 
-        public static final double MARGIN_OF_ERROR_TICKS = 80;
+        public static final double MARGIN_OF_ERROR_TICKS = 200;
 
-        public static final double P = 0.541;
-        public static final double I = 0;
-        public static final double D = 0.33;
-        public static final double FF = 0.2;
+        public static final double P = 0.52;
+        public static final double I = 0.0001;
+        public static final double D = 0;
+        public static final double FF = 0.33;
         public static final double ROTATIONAL_INERTIA = 0.1;
         public static final double PIVOT_MASS = 68.03;
         public static final double PIVOT_LENGTH = 0.1;
@@ -107,7 +107,7 @@ public final class Constants {
         public static final double kAlignD = 0.0018;
         public static final double kAlignff = 0.0033;
 
-        public static final double kAcceptableAlignError = 1.5; 
+        public static final double kAcceptableAlignError = 1; 
 
         public static final double kIntegralRange = 1;
     }

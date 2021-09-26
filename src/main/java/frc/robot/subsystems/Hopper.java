@@ -44,10 +44,10 @@ public class Hopper extends SubsystemBase {
     bottom = new TalonFX(2);
     top = new TalonFX(7);
 
-    breakbeamBot = new DigitalInput(9);
-    breakbeamTop = new DigitalInput(7);
+    breakbeamBot = new DigitalInput(7);
+    breakbeamTop = new DigitalInput(8);
 
-    lastTopTime = Timer.getFPGATimestamp();
+    lastTopTime = Timer.getFPGATimestamp(); 
     lastBotTime = Timer.getFPGATimestamp();
 
     balls = 0;
