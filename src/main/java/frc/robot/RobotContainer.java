@@ -10,11 +10,25 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.*;
-import frc.robot.subsystems.*;
-import frc.robot.utils.JoystickTriggerButton;
+import frc.robot.commands.AlignShoot;
+import frc.robot.commands.AutoAlign;
+import frc.robot.commands.AutonRoutine;
+import frc.robot.commands.HopperAutomatic;
+import frc.robot.commands.HopperManual;
+import frc.robot.commands.JoystickDrive;
+import frc.robot.commands.ResetBallsHopper;
+import frc.robot.commands.RunIntake;
+import frc.robot.commands.SetFlywheelRPM;
+import frc.robot.commands.SmartShoot;
+import frc.robot.commands.StopDrivetrain;
+import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Flywheel;
+import frc.robot.subsystems.Hopper;
+import frc.robot.subsystems.Intake;
 import frc.robot.utils.Limelight;
 import frc.robot.utils.RollingAverage;
 
@@ -28,13 +42,14 @@ import frc.robot.utils.RollingAverage;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   public final Hopper hopper = new Hopper();
-  private final Intake intake = new Intake();
+  public final Intake intake = new Intake();
   public final Limelight limelight = new Limelight();
 
   public final Flywheel flywheel = new Flywheel(limelight);  
   public final Drivetrain drivetrain = new Drivetrain(limelight);
-  
+  private SendableChooser<Command> autonSelector;
 
+  
   /** Main joystick */
    
   public Joystick joystick = new Joystick(0);
@@ -63,7 +78,19 @@ public class RobotContainer {
     configureButtonBindings();
   }
 
-  // #AkashPalla #NotOurPresident
+  public Intake getIntake() {
+    return intake;
+  }
+  public Hopper getHopper() {
+    return hopper;
+  }
+  public Drivetrain getDrivetrain() {
+    return drivetrain;
+  }
+  public Flywheel getFlywheel() {
+    return flywheel;
+  }
+
   /**
    * Use this method to define your button->command mappings. Buttons can be
    * created by instantiating a {@link GenericHID} or one of its subclasses
@@ -152,7 +179,15 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
-    return null;
+    autonSelector = new SendableChooser<>();
+
+    // autonSelector.setDefaultOption("Basic Shoot", new AutonRoutine3());
+    autonSelector.addOption("Trench Run", new AutonRoutine(intake, hopper, drivetrain, flywheel));
+    // autonSelector.addOption("Rendezvous Run", new AutonRoutine2());
+    // autonSelector.addOption("Rendezvous Run Small", new RendezvousAuton2());
+    // autonSelector.addOption("Shoot then Back", new BasicAuto());
+    SmartDashboard.putData(autonSelector);
+    
+    return new AutonRoutine(intake, hopper, drivetrain, flywheel);
   }
 }

@@ -65,7 +65,30 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    // setRobotState(RobotState.AUTON);
+
+    // .intake.resetPivotEncoder();
+    // RobotContainer.intake.setIntakeState(IntakeState.STOWED);
+    // RobotContainer.intake.setDefaultLimitSwitchStart();
+    
+    // RobotContainer.climber.setElevatorState(ElevatorState.ZEROED);
+    // RobotContainer.climber.resetEncoder();
+    
+    // RobotContainer.flywheel.setFlywheelState(FlywheelState.OFF);
+
+    // RobotContainer.drivetrain.resetOdometry();
+    // RobotContainer.drivetrain.configNeutralMode(NeutralMode.Brake, NeutralMode.Brake);
+
+    // led.setColor(LEDColor.RAINBOW);
+
+    // RobotContainer.hopper.setBalls(3);
+    
+    // m_autonomousCommand = autonSelector.getSelected();
+
+    // if (m_autonomousCommand != null) {
+    //   m_autonomousCommand.schedule();
+    // }
+    // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
@@ -103,7 +126,24 @@ public class Robot extends TimedRobot {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
   }
+  // public static Command generatePath(Trajectory trajectory){
+    
+  //   var autoCommand = new RamseteCommand(
+  //     trajectory,
+  //     drivetrain::getPose,
+  //     drivetrain.getRamseteController(),
+  //     drivetrain.getFeedForward(),
+  //     drivetrain.getDriveKinematics(),
+  //     drivetrain::getWheelSpeeds,
+  //     drivetrain.getLeftDriveController(),
+  //     drivetrain.getRightDriveController(),
+  //     drivetrain::setOutputVolts,
+  //     drivetrain
+  //   );
 
+  
+  //   return autoCommand;
+  // }
   /**
    * This function is called periodically during test mode.
    */

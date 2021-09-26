@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -50,6 +51,14 @@ public class Drivetrain extends SubsystemBase {
 
   // constants are from robot characteristics
   private SimpleMotorFeedforward feedforward;
+
+	private RamseteController ramseteController; // auton
+	private TrajectoryConfig trajectoryConfig; // auton
+  private TrajectoryConfig trajectoryConfigSlow; // auton
+  public static final double kMaxVelocityMetersPerSecond = 1.5;
+  public static final double kMaxAccelerationMetersPerSecondSq = 2;
+  public double integralAcc;
+
 
   // PID used by ramsete command
   private PIDController rightPIDController;
@@ -143,6 +152,17 @@ public class Drivetrain extends SubsystemBase {
     leftBack.follow(leftFront);
     rightBack.follow(rightFront);
     this.limelight = limelight;
+
+    trajectoryConfig = new TrajectoryConfig(kMaxVelocityMetersPerSecond,
+				kMaxAccelerationMetersPerSecondSq);
+		trajectoryConfig.setReversed(false);
+
+		trajectoryConfigSlow = new TrajectoryConfig(.9, 1);
+		trajectoryConfigSlow.setReversed(false);
+
+		ramseteController = new RamseteController();
+		integralAcc = 0;
+
 
     resetGyro();
     resetEncoderValues();
@@ -490,4 +510,16 @@ public class Drivetrain extends SubsystemBase {
         * Constants.Drivetrain.kWheelCircumferenceMeters;
     return meters;
   }
+
+  public void invertPathDirection(boolean reversed){
+		trajectoryConfig.setReversed(reversed);
+		trajectoryConfigSlow.setReversed(reversed);
+  }
+  
+  public TrajectoryConfig getTrajectoryConfig() {
+		return trajectoryConfig;
+	}
+  public TrajectoryConfig getTrajectoryConfigSlow() {
+		return trajectoryConfigSlow;
+	}
 }
