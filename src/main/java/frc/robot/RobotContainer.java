@@ -51,7 +51,12 @@ public class RobotContainer {
 
   
   /** Main joystick */
-   
+
+   // operator
+   // hopper manual
+   // elevator stuff, servo and climbing
+   // hopper ball count fix
+   // shoot
   public Joystick joystick = new Joystick(0);
 
   // joystick buttons
@@ -137,6 +142,7 @@ public class RobotContainer {
     // Deruiter is goated
     // Codingbat for life. Lets go commonEnd.java is the best excerise
     // Vincent dont forget to do APUSH and Conlin hw
+
   }
 
   /**
@@ -179,15 +185,16 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    autonSelector = new SendableChooser<>();
+    // autonSelector = new SendableChooser<>();
 
     // autonSelector.setDefaultOption("Basic Shoot", new AutonRoutine3());
-    autonSelector.addOption("Trench Run", new AutonRoutine(intake, hopper, drivetrain, flywheel));
+    // autonSelector.addOption("Trench Run", new AutonRoutine(intake, hopper, drivetrain, flywheel));
     // autonSelector.addOption("Rendezvous Run", new AutonRoutine2());
     // autonSelector.addOption("Rendezvous Run Small", new RendezvousAuton2());
     // autonSelector.addOption("Shoot then Back", new BasicAuto());
-    SmartDashboard.putData(autonSelector);
+    // SmartDashboard.putData(autonSelector);
     
-    return new AutonRoutine(intake, hopper, drivetrain, flywheel);
+    return new AutonRoutine(intake, hopper, drivetrain, flywheel)
+  
   }
 }
