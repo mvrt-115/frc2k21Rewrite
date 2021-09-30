@@ -11,13 +11,13 @@ import java.util.List;
 
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Robot;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.Hopper;
 
@@ -40,19 +40,19 @@ public class AutonRoutine extends SequentialCommandGroup {
 
     addCommands(
         
-      new SmartShoot(flywheel, hopper).withTimeout(4),
-        new ParallelRaceGroup(
-          new ParallelCommandGroup(
-            getTrajectory1(),
-            new RunIntake(intake, true).withTimeout(5.5)
-          ),
+      new SmartShoot(flywheel, hopper).withTimeout(10),
+      new ParallelRaceGroup(
+        new ParallelCommandGroup(
+          getTrajectory1(),
+          new RunIntake(intake, true).withTimeout(5.5)
+        ),
           new HopperAutomatic(hopper, intake).withTimeout(10)
         ),
         new ParallelRaceGroup(
           new SequentialCommandGroup(
             getTrajectory2(),
             new SmartShoot(flywheel, hopper).withTimeout(5)
-          ),  
+          ),
           new RunIntake(intake, true).withTimeout(7)
         )
     );
@@ -64,7 +64,7 @@ public class AutonRoutine extends SequentialCommandGroup {
 
     Trajectory traj1 = TrajectoryGenerator.generateTrajectory(List.of(
       new Pose2d(-4, -1.55, new Rotation2d()),  
-      new Pose2d(-1.25,0, new Rotation2d().fromDegrees(8))
+      new Pose2d(-1.25,0, Rotation2d.fromDegrees(8))
 
     ), drivetrain.getTrajectoryConfig());
 
@@ -87,11 +87,19 @@ public class AutonRoutine extends SequentialCommandGroup {
 
     Trajectory traj1 = TrajectoryGenerator.generateTrajectory(List.of(
       new Pose2d(0, 0, new Rotation2d()),  
-      new Pose2d(-2.2,-1.55, new Rotation2d().fromDegrees(8)),
+      new Pose2d(-2.2,-1.55, Rotation2d.fromDegrees(8)),
       new Pose2d(-4, -1.55, new Rotation2d())
 
-    ), drivetrain.getTrajectoryConfig());
+    ), drivetrain.getTrajectoryConfigSlow());
 
     return drivetrain.getRamseteCommand(traj1);
+  }
+
+  @Override
+  public void execute() {
+    // TODO Auto-generated method stub
+    super.execute();
+
+    SmartDashboard.putString("Auton", "Auton 1 Running");
   }
 }

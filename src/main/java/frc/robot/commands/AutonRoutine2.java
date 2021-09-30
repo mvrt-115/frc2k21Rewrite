@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Robot;
 import frc.robot.subsystems.*;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -85,7 +84,7 @@ public class AutonRoutine2 extends SequentialCommandGroup {
 
       new Pose2d(-2, -.2, new Rotation2d(.4,.161)),
       new Pose2d(-.9, -.6, new Rotation2d(0,-.1)),
-      new Pose2d(-.4,-2, new Rotation2d().fromDegrees(-10))
+      new Pose2d(-.4,-2, Rotation2d.fromDegrees(-10))
 
     ), drivetrain.getTrajectoryConfigSlow());
 
@@ -96,7 +95,7 @@ public class AutonRoutine2 extends SequentialCommandGroup {
     drivetrain.invertPathDirection(true);
 
     Trajectory traj1 = TrajectoryGenerator.generateTrajectory(List.of(
-      new Pose2d(-.4,-2, new Rotation2d().fromDegrees(0)),
+      new Pose2d(-.4,-2, Rotation2d.fromDegrees(0)),
       new Pose2d(-2.4, -1.6, new Rotation2d(.374, -.55))
 
     ), drivetrain.getTrajectoryConfig());

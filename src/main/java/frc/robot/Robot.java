@@ -8,6 +8,8 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.shuffleboard.EventImportance;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -88,7 +90,7 @@ public class Robot extends TimedRobot {
     // if (m_autonomousCommand != null) {
     //   m_autonomousCommand.schedule();
     // }
-    // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
@@ -101,6 +103,12 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
+    CommandScheduler.getInstance().onCommandInitialize(command -> Shuffleboard.addEventMarker(
+        "Command initialized", command.getName(), EventImportance.kNormal));
+    CommandScheduler.getInstance().onCommandInterrupt(command -> Shuffleboard.addEventMarker(
+        "Command interrupted", command.getName(), EventImportance.kNormal));
+    CommandScheduler.getInstance().onCommandFinish(command -> Shuffleboard.addEventMarker(
+        "Command finished", command.getName(), EventImportance.kNormal));
   }
 
   @Override

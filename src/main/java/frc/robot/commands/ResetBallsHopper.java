@@ -19,7 +19,7 @@ public class ResetBallsHopper extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    hopper.resetBalls();
+    // hopper.resetBalls();
   }
 
   // Called every time the scheduler runs while the command is scheduled.

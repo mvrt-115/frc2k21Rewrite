@@ -73,6 +73,10 @@ public class Flywheel extends SubsystemBase{
         
     }
 
+    public void stop() {
+        flywheelLeader.set(ControlMode.PercentOutput, 0);
+    }
+
     /**
      * Set motor target RPM
      * @param desiredVelocity -- desired RPM

@@ -52,7 +52,7 @@ public class Drivetrain extends SubsystemBase {
   // constants are from robot characteristics
   private SimpleMotorFeedforward feedforward;
 
-	private RamseteController ramseteController; // auton
+	// private RamseteController ramseteController; // auton
 	private TrajectoryConfig trajectoryConfig; // auton
   private TrajectoryConfig trajectoryConfigSlow; // auton
   public static final double kMaxVelocityMetersPerSecond = 1.5;
@@ -157,10 +157,10 @@ public class Drivetrain extends SubsystemBase {
 				kMaxAccelerationMetersPerSecondSq);
 		trajectoryConfig.setReversed(false);
 
-		trajectoryConfigSlow = new TrajectoryConfig(.9, 1);
+		trajectoryConfigSlow = new TrajectoryConfig(.5, .75);
 		trajectoryConfigSlow.setReversed(false);
 
-		ramseteController = new RamseteController();
+		// ramseteController = new RamseteController();
 		integralAcc = 0;
 
 
@@ -329,6 +329,7 @@ public class Drivetrain extends SubsystemBase {
    */
   // implement voltage compensation
   public void setOutputVoltage(double rightVoltage, double leftVoltage) {
+    System.out.println(rightVoltage / RobotController.getBatteryVoltage() + " ad " + leftVoltage / RobotController.getBatteryVoltage());
     setDrivetrainMotorSpeed(leftVoltage / RobotController.getBatteryVoltage(),
         rightVoltage / RobotController.getBatteryVoltage());
   }

@@ -7,6 +7,8 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hopper;
@@ -15,6 +17,8 @@ import frc.robot.subsystems.Flywheel.FlywheelState;
 public class SmartShoot extends CommandBase {
   private Flywheel flywheel;
   private Hopper hopper;
+  boolean stop = false;
+  double topStart = -1;
 
   /**
    * Creates a new SmartShoot.
@@ -41,23 +45,29 @@ public class SmartShoot extends CommandBase {
       
       if(flywheel.getFlywheelState() == FlywheelState.ATSPEED) {
         hopper.runTopMotor(0.4);
-        hopper.runBottomMotor(0.8);
+        hopper.runBottomMotor(0.7);
       } else {
         hopper.runTopMotor(0);
         hopper.runBottomMotor(0);
       }
   
-    
+      if(hopper.getBallsInHopper() == 0 && topStart == -1) {
+        topStart = Timer.getFPGATimestamp();
+      }
+      SmartDashboard.putNumber("aksjdl", topStart);
+      SmartDashboard.putNumber("aksssjdl", Timer.getFPGATimestamp());
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    flywheel.stop();
+    flywheel.setTargetRPM(0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return flywheel.getFlywheelState() == FlywheelState.ATSPEED;
+    return Timer.getFPGATimestamp() - topStart > 0.3 && topStart != -1;
   }
 }
