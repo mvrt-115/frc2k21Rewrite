@@ -54,8 +54,6 @@ public class SmartShoot extends CommandBase {
       if(hopper.getBallsInHopper() == 0 && topStart == -1) {
         topStart = Timer.getFPGATimestamp();
       }
-      SmartDashboard.putNumber("aksjdl", topStart);
-      SmartDashboard.putNumber("aksssjdl", Timer.getFPGATimestamp());
   }
 
   // Called once the command ends or is interrupted.
