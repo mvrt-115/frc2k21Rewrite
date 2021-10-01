@@ -254,34 +254,45 @@ public class Drivetrain extends SubsystemBase {
    * alignment, and then applies it to the motors
    */
   public double alignToTarget() {
-    double horizontalAngleError = getHorizontalAngleError();
-    // find change in error / change in time
-    double dt = Timer.getFPGATimestamp() - lastTime;
-    double de = horizontalAngleError - lastHorizontalAngleError;
-    double slope = de / dt;
+    double error = getHorizontalAngleError();
+    double kFF = 0.035;  //0.033;
+		double kP = .0055;
+		double output;
+		integralAcc += error;
 
-    // if the error is within the range to use integral, add the I term
-    if (Math.abs(horizontalAngleError) < Constants.Drivetrain.kIntegralRange)
-      totalHorizontalAngleError += dt * horizontalAngleError;
+		if (Math.abs(error) > .9) {			// .5
+			output = error * kP + Math.copySign(kFF, error);
+		} else {
+			output = error * kP;
+		}
+    // double horizontalAngleError = getHorizontalAngleError();
+    // // find change in error / change in time
+    // double dt = Timer.getFPGATimestamp() - lastTime;
+    // double de = horizontalAngleError - lastHorizontalAngleError;
+    // double slope = de / dt;
 
-    // calculate turn speed with PID
-    double turnSpeed = Constants.Drivetrain.kAlignP * horizontalAngleError
-        + Constants.Drivetrain.kAlignI * totalHorizontalAngleError + Constants.Drivetrain.kAlignD * slope;
+    // // if the error is within the range to use integral, add the I term
+    // if (Math.abs(horizontalAngleError) < Constants.Drivetrain.kIntegralRange)
+    //   totalHorizontalAngleError += dt * horizontalAngleError;
 
-    // if error is greater than constant value, add FF term
-    if (horizontalAngleError > 0.9) {
-      turnSpeed += Math.copySign(Constants.Drivetrain.kAlignff, horizontalAngleError);
-    }
+    // // calculate turn speed with PID
+    // double turnSpeed = Constants.Drivetrain.kAlignP * horizontalAngleError
+    //     + Constants.Drivetrain.kAlignI * totalHorizontalAngleError + Constants.Drivetrain.kAlignD * slope;
+
+    // // if error is greater than constant value, add FF term
+    // if (horizontalAngleError > 0.9) {
+    //   turnSpeed += Math.copySign(Constants.Drivetrain.kAlignff, horizontalAngleError);
+    // }
 
     // run motors
-    setDrivetrainMotorSpeed(turnSpeed, -turnSpeed);
+    setDrivetrainMotorSpeed(output, -output);
 
-    // change previous angle to current angle
-    lastHorizontalAngleError = horizontalAngleError;
-    // change previous time to current time
-    lastTime = Timer.getFPGATimestamp();
+    // // change previous angle to current angle
+    // lastHorizontalAngleError = horizontalAngleError;
+    // // change previous time to current time
+    // lastTime = Timer.getFPGATimestamp();
 
-    return turnSpeed;
+    return output;
   }
 
   @Override
@@ -308,6 +319,8 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("Curr Y Position", pose.getTranslation().getY());
     SmartDashboard.putNumber("Horizontal Error", getHorizontalAngleError());
     SmartDashboard.putNumber("NavX", gyro.getAngle());
+    SmartDashboard.putNumber("Left Output", leftBack.getMotorOutputPercent());
+    SmartDashboard.putNumber("right Output", rightBack.getMotorOutputPercent());
   }
 
   // ***********************************OUTPUT-SETTING
@@ -316,10 +329,13 @@ public class Drivetrain extends SubsystemBase {
   /**
    * Sets drivetrain motors to a given left and right percent outunt
    */
-  public void setDrivetrainMotorSpeed(double leftSpeed, double rightSpeed) {
-    leftFront.set(ControlMode.PercentOutput, leftSpeed);
-    rightFront.set(ControlMode.PercentOutput, rightSpeed);
-  }
+  public void setDrivetrainMotorSpeed(double left, double right) {
+		leftFront.set(ControlMode.PercentOutput, left);
+		leftBack.set(ControlMode.PercentOutput, left);
+		rightBack.set(ControlMode.PercentOutput, right);
+		rightFront.set(ControlMode.PercentOutput, right);
+
+	}
 
   /**
    * Sets motor percent output based on voltage to each side of the drivetrain
@@ -328,10 +344,9 @@ public class Drivetrain extends SubsystemBase {
    * @param leftVoltage  voltage to left side of drivetrain
    */
   // implement voltage compensation
-  public void setOutputVoltage(double rightVoltage, double leftVoltage) {
-    System.out.println(rightVoltage / RobotController.getBatteryVoltage() + " ad " + leftVoltage / RobotController.getBatteryVoltage());
-    setDrivetrainMotorSpeed(leftVoltage / RobotController.getBatteryVoltage(),
-        rightVoltage / RobotController.getBatteryVoltage());
+  public void setOutputVoltage(double leftVolts, double rightVolts) {
+    System.out.println(Math.max(-0.7, Math.min(leftVolts / 10.0, 0.7)) + " " + Math.max(-0.7, Math.min(rightVolts / 10.0, 0.7)));
+    setDrivetrainMotorSpeed(Math.max(-0.7, Math.min(leftVolts / 10.0, 0.7)), Math.max(-0.7, Math.min(rightVolts / 10.0, 0.7)));
   }
 
   /**
@@ -491,7 +506,7 @@ public class Drivetrain extends SubsystemBase {
     // ratio to get rotations per second of wheel -> multiply by wheel circumference
     // to get final: meters per second of wheel
     double metersPerSecond = ticksPer100ms / Constants.Drivetrain.kDriveGearRatio
-        / Constants.Drivetrain.kFalconTicksPerRotation * Constants.Drivetrain.kWheelCircumferenceMeters * 10;
+        / Constants.Drivetrain.kFalconTicksPerRotation * Constants.Drivetrain.kWheelCircumferenceMeters * 10 * Math.PI;
     return metersPerSecond;
   }
 

@@ -11,6 +11,7 @@ import java.util.List;
 
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
@@ -40,21 +41,21 @@ public class AutonRoutine extends SequentialCommandGroup {
 
     addCommands(
         
-      new SmartShoot(flywheel, hopper).withTimeout(10),
-      new ParallelRaceGroup(
-        new ParallelCommandGroup(
-          getTrajectory1(),
-          new RunIntake(intake, true).withTimeout(5.5)
-        ),
-          new HopperAutomatic(hopper, intake).withTimeout(10)
-        ),
-        new ParallelRaceGroup(
-          new SequentialCommandGroup(
-            getTrajectory2(),
-            new SmartShoot(flywheel, hopper).withTimeout(5)
-          ),
-          new RunIntake(intake, true).withTimeout(7)
-        )
+      // new SmartShoot(flywheel, hopper).withTimeout(10),
+      // new ParallelRaceGroup(
+        // new ParallelCommandGroup(
+          getTrajectory1()
+          // new RunIntake(intake, true).withTimeout(5.5)
+        // ),
+          // new HopperAutomatic(hopper, intake).withTimeout(10)
+        // ),
+        // new ParallelRaceGroup(
+          // new SequentialCommandGroup(
+            // getTrajectory2()
+            // new SmartShoot(flywheel, hopper).withTimeout(5)
+          // ),
+          // new RunIntake(intake, true).withTimeout(7)
+        // )
     );
   }
 
@@ -85,12 +86,14 @@ public class AutonRoutine extends SequentialCommandGroup {
   public Command getTrajectory1(){
     drivetrain.invertPathDirection(true);
 
-    Trajectory traj1 = TrajectoryGenerator.generateTrajectory(List.of(
+    Trajectory traj1 = TrajectoryGenerator.generateTrajectory(
       new Pose2d(0, 0, new Rotation2d()),  
-      new Pose2d(-2.2,-1.55, Rotation2d.fromDegrees(8)),
-      new Pose2d(-4, -1.55, new Rotation2d())
-
-    ), drivetrain.getTrajectoryConfigSlow());
+      List.of(      
+        new Translation2d(-2.2,-1.55)
+      ), 
+      new Pose2d(-4, -1.55, new Rotation2d()),
+      drivetrain.getTrajectoryConfig()
+    );
 
     return drivetrain.getRamseteCommand(traj1);
   }

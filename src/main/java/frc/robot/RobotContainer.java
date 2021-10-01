@@ -58,20 +58,21 @@ public class RobotContainer {
    // hopper ball count fix
    // shoot
   public Joystick joystick = new Joystick(0);
+  public Joystick opJoystick = new Joystick(1);
 
   // joystick buttons
 
   public JoystickButton quickturn = new JoystickButton(joystick, 5);
-  public JoystickButton runIntake = new JoystickButton(joystick, 1);
-  public JoystickButton autoHopper = new JoystickButton(joystick, 6);
+  // public JoystickButton runIntake = new JoystickButton(joystick, 1);
+  public JoystickButton autoHopper = new JoystickButton(opJoystick, 6);
   // public JoystickButton autoAlign = new JoystickButton(joystick, 8);
-  public JoystickButton autoAlign = new JoystickButton(joystick, 4);
-  public JoystickButton hopperDown = new JoystickButton(joystick, 1);
-  public JoystickButton hopperUp = new JoystickButton(joystick, 3);
-  public JoystickButton shootToTarget = new JoystickButton(joystick, 10);
-  public JoystickButton resetHopper = new JoystickButton(joystick, 7);
-  public JoystickButton alignShoot = new JoystickButton(joystick, 8);
-  public JoystickButton shoot = new JoystickButton(joystick, 7);
+  public JoystickButton autoAlign = new JoystickButton(joystick, 1);
+  public JoystickButton hopperDown = new JoystickButton(opJoystick, 1);
+  public JoystickButton hopperUp = new JoystickButton(opJoystick, 4);
+  public JoystickButton shootToTarget = new JoystickButton(joystick, 6);
+  public JoystickButton resetHopper = new JoystickButton(opJoystick, 3);
+  // public JoystickButton alignShoot = new JoystickButton(joystick, 8);
+  // public JoystickButton shoot = new JoystickButton(joystick, 7);
 
   public RollingAverage throttle = new RollingAverage(50);
   public RollingAverage wheel = new RollingAverage(15);
@@ -109,13 +110,13 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, this::getQuickTurn));
 
     // run intake button
-    runIntake.whenPressed(new RunIntake(intake, true)).whenReleased(new RunIntake(intake, false));
+    // runIntake.whenPressed(new RunIntake(intake, true)).whenReleased(new RunIntake(intake, false));
 
     // // hopper button
     autoAlign.whenPressed(new AutoAlign(drivetrain)).whenReleased(new StopDrivetrain(drivetrain));
 
     // // backwards hopper button
-    // hopperDown.whenPressed(new HopperManual(hopper, -0.35, -0.35)).whenReleased(new HopperManual(hopper, 0, 0));
+    hopperDown.whenPressed(new HopperManual(hopper, -0.35, -0.35)).whenReleased(new HopperManual(hopper, 0, 0));
 
     // shoot flywheel with limelight
     shootToTarget.whenActive(new SmartShoot(flywheel, hopper)).whenInactive(new SetFlywheelRPM(flywheel, 0)).whenInactive(new HopperManual(hopper, 0, 0));
@@ -124,7 +125,7 @@ public class RobotContainer {
 
     // hopper.setDefaultCommand(new HopperAutomatic(hopper, intake));
 
-    alignShoot.whenPressed(new AlignShoot(flywheel, hopper, drivetrain));
+    // alignShoot.whenPressed(new AlignShoot(flywheel, hopper, drivetrain));
 
     hopperUp.whenPressed(new HopperManual(hopper, 0.25, 0.25)).whenReleased(new HopperManual(hopper, 0, 0));
     // hopperDown.whenPressed(new HopperManual(hopper, -0.25, -0.25)).whenReleased(new HopperManual(hopper, 0, 0));
@@ -134,7 +135,7 @@ public class RobotContainer {
     //      .whenReleased(new SetFlywheelRPM(flywheel, 0));
 
     // auto hpper
-    autoHopper.whenPressed(new HopperAutomatic(hopper, intake)).whenReleased(new HopperManual(hopper, 0, 0));
+    autoHopper.whenPressed(new HopperAutomatic(hopper, intake)).whenReleased(new HopperManual(hopper, 0, 0)).whenPressed(new RunIntake(intake, true)).whenReleased(new RunIntake(intake, false));
     // Align robot to target
     // autoAlign.whenPressed(new AutoAlign(drivetrain)).whenReleased(new StopDrivetrain(drivetrain));
     // adithya patil was here
@@ -194,7 +195,7 @@ public class RobotContainer {
     // autonSelector.addOption("Shoot then Back", new BasicAuto());
     // SmartDashboard.putData(autonSelector);
     
-    return new AutonRoutine(intake, hopper, drivetrain, flywheel)
+    return new AutonRoutine(intake, hopper, drivetrain, flywheel);
   
   }
 }

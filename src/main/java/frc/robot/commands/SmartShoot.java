@@ -68,6 +68,7 @@ public class SmartShoot extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Timer.getFPGATimestamp() - topStart > 0.3 && topStart != -1;
+    // return Timer.getFPGATimestamp() - topStart > 0.3 && topStart != -1;
+    return false;
   }
 }

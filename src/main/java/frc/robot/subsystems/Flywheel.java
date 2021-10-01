@@ -214,7 +214,7 @@ public class Flywheel extends SubsystemBase{
 
         // SmartDashboard.putNumber("distance", distance_in);
 
-        return distance_in * 8.3 + 4700;
+        return distance_in * 8.5 + 4800;
     }
     /**
      * @param target -- the target RPM

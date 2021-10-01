@@ -49,7 +49,7 @@ public class Hopper extends SubsystemBase {
     lastTopTime = Timer.getFPGATimestamp();
     lastBotTime = Timer.getFPGATimestamp();
 
-    balls = 3;
+    balls = 0;
 
     top.configVoltageCompSaturation(Constants.MAX_VOLTAGE);
     bottom.configVoltageCompSaturation(Constants.MAX_VOLTAGE);
