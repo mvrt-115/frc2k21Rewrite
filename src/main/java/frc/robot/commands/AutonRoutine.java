@@ -105,4 +105,12 @@ public class AutonRoutine extends SequentialCommandGroup {
 
     SmartDashboard.putString("Auton", "Auton 1 Running");
   }
+
+  @Override
+  public void initialize() {
+    // TODO Auto-generated method stub
+    super.initialize();
+
+    hopper.setBallsInHopper(3);
+  }
 }

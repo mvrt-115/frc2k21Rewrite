@@ -24,6 +24,7 @@ import frc.robot.commands.ResetBallsHopper;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.SetFlywheelRPM;
 import frc.robot.commands.SmartShoot;
+import frc.robot.commands.StandAndShoot;
 import frc.robot.commands.StopDrivetrain;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Flywheel;
@@ -195,7 +196,7 @@ public class RobotContainer {
     // autonSelector.addOption("Shoot then Back", new BasicAuto());
     // SmartDashboard.putData(autonSelector);
     
-    return new AutonRoutine(intake, hopper, drivetrain, flywheel);
+    return new StandAndShoot(hopper, flywheel, drivetrain);
   
   }
 }
