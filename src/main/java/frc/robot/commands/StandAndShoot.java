@@ -27,7 +27,7 @@ public class StandAndShoot extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    hopper.setBallsInHopper(3);
+    hopper.setBallsInHopper(2);
     topStart = Timer.getFPGATimestamp();
   }
 
@@ -35,6 +35,8 @@ public class StandAndShoot extends CommandBase {
   @Override
   public void execute() {
     if(hopper.getBallsInHopper() != 0 && !(Timer.getFPGATimestamp() - topStart > 0.3 && topStart != -1)) {
+      // flywheel.setTargetRPM(flywheel.getRequiredRPM());
+      flywheel.setTargetRPM(1000);
       if(flywheel.getFlywheelState() == FlywheelState.ATSPEED) {
         hopper.runTopMotor(0.4);
         hopper.runBottomMotor(0.7);
@@ -66,6 +68,6 @@ public class StandAndShoot extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Timer.getFPGATimestamp() - startDriving > 10 && startDriving != -1;
+    return Timer.getFPGATimestamp() - startDriving > 2 && startDriving != -1;
   }
 }
