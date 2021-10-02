@@ -56,8 +56,8 @@ public class Intake extends SubsystemBase {
     roller.configFactoryDefault();
     funnel.configFactoryDefault();
 
-    roller.setInverted(true);
-    funnel.setInverted(false);
+    roller.setInverted(false);
+    funnel.setInverted(true);
 
     // configure PID constants and feed forward to compensate for gravity
     pivot.config_kP(0, Constants.Intake.P);
@@ -177,10 +177,10 @@ public class Intake extends SubsystemBase {
   {
     // apply slight voltage to keep intake from falling down
     if(state == IntakeState.INTAKING)
-      pivot.set(ControlMode.PercentOutput, 0.2); 
+      pivot.set(ControlMode.PercentOutput, 0.23); 
 
     else
-    pivot.set(ControlMode.PercentOutput, -0.2);
+    pivot.set(ControlMode.PercentOutput, -0.1);
   }
 
   /**

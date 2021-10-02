@@ -10,21 +10,23 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;  
 import frc.robot.subsystems.Drivetrain;
 
-public class StopDrivetrain extends CommandBase {
+public class RunDrivetrain extends CommandBase {
   Drivetrain drivetrain;
+  double out;
   /**
    * Creates a new StopDrivetrain.
    */
-  public StopDrivetrain(Drivetrain drivetrain) {
+  public RunDrivetrain(Drivetrain drivetrain, double out) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
     this.drivetrain = drivetrain;
+    this.out = out;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    drivetrain.stopDrivetrainMotors();
+    drivetrain.setDrivetrainMotorSpeed(out, out);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

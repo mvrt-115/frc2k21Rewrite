@@ -81,7 +81,7 @@ public class Drivetrain extends SubsystemBase {
    */
   public Drivetrain(Limelight limelight) {
     // initializes if real (plugged into a robot)
-    if (RobotBase.isReal()) {
+    // if (RobotBase.isReal()) {
       leftFront = new TalonFX(46);
       leftBack = new TalonFX(9);
       rightFront = new TalonFX(48);
@@ -121,7 +121,7 @@ public class Drivetrain extends SubsystemBase {
           Constants.TIMEOUT_MS);
       ((TalonFX) rightBack).configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.PID_IDX,
           Constants.TIMEOUT_MS);
-    }
+    // }
     gyro = new AHRS(SPI.Port.kMXP);
 
     odometry = new DifferentialDriveOdometry(getGyroAngle());

@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.Flywheel.FlywheelState;
@@ -27,16 +28,26 @@ public class StandAndShoot extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    hopper.setBallsInHopper(2);
+    hopper.setBallsInHopper(3);
     topStart = Timer.getFPGATimestamp();
+    flywheel.setTargetRPM(flywheel.getRequiredRPM());
+    // flywheel.setTargetRPM(1000);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(hopper.getBallsInHopper() != 0 && !(Timer.getFPGATimestamp() - topStart > 0.3 && topStart != -1)) {
-      // flywheel.setTargetRPM(flywheel.getRequiredRPM());
-      flywheel.setTargetRPM(1000);
+    // if(hopper.getBallsInHopper() == 0 && topStart == -1) {
+    //     topStart = Timer.getFPGATimestamp();
+    //   }
+    if(hopper.getBallsInHopper() == 0 && startDriving == -1) {
+      // topStart = -1;
+      flywheel.setTargetRPM(0);
+      hopper.stop();
+      if(startDriving == -1)
+        startDriving = Timer.getFPGATimestamp();
+    }
+    if(hopper.getBallsInHopper() != 0 ) {
       if(flywheel.getFlywheelState() == FlywheelState.ATSPEED) {
         hopper.runTopMotor(0.4);
         hopper.runBottomMotor(0.7);
@@ -45,16 +56,12 @@ public class StandAndShoot extends CommandBase {
         hopper.runBottomMotor(0);
       }
   
-      if(hopper.getBallsInHopper() == 0 && topStart == -1) {
-        topStart = Timer.getFPGATimestamp();
-      }
-    } else {
-      flywheel.setTargetRPM(0);
-      hopper.stop();
-      if(startDriving == -1)
-        startDriving = Timer.getFPGATimestamp();
-
-      drivetrain.setDrivetrainMotorSpeed(0.3, 0.3);
+      
+      SmartDashboard.putNumber("shooting auton", 123);
+    } 
+    if(startDriving != -1) {
+      drivetrain.setDrivetrainMotorSpeed(-0.5, -0.5);
+      SmartDashboard.putNumber("shooting auton", 143252);
     }
 
   }
@@ -62,7 +69,6 @@ public class StandAndShoot extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    drivetrain.setDrivetrainMotorSpeed(0, 0);
   }
 
   // Returns true when the command should end.

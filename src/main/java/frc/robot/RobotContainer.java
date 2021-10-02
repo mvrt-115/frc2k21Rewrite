@@ -14,18 +14,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.AlignShoot;
-import frc.robot.commands.AutoAlign;
-import frc.robot.commands.AutonRoutine;
-import frc.robot.commands.HopperAutomatic;
-import frc.robot.commands.HopperManual;
-import frc.robot.commands.JoystickDrive;
-import frc.robot.commands.ResetBallsHopper;
-import frc.robot.commands.RunIntake;
-import frc.robot.commands.SetFlywheelRPM;
-import frc.robot.commands.SmartShoot;
-import frc.robot.commands.StandAndShoot;
-import frc.robot.commands.StopDrivetrain;
+import frc.robot.commands.*;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hopper;
@@ -114,7 +103,7 @@ public class RobotContainer {
     // runIntake.whenPressed(new RunIntake(intake, true)).whenReleased(new RunIntake(intake, false));
 
     // // hopper button
-    autoAlign.whenPressed(new AutoAlign(drivetrain)).whenReleased(new StopDrivetrain(drivetrain));
+    autoAlign.whenPressed(new AutoAlign(drivetrain)).whenReleased(new RunDrivetrain(drivetrain, 0));
 
     // // backwards hopper button
     hopperDown.whenPressed(new HopperManual(hopper, -0.35, -0.35)).whenReleased(new HopperManual(hopper, 0, 0));
@@ -197,7 +186,7 @@ public class RobotContainer {
     // autonSelector.addOption("Shoot then Back", new BasicAuto());
     // SmartDashboard.putData(autonSelector);
     
-    return new StandAndShoot(hopper, flywheel, drivetrain);
+    return new RunDrivetrain(drivetrain, -0.5).andThen(new Wait(2)).andThen(new RunDrivetrain(drivetrain, 0)).andThen(new SmartShoot(flywheel, hopper));
   
   }
 }
