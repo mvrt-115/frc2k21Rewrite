@@ -156,11 +156,12 @@ public class RobotContainer {
     // aDiTyA : 0.7, axis 5
     // AbHiK: 0.6, axis 1
     // jAcOb: 0.7 axis 5
-    throttle.updateValue(-joystick.getRawAxis(5) * 0.6);
+    throttle.updateValue(-joystick.getRawAxis(5) * 0.7);
     return throttle.getAverage();
   }
 
   /**
+   * 
    * Gets the wheel from the trigger on the # axis, or __ side trigger
    * 
    * @return double from -1 to 1 representing power towards turning
