@@ -65,6 +65,6 @@ public class StandAndShoot extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Timer.getFPGATimestamp() - startDriving > 0.5 && startDriving != -1;
+    return Timer.getFPGATimestamp() - startDriving > 10 && startDriving != -1;
   }
 }
