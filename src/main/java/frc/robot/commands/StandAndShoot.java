@@ -28,6 +28,7 @@ public class StandAndShoot extends CommandBase {
   @Override
   public void initialize() {
     hopper.setBallsInHopper(3);
+    topStart = Timer.getFPGATimestamp();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
