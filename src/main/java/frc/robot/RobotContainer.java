@@ -61,8 +61,12 @@ public class RobotContainer {
   public JoystickButton hopperUp = new JoystickButton(opJoystick, 4);
   public JoystickButton shootToTarget = new JoystickButton(joystick, 6);
   public JoystickButton resetHopper = new JoystickButton(opJoystick, 3);
-  // public JoystickButton alignShoot = new JoystickButton(joystick, 8);
-  // public JoystickButton shoot = new JoystickButton(joystick, 7);
+  // public JoystickButton elevatorUp = new JoystickButton(opJoystick, 9);
+  // public JoystickButton elevatorDown = new JoystickButton(opJoystick, 10);
+  // public JoystickButton ratchet = new JoystickButton(joystick, 7);
+  public JoystickButton fixIntake = new JoystickButton(joystick, 2);
+  public JoystickButton manualShoot = new JoystickButton(opJoystick, 9);
+
 
   public RollingAverage throttle = new RollingAverage(50);
   public RollingAverage wheel = new RollingAverage(15);
@@ -109,9 +113,13 @@ public class RobotContainer {
     hopperDown.whenPressed(new HopperManual(hopper, -0.35, -0.35)).whenReleased(new HopperManual(hopper, 0, 0));
 
     // shoot flywheel with limelight
-    shootToTarget.whenActive(new SmartShoot(flywheel, hopper)).whenInactive(new SetFlywheelRPM(flywheel, 0)).whenInactive(new HopperManual(hopper, 0, 0));
+    shootToTarget.whenActive(new SmartShoot(flywheel, hopper, false)).whenInactive(new SetFlywheelRPM(flywheel, 0)).whenInactive(new HopperManual(hopper, 0, 0));
 
     resetHopper.whenPressed(new ResetBallsHopper(hopper));
+    
+    manualShoot.whenPressed(new SetFlywheelRPM(flywheel, 7000)).whenPressed(new HopperManual(hopper, 0.5, 0.5)).whenReleased(new SetFlywheelRPM(flywheel, 0)).whenReleased(new HopperManual(hopper, 0, 0));
+
+    fixIntake.whenPressed(new FixIntake(intake)).whenReleased(new RunIntake(intake, false));
 
     // hopper.setDefaultCommand(new HopperAutomatic(hopper, intake));
 
@@ -186,7 +194,7 @@ public class RobotContainer {
     // autonSelector.addOption("Shoot then Back", new BasicAuto());
     // SmartDashboard.putData(autonSelector);
     
-    return new RunDrivetrain(drivetrain, -0.5).andThen(new Wait(2)).andThen(new RunDrivetrain(drivetrain, 0)).andThen(new SmartShoot(flywheel, hopper));
+    return new RunDrivetrain(drivetrain, -0.5).andThen(new Wait(0.5)).andThen(new RunDrivetrain(drivetrain, 0)).andThen(new SmartShoot(flywheel, hopper, true));
   
   }
 }

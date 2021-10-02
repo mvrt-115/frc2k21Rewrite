@@ -53,4 +53,8 @@ public class RollingAverage {
     public double getAverage() {
         return average;
     }
+    public void zero()
+    {
+        nums = new double[len];
+    }
 }

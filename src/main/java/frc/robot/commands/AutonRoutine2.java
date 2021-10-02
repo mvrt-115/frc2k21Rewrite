@@ -48,9 +48,9 @@ public class AutonRoutine2 extends SequentialCommandGroup {
                 new RunIntake(intake, true)
             )
           ),
-          new SmartShoot(flywheel, hopper).withTimeout(15)
+          new SmartShoot(flywheel, hopper, true).withTimeout(15)
         ),
-        new SmartShoot(flywheel, hopper).withTimeout(4),
+        new SmartShoot(flywheel, hopper, true).withTimeout(4),
         new ParallelRaceGroup(  
             new ParallelCommandGroup(
               getTrajectory3(),

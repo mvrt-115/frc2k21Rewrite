@@ -56,10 +56,10 @@ public class Intake extends SubsystemBase {
     roller.configFactoryDefault();
     funnel.configFactoryDefault();
 
-    roller.setInverted(false);
-    funnel.setInverted(true);
+    roller.setInverted(true);
+    funnel.setInverted(false);
 
-    // configure PID constants and feed forward to compensate for gravity
+    // configure PID constants aw;f'[-nd feed forward to compensate for gravity
     pivot.config_kP(0, Constants.Intake.P);
     pivot.config_kI(0, Constants.Intake.I);
     pivot.config_kD(0, Constants.Intake.D);
@@ -84,6 +84,10 @@ public class Intake extends SubsystemBase {
 
     setState(IntakeState.DISABLED);
     //System.out.println(state);
+  }
+
+  public void resetEncoders(double ticks) {
+    pivot.setSelectedSensorPosition(ticks);
   }
 
   @Override

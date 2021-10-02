@@ -17,7 +17,7 @@ public class AlignShoot extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new AutoAlign(drivetrain),
-      new SmartShoot(flywheel, hopper)
+      new SmartShoot(flywheel, hopper, true)
     );
   }
 }

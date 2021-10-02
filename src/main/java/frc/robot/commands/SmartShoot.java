@@ -19,14 +19,16 @@ public class SmartShoot extends CommandBase {
   private Hopper hopper;
   boolean stop = false;
   double topStart = -1;
+  boolean auton = false;
 
   /**
    * Creates a new SmartShoot.
    */
-  public SmartShoot(Flywheel flywheel, Hopper hopper) {
+  public SmartShoot(Flywheel flywheel, Hopper hopper, boolean auton) {
 
     this.flywheel = flywheel;
     this.hopper = hopper;
+    auton = this.auton;
 
     addRequirements(flywheel, hopper);
 
@@ -66,7 +68,8 @@ public class SmartShoot extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    // return Timer.getFPGATimestamp() - topStart > 0.3 && topStart != -1;
+    if(auton)
+      return Timer.getFPGATimestamp() - topStart > 0.3 && topStart != -1;
     return false;
   }
 }
