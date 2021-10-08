@@ -8,9 +8,9 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.RobotController;
+// import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.Timer;
+// import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
@@ -67,9 +67,9 @@ public class Drivetrain extends SubsystemBase {
   // the position of the robot at a certain point in time
   private Pose2d pose;
 
-  private double lastTime; // tracks time when method was last run for alignment
-  private double totalHorizontalAngleError; // tracks the total error to calculate I in PID of alignment
-  private double lastHorizontalAngleError; // tracks last error to calculate D in PID of alignment
+  // private double lastTime; // tracks time when method was last run for alignment
+  // private double totalHorizontalAngleError; // tracks the total error to calculate I in PID of alignment
+  // private double lastHorizontalAngleError; // tracks last error to calculate D in PID of alignment
 
   private SupplyCurrentLimitConfiguration currentLimit;
   private Limelight limelight;
@@ -103,10 +103,10 @@ public class Drivetrain extends SubsystemBase {
       leftBack.configSupplyCurrentLimit(currentLimit, Constants.TIMEOUT_MS);
       rightBack.configSupplyCurrentLimit(currentLimit, Constants.TIMEOUT_MS);
 
-      leftFront.configOpenloopRamp(1.0);
-      rightFront.configOpenloopRamp(1.0);
-      leftBack.configOpenloopRamp(1.0);
-      rightBack.configOpenloopRamp(1.0);
+      leftFront.configOpenloopRamp(0.4);
+      rightFront.configOpenloopRamp(0.4);
+      leftBack.configOpenloopRamp(0.4);
+      rightBack.configOpenloopRamp(0.4);
 
       leftFront.setInverted(false);
       leftBack.setInverted(false);
@@ -147,6 +147,7 @@ public class Drivetrain extends SubsystemBase {
     leftBack.enableVoltageCompensation(true);
     rightBack.enableVoltageCompensation(true);
 
+    pose = new Pose2d();
     
 
     leftBack.follow(leftFront);
@@ -255,8 +256,10 @@ public class Drivetrain extends SubsystemBase {
    */
   public double alignToTarget() {
     double error = getHorizontalAngleError();
+    double distance = limelight.getDistanceFromTarget();
     double kFF = 0.035;  //0.033;
 		double kP = .0055;
+    double kDist = 0.0003;
 		double output;
 		integralAcc += error;
 
@@ -265,6 +268,7 @@ public class Drivetrain extends SubsystemBase {
 		} else {
 			output = error * kP;
 		}
+    output+=Math.copySign(distance * kDist, error);
     // double horizontalAngleError = getHorizontalAngleError();
     // // find change in error / change in time
     // double dt = Timer.getFPGATimestamp() - lastTime;
@@ -303,7 +307,6 @@ public class Drivetrain extends SubsystemBase {
     // This method will be called once per scheduler run
 
     odometry.update(getGyroAngle(), getDistance(leftFront, leftBack), getDistance(rightFront, rightBack));
-    pose = odometry.getPoseMeters();
 
     log();
   }
@@ -345,8 +348,7 @@ public class Drivetrain extends SubsystemBase {
    */
   // implement voltage compensation
   public void setOutputVoltage(double leftVolts, double rightVolts) {
-    System.out.println(Math.max(-0.7, Math.min(leftVolts / 10.0, 0.7)) + " " + Math.max(-0.7, Math.min(rightVolts / 10.0, 0.7)));
-    setDrivetrainMotorSpeed(Math.max(-0.7, Math.min(leftVolts / 10.0, 0.7)), Math.max(-0.7, Math.min(rightVolts / 10.0, 0.7)));
+    setDrivetrainMotorSpeed(leftVolts / Constants.MAX_VOLTAGE, rightVolts / Constants.MAX_VOLTAGE);
   }
 
   /**
