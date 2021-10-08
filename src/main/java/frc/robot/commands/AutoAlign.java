@@ -3,6 +3,9 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.utils.Limelight;
+import frc.robot.utils.Limelight.CAM_MODE;
+import frc.robot.utils.Limelight.LED_STATE;
 
 /**
  * A command that aligns the robot to the target using the limelight system
@@ -12,15 +15,17 @@ import frc.robot.subsystems.Drivetrain;
 public class AutoAlign extends CommandBase {
 
   Drivetrain  drivetrain;
+  Limelight limelight;
 
   /**
    * Makes sure that the drivetrain subsystem object exists for use in the
    * command
    */
-  public AutoAlign(Drivetrain drivetrain) {
+  public AutoAlign(Drivetrain drivetrain, Limelight limelight) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
     this.drivetrain = drivetrain;
+    this.limelight = limelight;
   }
 
   // Called when the command is initially scheduled.
@@ -31,6 +36,8 @@ public class AutoAlign extends CommandBase {
   public void initialize() 
   {
     drivetrain.resetGyro();
+    limelight.setLED(LED_STATE.ON);
+    limelight.setPipeline(CAM_MODE.VISION_WIDE);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -54,6 +61,8 @@ public class AutoAlign extends CommandBase {
   public void end(boolean interrupted) 
   {
     drivetrain.stopDrivetrainMotors();
+    limelight.setLED(LED_STATE.OFF);
+    limelight.setPipeline(CAM_MODE.DRIVER);
   }
 
   // Returns true when the command should end.

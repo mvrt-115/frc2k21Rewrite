@@ -13,20 +13,28 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Flywheel.FlywheelState;
+import frc.robot.utils.Limelight;
+import frc.robot.utils.Limelight.CAM_MODE;
+import frc.robot.utils.Limelight.LED_STATE;
 
 public class SmartShoot extends CommandBase {
   private Flywheel flywheel;
   private Hopper hopper;
   boolean stop = false;
   double topStart = -1;
+  Limelight limelight;
+  boolean auton;
 
   /**
    * Creates a new SmartShoot.
    */
-  public SmartShoot(Flywheel flywheel, Hopper hopper) {
+  public SmartShoot(Flywheel flywheel, Hopper hopper, Limelight limelight, boolean auton) {
 
     this.flywheel = flywheel;
     this.hopper = hopper;
+
+    this.limelight = limelight;
+    this.auton = auton;
 
     addRequirements(flywheel, hopper);
 
@@ -36,14 +44,17 @@ public class SmartShoot extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    flywheel.setTargetRPM(flywheel.getRequiredRPM());
+    limelight.setLED(LED_STATE.ON);
+    limelight.setPipeline(CAM_MODE.VISION_WIDE);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
       
-      if(flywheel.getFlywheelState() == FlywheelState.ATSPEED) {
+    flywheel.setTargetRPM(flywheel.getRequiredRPM());
+
+    if(flywheel.getFlywheelState() == FlywheelState.ATSPEED) {
         hopper.runTopMotor(0.4);
         hopper.runBottomMotor(0.7);
       } else {
@@ -61,12 +72,13 @@ public class SmartShoot extends CommandBase {
   public void end(boolean interrupted) {
     flywheel.stop();
     flywheel.setTargetRPM(0);
+    limelight.setLED(LED_STATE.OFF);
+    limelight.setPipeline(CAM_MODE.DRIVER);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    // return Timer.getFPGATimestamp() - topStart > 0.3 && topStart != -1;
-    return false;
+    return auton && Timer.getFPGATimestamp() - topStart > 0.3 && topStart != -1;
   }
 }

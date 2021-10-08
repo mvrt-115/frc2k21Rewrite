@@ -14,22 +14,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.AlignShoot;
-import frc.robot.commands.AutoAlign;
-import frc.robot.commands.AutonRoutine;
-import frc.robot.commands.HopperAutomatic;
-import frc.robot.commands.HopperManual;
-import frc.robot.commands.JoystickDrive;
-import frc.robot.commands.ResetBallsHopper;
-import frc.robot.commands.RunIntake;
-import frc.robot.commands.SetFlywheelRPM;
-import frc.robot.commands.SmartShoot;
-import frc.robot.commands.StandAndShoot;
-import frc.robot.commands.StopDrivetrain;
-import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Flywheel;
-import frc.robot.subsystems.Hopper;
-import frc.robot.subsystems.Intake;
+import frc.robot.commands.*;
+import frc.robot.subsystems.*;
 import frc.robot.utils.Limelight;
 import frc.robot.utils.RollingAverage;
 
@@ -114,13 +100,13 @@ public class RobotContainer {
     // runIntake.whenPressed(new RunIntake(intake, true)).whenReleased(new RunIntake(intake, false));
 
     // // hopper button
-    autoAlign.whenPressed(new AutoAlign(drivetrain)).whenReleased(new StopDrivetrain(drivetrain));
+    autoAlign.whenActive(new AutoAlign(drivetrain, limelight));
 
     // // backwards hopper button
     hopperDown.whenPressed(new HopperManual(hopper, -0.35, -0.35)).whenReleased(new HopperManual(hopper, 0, 0));
 
     // shoot flywheel with limelight
-    shootToTarget.whenActive(new SmartShoot(flywheel, hopper)).whenInactive(new SetFlywheelRPM(flywheel, 0)).whenInactive(new HopperManual(hopper, 0, 0));
+    shootToTarget.whenActive(new SmartShoot(flywheel, hopper, limelight, false)).whenInactive(new SetFlywheelRPM(flywheel, 0)).whenInactive(new HopperManual(hopper, 0, 0));
 
     resetHopper.whenPressed(new ResetBallsHopper(hopper));
 
@@ -188,16 +174,17 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // autonSelector = new SendableChooser<>();
+    autonSelector = new SendableChooser<>();
 
-    // autonSelector.setDefaultOption("Basic Shoot", new AutonRoutine3());
-    // autonSelector.addOption("Trench Run", new AutonRoutine(intake, hopper, drivetrain, flywheel));
-    // autonSelector.addOption("Rendezvous Run", new AutonRoutine2());
+    // autonSelector.setDefaultOption("Stand and Shoot", new StandAndShoot(hopper, flywheel, drivetrain, limelight));
+    autonSelector.setDefaultOption("Trench Run", new TrenchRun(intake, hopper, drivetrain, flywheel, limelight));
+    autonSelector.addOption("Trench Run", new TrenchRun(intake, hopper, drivetrain, flywheel, limelight));
+    autonSelector.addOption("Rendezvous Run", new RendezvousZone(intake, hopper, drivetrain, flywheel, limelight));
     // autonSelector.addOption("Rendezvous Run Small", new RendezvousAuton2());
     // autonSelector.addOption("Shoot then Back", new BasicAuto());
     // SmartDashboard.putData(autonSelector);
     
-    return new StandAndShoot(hopper, flywheel, drivetrain);
+    return autonSelector.getSelected();
   
   }
 }

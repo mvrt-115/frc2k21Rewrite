@@ -18,11 +18,12 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.*;
+import frc.robot.utils.Limelight;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
-public class AutonRoutine2 extends SequentialCommandGroup {
+public class RendezvousZone extends SequentialCommandGroup {
   Intake intake;
   Hopper hopper;
   Drivetrain drivetrain;
@@ -30,7 +31,7 @@ public class AutonRoutine2 extends SequentialCommandGroup {
   /**
    * Rendezvous Auton Routine
    */
-  public AutonRoutine2(Intake intake, Hopper hopper, Drivetrain drivetrain, Flywheel flywheel) {
+  public RendezvousZone(Intake intake, Hopper hopper, Drivetrain drivetrain, Flywheel flywheel, Limelight limelight) {
     this.intake = intake;
     this.hopper = hopper;
     this.drivetrain = drivetrain;
@@ -48,9 +49,9 @@ public class AutonRoutine2 extends SequentialCommandGroup {
                 new RunIntake(intake, true)
             )
           ),
-          new SmartShoot(flywheel, hopper).withTimeout(15)
+          new SmartShoot(flywheel, hopper, limelight, true).withTimeout(15)
         ),
-        new SmartShoot(flywheel, hopper).withTimeout(4),
+        new SmartShoot(flywheel, hopper, limelight, true).withTimeout(4),
         new ParallelRaceGroup(  
             new ParallelCommandGroup(
               getTrajectory3(),
