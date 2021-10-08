@@ -29,6 +29,8 @@ public class RealClimber implements ClimberInterface
         elevatorMaster = new TalonFX(motorID);
         elevatorBottomLimitSwitch = new DigitalInput(elevatorBottomLimitSwitchID);
         elevatorMaster.configFactoryDefault();
+
+        elevatorMaster.setInverted(true);
       
         elevatorMaster.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.kPIDIdx, Constants.kTimeoutMs);
 

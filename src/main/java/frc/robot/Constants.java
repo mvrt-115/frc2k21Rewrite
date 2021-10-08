@@ -64,10 +64,10 @@ public final class Constants {
 
         public static final double MARGIN_OF_ERROR_TICKS = 200;
 
-        public static final double P = 0.53;
+        public static final double P = 0.57;
         public static final double I = 0;
         public static final double D = 0;
-        public static final double FF = 0.28;
+        public static final double FF = 0.31;
         public static final double ROTATIONAL_INERTIA = 0.1;
         public static final double PIVOT_MASS = 68.03;
         public static final double PIVOT_LENGTH = 0.1;
@@ -125,12 +125,12 @@ public final class Constants {
         public static final double kElevatorClimbOutput = 0.257;
         
         //Location Ticks
-        public static final double kClimbHeight = 37_000;
-        public static final double kElevatorZero = 1_000;
+        public static final double kClimbHeight = -205438;
+        public static final double kElevatorZero = 3000;
 
         //Servo angles
-        public static final double kServoRatchet = 0;
-        public static final double kServoUnRatchet = 1;
+        public static final double kServoRatchet = 1;
+        public static final double kServoUnRatchet = 0;
 
         //Other usefull constants
         public static final double TICKS_PER_ROTATION = 4096;

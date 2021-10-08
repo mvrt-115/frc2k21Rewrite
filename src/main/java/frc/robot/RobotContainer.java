@@ -11,10 +11,24 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.*;
+import frc.robot.commands.AutoAlign;
+import frc.robot.commands.ClimberDownCommand;
+import frc.robot.commands.ElevatorCommand;
+import frc.robot.commands.FixIntake;
+import frc.robot.commands.HopperAutomatic;
+import frc.robot.commands.HopperManual;
+import frc.robot.commands.JoystickDrive;
+import frc.robot.commands.MoveServo;
+import frc.robot.commands.ResetBallsHopper;
+import frc.robot.commands.RunDrivetrain;
+import frc.robot.commands.RunIntake;
+import frc.robot.commands.SetFlywheelRPM;
+import frc.robot.commands.SmartShoot;
+import frc.robot.commands.StopElevator;
+import frc.robot.commands.Wait;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Flywheel;
 import frc.robot.subsystems.Hopper;
@@ -34,6 +48,7 @@ public class RobotContainer {
   public final Hopper hopper = new Hopper();
   public final Intake intake = new Intake();
   public final Limelight limelight = new Limelight();
+  public final Climber climber = new Climber();
 
   public final Flywheel flywheel = new Flywheel(limelight);  
   public final Drivetrain drivetrain = new Drivetrain(limelight);
@@ -61,8 +76,8 @@ public class RobotContainer {
   public JoystickButton hopperUp = new JoystickButton(opJoystick, 4);
   public JoystickButton shootToTarget = new JoystickButton(joystick, 6);
   public JoystickButton resetHopper = new JoystickButton(opJoystick, 3);
-  // public JoystickButton elevatorUp = new JoystickButton(opJoystick, 9);
-  // public JoystickButton elevatorDown = new JoystickButton(opJoystick, 10);
+  public JoystickButton elevatorUp  = new JoystickButton(opJoystick, 7);
+  public JoystickButton elevatorDown = new JoystickButton(opJoystick, 8);
   // public JoystickButton ratchet = new JoystickButton(joystick, 7);
   public JoystickButton fixIntake = new JoystickButton(joystick, 2);
   public JoystickButton manualShoot = new JoystickButton(opJoystick, 9);
@@ -100,7 +115,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // new JoystickButton(joystick, 1).whenPressed(new
     // ExampleCommand(m_exampleSubsystem, true));
-
+    
     drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, this::getQuickTurn));
 
     // run intake button
@@ -141,6 +156,11 @@ public class RobotContainer {
     // Deruiter is goated
     // Codingbat for life. Lets go commonEnd.java is the best excerise
     // Vincent dont forget to do APUSH and Conlin hw
+    
+    elevatorUp.whenPressed(new ElevatorCommand(climber, intake)).whenReleased(new StopElevator(climber));
+    elevatorDown.whenPressed(new ClimberDownCommand(climber)).whenReleased(new StopElevator(climber));
+
+  // new JoystickButton(opJoystick, 1).whenPressed(new MoveServo(climber, true));
 
   }
 
@@ -194,7 +214,7 @@ public class RobotContainer {
     // autonSelector.addOption("Shoot then Back", new BasicAuto());
     // SmartDashboard.putData(autonSelector);
     
-    return new RunDrivetrain(drivetrain, -0.5).andThen(new Wait(0.5)).andThen(new RunDrivetrain(drivetrain, 0)).andThen(new SmartShoot(flywheel, hopper, true));
+    return new Wait(5).andThen(new RunDrivetrain(drivetrain, -0.5)).andThen(new Wait(0.5)).andThen(new RunDrivetrain(drivetrain, 0)).andThen(new SmartShoot(flywheel, hopper, true));
   
   }
 }

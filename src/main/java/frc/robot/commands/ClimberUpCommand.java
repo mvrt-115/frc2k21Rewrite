@@ -29,14 +29,17 @@ public class ClimberUpCommand extends CommandBase {
    * Sets the elevator state to climbing
    */
   public void initialize() {
-      climber.setElevatorState(Climber.ElevatorState.CLIMBING);
+      climber.setElevatorState(Climber.ElevatorState.GOING_UP);
   }
 
   @Override
   /**
    * Does nothing
    */
-  public void execute() {}
+  public void execute() {
+
+      climber.setElevatorState(Climber.ElevatorState.GOING_UP);
+  }
 
   @Override
   /**

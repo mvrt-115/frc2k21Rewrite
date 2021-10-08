@@ -40,7 +40,7 @@ public class Climber extends SubsystemBase
    */
   public enum ElevatorState 
   {
-    CLIMBING, HOLD, ZEROING, MANUAL_OVERRIDE, SERVO_TEST_RATCHET, SERVO_TEST_UNRATCHET, SERVO_TEST_REST
+    CLIMBING, HOLD, ZEROING, MANUAL_OVERRIDE, SERVO_TEST_RATCHET, SERVO_TEST_UNRATCHET, SERVO_TEST_REST, GOING_UP, GOING_DOWN
   };
 
   /** Creates a new Climber. */
@@ -102,10 +102,10 @@ public class Climber extends SubsystemBase
         elevatorServo.set(Constants.Climber.kServoUnRatchet);
 
         if(sensorPosition == Constants.Climber.kClimbHeight)
-          climberMethods.setMotorOutputPercent(-0.1);
+          climberMethods.setMotorOutputPercent(-0.3);
         
         else if(sensorPosition == Constants.Climber.kElevatorZero)
-          climberMethods.setMotorOutputPercent(0.1);
+          climberMethods.setMotorOutputPercent(0.3);
         
         // else
           // climberMethods.setMotorOutputPercent(Robot.getContainer().getLeft());
@@ -127,6 +127,17 @@ public class Climber extends SubsystemBase
         //do nothing
         case SERVO_TEST_REST:
           break;
+
+        case GOING_UP:
+          // if(sensorPosition >= Constants.Climber.kClimbHeight)
+          climberMethods.setMotorOutputPercent(0.5);
+          break;
+
+        case GOING_DOWN:
+          // if(sensorPosition <= Constants.Climber.kElevatorZero)
+            climberMethods.setMotorOutputPercent(-0.5);
+          break;
+
     }
 
     heightAverage.updateValue(sensorPosition);

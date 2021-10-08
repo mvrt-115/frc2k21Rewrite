@@ -181,10 +181,10 @@ public class Intake extends SubsystemBase {
   {
     // apply slight voltage to keep intake from falling down
     if(state == IntakeState.INTAKING)
-      pivot.set(ControlMode.PercentOutput, 0.23); 
+      pivot.set(ControlMode.PercentOutput, 0.3); 
 
     else
-    pivot.set(ControlMode.PercentOutput, -0.1);
+    pivot.set(ControlMode.PercentOutput, -0.23);
   }
 
   /**

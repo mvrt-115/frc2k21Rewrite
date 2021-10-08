@@ -29,7 +29,7 @@ public class ClimberDownCommand extends CommandBase {
    * Initializes the elevator state to zeroing so it is going down.
    */
   public void initialize() {
-    climber.setElevatorState(Climber.ElevatorState.ZEROING);
+    climber.setElevatorState(Climber.ElevatorState.GOING_DOWN);
   }
 
   @Override
