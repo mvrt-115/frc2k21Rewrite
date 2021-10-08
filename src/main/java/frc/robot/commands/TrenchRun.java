@@ -21,41 +21,39 @@ import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.Hopper;
+import frc.robot.utils.Limelight;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
-public class AutonRoutine extends SequentialCommandGroup {
-  Intake intake;
-  Hopper hopper;
+public class TrenchRun extends SequentialCommandGroup {
   Drivetrain drivetrain;
-  Flywheel flywheel;
+  Hopper hopper;
   /**
    * Right Side Trench Auton
    */
-  public AutonRoutine(Intake intake, Hopper hopper, Drivetrain drivetrain, Flywheel flywheel) {
-    this.intake = intake;
-    this.hopper = hopper;
+  public TrenchRun(Intake intake, Hopper hopper, Drivetrain drivetrain, Flywheel flywheel, Limelight limelight) {
     this.drivetrain = drivetrain;
-    this.flywheel = flywheel;
-
+    this.hopper = hopper;
     addCommands(
-        
-      // new SmartShoot(flywheel, hopper).withTimeout(10),
+      // shoot at start
+      new SmartShoot(flywheel, hopper, limelight, true).withTimeout(10),
+      // intake at trench
+      new ParallelRaceGroup(
+        new ParallelCommandGroup(
+          getTrajectory1(),
+          new RunIntake(intake, true).withTimeout(5.5).andThen(new RunIntake(intake, false))
+        ),
+        new HopperAutomatic(hopper, intake).withTimeout(10)
+      ),
+      // go back and shoot
       // new ParallelRaceGroup(
-        // new ParallelCommandGroup(
-          getTrajectory1()
-          // new RunIntake(intake, true).withTimeout(5.5)
+      //   new SequentialCommandGroup(
+          getTrajectory2(),
+          new SmartShoot(flywheel, hopper, limelight, true).withTimeout(5)
         // ),
-          // new HopperAutomatic(hopper, intake).withTimeout(10)
-        // ),
-        // new ParallelRaceGroup(
-          // new SequentialCommandGroup(
-            // getTrajectory2()
-            // new SmartShoot(flywheel, hopper).withTimeout(5)
-          // ),
-          // new RunIntake(intake, true).withTimeout(7)
-        // )
+      //   new RunIntake(intake, true).withTimeout(7)
+      // )
     );
   }
 

@@ -13,26 +13,8 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.commands.AutoAlign;
-import frc.robot.commands.ClimberDownCommand;
-import frc.robot.commands.ElevatorCommand;
-import frc.robot.commands.FixIntake;
-import frc.robot.commands.HopperAutomatic;
-import frc.robot.commands.HopperManual;
-import frc.robot.commands.JoystickDrive;
-import frc.robot.commands.MoveServo;
-import frc.robot.commands.ResetBallsHopper;
-import frc.robot.commands.RunDrivetrain;
-import frc.robot.commands.RunIntake;
-import frc.robot.commands.SetFlywheelRPM;
-import frc.robot.commands.SmartShoot;
-import frc.robot.commands.StopElevator;
-import frc.robot.commands.Wait;
-import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Flywheel;
-import frc.robot.subsystems.Hopper;
-import frc.robot.subsystems.Intake;
+import frc.robot.commands.*;
+import frc.robot.subsystems.*;
 import frc.robot.utils.Limelight;
 import frc.robot.utils.RollingAverage;
 
@@ -122,13 +104,13 @@ public class RobotContainer {
     // runIntake.whenPressed(new RunIntake(intake, true)).whenReleased(new RunIntake(intake, false));
 
     // // hopper button
-    autoAlign.whenPressed(new AutoAlign(drivetrain)).whenReleased(new RunDrivetrain(drivetrain, 0));
+    autoAlign.whenActive(new AutoAlign(drivetrain, limelight));
 
     // // backwards hopper button
     hopperDown.whenPressed(new HopperManual(hopper, -0.35, -0.35)).whenReleased(new HopperManual(hopper, 0, 0));
 
     // shoot flywheel with limelight
-    shootToTarget.whenActive(new SmartShoot(flywheel, hopper, false)).whenInactive(new SetFlywheelRPM(flywheel, 0)).whenInactive(new HopperManual(hopper, 0, 0));
+    shootToTarget.whenActive(new SmartShoot(flywheel, hopper, limelight, false)).whenInactive(new SetFlywheelRPM(flywheel, 0)).whenInactive(new HopperManual(hopper, 0, 0));
 
     resetHopper.whenPressed(new ResetBallsHopper(hopper));
     
@@ -205,16 +187,17 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // autonSelector = new SendableChooser<>();
+    autonSelector = new SendableChooser<>();
 
-    // autonSelector.setDefaultOption("Basic Shoot", new AutonRoutine3());
-    // autonSelector.addOption("Trench Run", new AutonRoutine(intake, hopper, drivetrain, flywheel));
-    // autonSelector.addOption("Rendezvous Run", new AutonRoutine2());
+    // autonSelector.setDefaultOption("Stand and Shoot", new StandAndShoot(hopper, flywheel, drivetrain, limelight));
+    autonSelector.setDefaultOption("Trench Run", new TrenchRun(intake, hopper, drivetrain, flywheel, limelight));
+    autonSelector.addOption("Trench Run", new TrenchRun(intake, hopper, drivetrain, flywheel, limelight));
+    autonSelector.addOption("Rendezvous Run", new RendezvousZone(intake, hopper, drivetrain, flywheel, limelight));
     // autonSelector.addOption("Rendezvous Run Small", new RendezvousAuton2());
     // autonSelector.addOption("Shoot then Back", new BasicAuto());
     // SmartDashboard.putData(autonSelector);
     
-    return new Wait(5).andThen(new RunDrivetrain(drivetrain, -0.5)).andThen(new Wait(0.5)).andThen(new RunDrivetrain(drivetrain, 0)).andThen(new SmartShoot(flywheel, hopper, true));
+    return autonSelector.getSelected();
   
   }
 }
