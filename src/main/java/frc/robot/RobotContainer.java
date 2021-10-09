@@ -10,11 +10,11 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
-import frc.robot.utils.JoystickTriggerButton;
 import frc.robot.utils.Limelight;
 import frc.robot.utils.RollingAverage;
 
@@ -28,30 +28,42 @@ import frc.robot.utils.RollingAverage;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   public final Hopper hopper = new Hopper();
-  private final Intake intake = new Intake();
+  public final Intake intake = new Intake();
   public final Limelight limelight = new Limelight();
+  public final Climber climber = new Climber();
 
   public final Flywheel flywheel = new Flywheel(limelight);  
   public final Drivetrain drivetrain = new Drivetrain(limelight);
-  
+  private SendableChooser<Command> autonSelector;
 
+  
   /** Main joystick */
-   
+
+   // operator
+   // hopper manual
+   // elevator stuff, servo and climbing
+   // hopper ball count fix
+   // shoot
   public Joystick joystick = new Joystick(0);
+  public Joystick opJoystick = new Joystick(1);
 
   // joystick buttons
 
   public JoystickButton quickturn = new JoystickButton(joystick, 5);
-  public JoystickButton runIntake = new JoystickButton(joystick, 1);
-  public JoystickButton autoHopper = new JoystickButton(joystick, 6);
+  // public JoystickButton runIntake = new JoystickButton(joystick, 1);
+  public JoystickButton autoHopper = new JoystickButton(opJoystick, 6);
   // public JoystickButton autoAlign = new JoystickButton(joystick, 8);
-  public JoystickButton autoAlign = new JoystickButton(joystick, 4);
-  public JoystickButton hopperDown = new JoystickButton(joystick, 1);
-  public JoystickButton hopperUp = new JoystickButton(joystick, 3);
-  public JoystickButton shootToTarget = new JoystickButton(joystick, 10);
-  public JoystickButton resetHopper = new JoystickButton(joystick, 7);
-  public JoystickButton alignShoot = new JoystickButton(joystick, 8);
-  public JoystickButton shoot = new JoystickButton(joystick, 7);
+  public JoystickButton autoAlign = new JoystickButton(joystick, 1);
+  public JoystickButton hopperDown = new JoystickButton(opJoystick, 1);
+  public JoystickButton hopperUp = new JoystickButton(opJoystick, 4);
+  public JoystickButton shootToTarget = new JoystickButton(joystick, 6);
+  public JoystickButton resetHopper = new JoystickButton(opJoystick, 3);
+  public JoystickButton elevatorUp  = new JoystickButton(opJoystick, 7);
+  public JoystickButton elevatorDown = new JoystickButton(opJoystick, 8);
+  // public JoystickButton ratchet = new JoystickButton(joystick, 7);
+  public JoystickButton fixIntake = new JoystickButton(joystick, 2);
+  public JoystickButton manualShoot = new JoystickButton(opJoystick, 9);
+
 
   public RollingAverage throttle = new RollingAverage(50);
   public RollingAverage wheel = new RollingAverage(15);
@@ -63,7 +75,19 @@ public class RobotContainer {
     configureButtonBindings();
   }
 
-  // #AkashPalla #NotOurPresident
+  public Intake getIntake() {
+    return intake;
+  }
+  public Hopper getHopper() {
+    return hopper;
+  }
+  public Drivetrain getDrivetrain() {
+    return drivetrain;
+  }
+  public Flywheel getFlywheel() {
+    return flywheel;
+  }
+
   /**
    * Use this method to define your button->command mappings. Buttons can be
    * created by instantiating a {@link GenericHID} or one of its subclasses
@@ -73,26 +97,30 @@ public class RobotContainer {
   private void configureButtonBindings() {
     // new JoystickButton(joystick, 1).whenPressed(new
     // ExampleCommand(m_exampleSubsystem, true));
-
+    
     drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, this::getQuickTurn));
 
     // run intake button
-    runIntake.whenPressed(new RunIntake(intake, true)).whenReleased(new RunIntake(intake, false));
+    // runIntake.whenPressed(new RunIntake(intake, true)).whenReleased(new RunIntake(intake, false));
 
     // // hopper button
-    autoAlign.whenPressed(new AutoAlign(drivetrain)).whenReleased(new StopDrivetrain(drivetrain));
+    autoAlign.whenPressed(new AutoAlign(drivetrain, limelight)).whenReleased(new RunDrivetrain(drivetrain, 0));
 
     // // backwards hopper button
-    // hopperDown.whenPressed(new HopperManual(hopper, -0.35, -0.35)).whenReleased(new HopperManual(hopper, 0, 0));
+    hopperDown.whenPressed(new HopperManual(hopper, -0.35, -0.35)).whenReleased(new HopperManual(hopper, 0, 0));
 
     // shoot flywheel with limelight
-    shootToTarget.whenActive(new SmartShoot(flywheel, hopper)).whenInactive(new SetFlywheelRPM(flywheel, 0)).whenInactive(new HopperManual(hopper, 0, 0));
+    shootToTarget.whenActive(new SmartShoot(flywheel, hopper, limelight, false)).whenInactive(new SetFlywheelRPM(flywheel, 0)).whenInactive(new HopperManual(hopper, 0, 0));
 
     resetHopper.whenPressed(new ResetBallsHopper(hopper));
+    
+    manualShoot.whenPressed(new SetFlywheelRPM(flywheel, 7000)).whenPressed(new HopperManual(hopper, 0.5, 0.5)).whenReleased(new SetFlywheelRPM(flywheel, 0)).whenReleased(new HopperManual(hopper, 0, 0));
+
+    fixIntake.whenPressed(new FixIntake(intake)).whenReleased(new RunIntake(intake, false));
 
     // hopper.setDefaultCommand(new HopperAutomatic(hopper, intake));
 
-    alignShoot.whenPressed(new AlignShoot(flywheel, hopper, drivetrain));
+    // alignShoot.whenPressed(new AlignShoot(flywheel, hopper, drivetrain));
 
     hopperUp.whenPressed(new HopperManual(hopper, 0.25, 0.25)).whenReleased(new HopperManual(hopper, 0, 0));
     // hopperDown.whenPressed(new HopperManual(hopper, -0.25, -0.25)).whenReleased(new HopperManual(hopper, 0, 0));
@@ -102,7 +130,7 @@ public class RobotContainer {
     //      .whenReleased(new SetFlywheelRPM(flywheel, 0));
 
     // auto hpper
-    autoHopper.whenPressed(new HopperAutomatic(hopper, intake)).whenReleased(new HopperManual(hopper, 0, 0));
+    autoHopper.whenPressed(new HopperAutomatic(hopper, intake)).whenReleased(new HopperManual(hopper, 0, 0)).whenPressed(new RunIntake(intake, true)).whenReleased(new RunIntake(intake, false));
     // Align robot to target
     // autoAlign.whenPressed(new AutoAlign(drivetrain)).whenReleased(new StopDrivetrain(drivetrain));
     // adithya patil was here
@@ -110,6 +138,12 @@ public class RobotContainer {
     // Deruiter is goated
     // Codingbat for life. Lets go commonEnd.java is the best excerise
     // Vincent dont forget to do APUSH and Conlin hw
+    
+    elevatorUp.whenPressed(new ElevatorCommand(climber, intake)).whenReleased(new StopElevator(climber));
+    elevatorDown.whenPressed(new ClimberDownCommand(climber)).whenReleased(new StopElevator(climber));
+
+  // new JoystickButton(opJoystick, 1).whenPressed(new MoveServo(climber, true));
+
   }
 
   /**
@@ -121,11 +155,12 @@ public class RobotContainer {
     // aDiTyA : 0.7, axis 5
     // AbHiK: 0.6, axis 1
     // jAcOb: 0.7 axis 5
-    throttle.updateValue(-joystick.getRawAxis(5) * 0.6);
+    throttle.updateValue(-joystick.getRawAxis(5) * 0.7);
     return throttle.getAverage();
   }
 
   /**
+   * 
    * Gets the wheel from the trigger on the # axis, or __ side trigger
    * 
    * @return double from -1 to 1 representing power towards turning
@@ -152,7 +187,17 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
-    return null;
+    autonSelector = new SendableChooser<>();
+
+    // autonSelector.setDefaultOption("Stand and Shoot", new StandAndShoot(hopper, flywheel, drivetrain, limelight));
+    autonSelector.setDefaultOption("Trench Run", new TrenchRun(intake, hopper, drivetrain, flywheel, limelight));
+    autonSelector.addOption("Trench Run", new TrenchRun(intake, hopper, drivetrain, flywheel, limelight));
+    autonSelector.addOption("Rendezvous Run", new RendezvousZone(intake, hopper, drivetrain, flywheel, limelight));
+    // autonSelector.addOption("Rendezvous Run Small", new RendezvousAuton2());
+    // autonSelector.addOption("Shoot then Back", new BasicAuto());
+    // SmartDashboard.putData(autonSelector);
+    
+    return autonSelector.getSelected();
+  
   }
 }

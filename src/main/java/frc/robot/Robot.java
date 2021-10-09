@@ -7,7 +7,10 @@
 
 package frc.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.shuffleboard.EventImportance;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -31,6 +34,7 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+    CameraServer.getInstance().startAutomaticCapture();
   }
 
   /**
@@ -65,6 +69,29 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    // setRobotState(RobotState.AUTON);
+
+    // .intake.resetPivotEncoder();
+    // RobotContainer.intake.setIntakeState(IntakeState.STOWED);
+    // RobotContainer.intake.setDefaultLimitSwitchStart();
+    
+    // RobotContainer.climber.setElevatorState(ElevatorState.ZEROED);
+    // RobotContainer.climber.resetEncoder();
+    
+    // RobotContainer.flywheel.setFlywheelState(FlywheelState.OFF);
+
+    // RobotContainer.drivetrain.resetOdometry();
+    // RobotContainer.drivetrain.configNeutralMode(NeutralMode.Brake, NeutralMode.Brake);
+
+    // led.setColor(LEDColor.RAINBOW);
+
+    // RobotContainer.hopper.setBalls(3);
+    
+    // m_autonomousCommand = autonSelector.getSelected();
+
+    // if (m_autonomousCommand != null) {
+    //   m_autonomousCommand.schedule();
+    // }
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -78,6 +105,12 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
+    CommandScheduler.getInstance().onCommandInitialize(command -> Shuffleboard.addEventMarker(
+        "Command initialized", command.getName(), EventImportance.kNormal));
+    CommandScheduler.getInstance().onCommandInterrupt(command -> Shuffleboard.addEventMarker(
+        "Command interrupted", command.getName(), EventImportance.kNormal));
+    CommandScheduler.getInstance().onCommandFinish(command -> Shuffleboard.addEventMarker(
+        "Command finished", command.getName(), EventImportance.kNormal));
   }
 
   @Override
@@ -103,7 +136,24 @@ public class Robot extends TimedRobot {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
   }
+  // public static Command generatePath(Trajectory trajectory){
+    
+  //   var autoCommand = new RamseteCommand(
+  //     trajectory,
+  //     drivetrain::getPose,
+  //     drivetrain.getRamseteController(),
+  //     drivetrain.getFeedForward(),
+  //     drivetrain.getDriveKinematics(),
+  //     drivetrain::getWheelSpeeds,
+  //     drivetrain.getLeftDriveController(),
+  //     drivetrain.getRightDriveController(),
+  //     drivetrain::setOutputVolts,
+  //     drivetrain
+  //   );
 
+  
+  //   return autoCommand;
+  // }
   /**
    * This function is called periodically during test mode.
    */

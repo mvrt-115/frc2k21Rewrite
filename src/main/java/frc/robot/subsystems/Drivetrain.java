@@ -8,9 +8,9 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.RobotController;
+// import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.Timer;
+// import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -51,6 +52,14 @@ public class Drivetrain extends SubsystemBase {
   // constants are from robot characteristics
   private SimpleMotorFeedforward feedforward;
 
+	// private RamseteController ramseteController; // auton
+	private TrajectoryConfig trajectoryConfig; // auton
+  private TrajectoryConfig trajectoryConfigSlow; // auton
+  public static final double kMaxVelocityMetersPerSecond = 1.5;
+  public static final double kMaxAccelerationMetersPerSecondSq = 2;
+  public double integralAcc;
+
+
   // PID used by ramsete command
   private PIDController rightPIDController;
   private PIDController leftPIDController;
@@ -58,9 +67,9 @@ public class Drivetrain extends SubsystemBase {
   // the position of the robot at a certain point in time
   private Pose2d pose;
 
-  private double lastTime; // tracks time when method was last run for alignment
-  private double totalHorizontalAngleError; // tracks the total error to calculate I in PID of alignment
-  private double lastHorizontalAngleError; // tracks last error to calculate D in PID of alignment
+  // private double lastTime; // tracks time when method was last run for alignment
+  // private double totalHorizontalAngleError; // tracks the total error to calculate I in PID of alignment
+  // private double lastHorizontalAngleError; // tracks last error to calculate D in PID of alignment
 
   private SupplyCurrentLimitConfiguration currentLimit;
   private Limelight limelight;
@@ -72,7 +81,7 @@ public class Drivetrain extends SubsystemBase {
    */
   public Drivetrain(Limelight limelight) {
     // initializes if real (plugged into a robot)
-    if (RobotBase.isReal()) {
+    // if (RobotBase.isReal()) {
       leftFront = new TalonFX(46);
       leftBack = new TalonFX(9);
       rightFront = new TalonFX(48);
@@ -94,10 +103,10 @@ public class Drivetrain extends SubsystemBase {
       leftBack.configSupplyCurrentLimit(currentLimit, Constants.TIMEOUT_MS);
       rightBack.configSupplyCurrentLimit(currentLimit, Constants.TIMEOUT_MS);
 
-      leftFront.configOpenloopRamp(1.0);
-      rightFront.configOpenloopRamp(1.0);
-      leftBack.configOpenloopRamp(1.0);
-      rightBack.configOpenloopRamp(1.0);
+      leftFront.configOpenloopRamp(0.4);
+      rightFront.configOpenloopRamp(0.4);
+      leftBack.configOpenloopRamp(0.4);
+      rightBack.configOpenloopRamp(0.4);
 
       leftFront.setInverted(false);
       leftBack.setInverted(false);
@@ -112,7 +121,7 @@ public class Drivetrain extends SubsystemBase {
           Constants.TIMEOUT_MS);
       ((TalonFX) rightBack).configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, Constants.PID_IDX,
           Constants.TIMEOUT_MS);
-    }
+    // }
     gyro = new AHRS(SPI.Port.kMXP);
 
     odometry = new DifferentialDriveOdometry(getGyroAngle());
@@ -138,11 +147,23 @@ public class Drivetrain extends SubsystemBase {
     leftBack.enableVoltageCompensation(true);
     rightBack.enableVoltageCompensation(true);
 
+    pose = new Pose2d();
     
 
     leftBack.follow(leftFront);
     rightBack.follow(rightFront);
     this.limelight = limelight;
+
+    trajectoryConfig = new TrajectoryConfig(kMaxVelocityMetersPerSecond,
+				kMaxAccelerationMetersPerSecondSq);
+		trajectoryConfig.setReversed(false);
+
+		trajectoryConfigSlow = new TrajectoryConfig(.5, .75);
+		trajectoryConfigSlow.setReversed(false);
+
+		// ramseteController = new RamseteController();
+		integralAcc = 0;
+
 
     resetGyro();
     resetEncoderValues();
@@ -234,34 +255,48 @@ public class Drivetrain extends SubsystemBase {
    * alignment, and then applies it to the motors
    */
   public double alignToTarget() {
-    double horizontalAngleError = getHorizontalAngleError();
-    // find change in error / change in time
-    double dt = Timer.getFPGATimestamp() - lastTime;
-    double de = horizontalAngleError - lastHorizontalAngleError;
-    double slope = de / dt;
+    double error = getHorizontalAngleError();
+    double distance = limelight.getDistanceFromTarget();
+    double kFF = 0.04;  //0.033;
+		double kP = .0055;
+    double kDist = 0.00005;
+		double output;
+		integralAcc += error;
 
-    // if the error is within the range to use integral, add the I term
-    if (Math.abs(horizontalAngleError) < Constants.Drivetrain.kIntegralRange)
-      totalHorizontalAngleError += dt * horizontalAngleError;
+		if (Math.abs(error) > 4) {			// .5
+			output = error * kP - Math.copySign(kFF, error);
+		} else {
+			output = error * kP;
+		}
+    output+=Math.copySign(distance * kDist, error);
+    // double horizontalAngleError = getHorizontalAngleError();
+    // // find change in error / change in time
+    // double dt = Timer.getFPGATimestamp() - lastTime;
+    // double de = horizontalAngleError - lastHorizontalAngleError;
+    // double slope = de / dt;
 
-    // calculate turn speed with PID
-    double turnSpeed = Constants.Drivetrain.kAlignP * horizontalAngleError
-        + Constants.Drivetrain.kAlignI * totalHorizontalAngleError + Constants.Drivetrain.kAlignD * slope;
+    // // if the error is within the range to use integral, add the I term
+    // if (Math.abs(horizontalAngleError) < Constants.Drivetrain.kIntegralRange)
+    //   totalHorizontalAngleError += dt * horizontalAngleError;
 
-    // if error is greater than constant value, add FF term
-    if (horizontalAngleError > 0.9) {
-      turnSpeed += Math.copySign(Constants.Drivetrain.kAlignff, horizontalAngleError);
-    }
+    // // calculate turn speed with PID
+    // double turnSpeed = Constants.Drivetrain.kAlignP * horizontalAngleError
+    //     + Constants.Drivetrain.kAlignI * totalHorizontalAngleError + Constants.Drivetrain.kAlignD * slope;
+
+    // // if error is greater than constant value, add FF term
+    // if (horizontalAngleError > 0.9) {
+    //   turnSpeed += Math.copySign(Constants.Drivetrain.kAlignff, horizontalAngleError);
+    // }
 
     // run motors
-    setDrivetrainMotorSpeed(turnSpeed, -turnSpeed);
+    setDrivetrainMotorSpeed(output, -output);
 
-    // change previous angle to current angle
-    lastHorizontalAngleError = horizontalAngleError;
-    // change previous time to current time
-    lastTime = Timer.getFPGATimestamp();
+    // // change previous angle to current angle
+    // lastHorizontalAngleError = horizontalAngleError;
+    // // change previous time to current time
+    // lastTime = Timer.getFPGATimestamp();
 
-    return turnSpeed;
+    return output;
   }
 
   @Override
@@ -271,8 +306,7 @@ public class Drivetrain extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
 
-    odometry.update(getGyroAngle(), getDistance(leftFront, leftBack), getDistance(rightFront, rightBack));
-    pose = odometry.getPoseMeters();
+    pose = odometry.update(getGyroAngle(), getDistance(leftFront, leftBack), getDistance(rightFront, rightBack));
 
     log();
   }
@@ -288,6 +322,8 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("Curr Y Position", pose.getTranslation().getY());
     SmartDashboard.putNumber("Horizontal Error", getHorizontalAngleError());
     SmartDashboard.putNumber("NavX", gyro.getAngle());
+    SmartDashboard.putNumber("Left Output", leftBack.getMotorOutputPercent());
+    SmartDashboard.putNumber("right Output", rightBack.getMotorOutputPercent());
   }
 
   // ***********************************OUTPUT-SETTING
@@ -296,10 +332,13 @@ public class Drivetrain extends SubsystemBase {
   /**
    * Sets drivetrain motors to a given left and right percent outunt
    */
-  public void setDrivetrainMotorSpeed(double leftSpeed, double rightSpeed) {
-    leftFront.set(ControlMode.PercentOutput, leftSpeed);
-    rightFront.set(ControlMode.PercentOutput, rightSpeed);
-  }
+  public void setDrivetrainMotorSpeed(double left, double right) {
+		leftFront.set(ControlMode.PercentOutput, left);
+		leftBack.set(ControlMode.PercentOutput, left);
+		rightBack.set(ControlMode.PercentOutput, right);
+		rightFront.set(ControlMode.PercentOutput, right);
+
+	}
 
   /**
    * Sets motor percent output based on voltage to each side of the drivetrain
@@ -308,9 +347,9 @@ public class Drivetrain extends SubsystemBase {
    * @param leftVoltage  voltage to left side of drivetrain
    */
   // implement voltage compensation
-  public void setOutputVoltage(double rightVoltage, double leftVoltage) {
-    setDrivetrainMotorSpeed(leftVoltage / RobotController.getBatteryVoltage(),
-        rightVoltage / RobotController.getBatteryVoltage());
+  public void setOutputVoltage(double leftVolts, double rightVolts) {
+    SmartDashboard.putNumber("volts", leftVolts);
+    setDrivetrainMotorSpeed(leftVolts / 100, rightVolts / 100);
   }
 
   /**
@@ -470,7 +509,7 @@ public class Drivetrain extends SubsystemBase {
     // ratio to get rotations per second of wheel -> multiply by wheel circumference
     // to get final: meters per second of wheel
     double metersPerSecond = ticksPer100ms / Constants.Drivetrain.kDriveGearRatio
-        / Constants.Drivetrain.kFalconTicksPerRotation * Constants.Drivetrain.kWheelCircumferenceMeters * 10;
+        / Constants.Drivetrain.kFalconTicksPerRotation * Constants.Drivetrain.kWheelCircumferenceMeters * 10 * Math.PI;
     return metersPerSecond;
   }
 
@@ -490,4 +529,16 @@ public class Drivetrain extends SubsystemBase {
         * Constants.Drivetrain.kWheelCircumferenceMeters;
     return meters;
   }
+
+  public void invertPathDirection(boolean reversed){
+		trajectoryConfig.setReversed(reversed);
+		trajectoryConfigSlow.setReversed(reversed);
+  }
+  
+  public TrajectoryConfig getTrajectoryConfig() {
+		return trajectoryConfig;
+	}
+  public TrajectoryConfig getTrajectoryConfigSlow() {
+		return trajectoryConfigSlow;
+	}
 }

@@ -73,6 +73,10 @@ public class Flywheel extends SubsystemBase{
         
     }
 
+    public void stop() {
+        flywheelLeader.set(ControlMode.PercentOutput, 0);
+    }
+
     /**
      * Set motor target RPM
      * @param desiredVelocity -- desired RPM
@@ -210,7 +214,7 @@ public class Flywheel extends SubsystemBase{
 
         // SmartDashboard.putNumber("distance", distance_in);
 
-        return distance_in * 8.3 + 4700;
+        return distance_in * 8.5 + 4800;
     }
     /**
      * @param target -- the target RPM

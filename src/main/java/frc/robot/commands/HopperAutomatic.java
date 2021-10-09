@@ -32,7 +32,7 @@ public class HopperAutomatic extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    hopper.runHopper(hopper.getBallsInHopper() < 5);
+    hopper.runHopper();
   }
   
   // Called once the command ends or is interrupted.
