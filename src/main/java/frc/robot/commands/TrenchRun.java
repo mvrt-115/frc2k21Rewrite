@@ -37,7 +37,7 @@ public class TrenchRun extends SequentialCommandGroup {
     this.hopper = hopper;
     addCommands(
       // shoot at start
-      new SmartShoot(flywheel, hopper, limelight, true).withTimeout(10),
+      // new SmartShoot(flywheel, hopper, limelight, true).withTimeout(10),
       // intake at trench
       new ParallelRaceGroup(
         new ParallelCommandGroup(
@@ -49,8 +49,8 @@ public class TrenchRun extends SequentialCommandGroup {
       // go back and shoot
       // new ParallelRaceGroup(
       //   new SequentialCommandGroup(
-          getTrajectory2(),
-          new SmartShoot(flywheel, hopper, limelight, true).withTimeout(5)
+          getTrajectory2()
+          // new SmartShoot(flywheel, hopper, limelight, true).withTimeout(5)
         // ),
       //   new RunIntake(intake, true).withTimeout(7)
       // )
@@ -85,11 +85,13 @@ public class TrenchRun extends SequentialCommandGroup {
     drivetrain.invertPathDirection(true);
 
     Trajectory traj1 = TrajectoryGenerator.generateTrajectory(
-      new Pose2d(0, 0, new Rotation2d()),  
-      List.of(      
-        new Translation2d(-2.2,-1.55)
+      
+      List.of(   
+        // new Pose2d(0, 0, new Rotation2d()),     
+        new Pose2d(-2.2,-1.55, Rotation2d.fromDegrees(8)),
+        new Pose2d(-4, -1.55, new Rotation2d())
       ), 
-      new Pose2d(-4, -1.55, new Rotation2d()),
+      
       drivetrain.getTrajectoryConfig()
     );
 

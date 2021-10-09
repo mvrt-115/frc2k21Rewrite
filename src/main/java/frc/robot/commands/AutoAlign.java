@@ -61,8 +61,8 @@ public class AutoAlign extends CommandBase {
   public void end(boolean interrupted) 
   {
     drivetrain.stopDrivetrainMotors();
-    limelight.setLED(LED_STATE.OFF);
-    limelight.setPipeline(CAM_MODE.DRIVER);
+    // limelight.setLED(LED_STATE.OFF);
+    // limelight.setPipeline(CAM_MODE.DRIVER);
   }
 
   // Returns true when the command should end.
@@ -74,6 +74,7 @@ public class AutoAlign extends CommandBase {
    */
   @Override
   public boolean isFinished() {
-    return Math.abs(drivetrain.getHorizontalAngleError()) < 3;
+    // return Math.abs(drivetrain.getHorizontalAngleError()) < 3;
+    return false;
   }
 }

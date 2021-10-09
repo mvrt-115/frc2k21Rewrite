@@ -257,14 +257,14 @@ public class Drivetrain extends SubsystemBase {
   public double alignToTarget() {
     double error = getHorizontalAngleError();
     double distance = limelight.getDistanceFromTarget();
-    double kFF = 0.035;  //0.033;
+    double kFF = 0.04;  //0.033;
 		double kP = .0055;
-    double kDist = 0.0003;
+    double kDist = 0.00005;
 		double output;
 		integralAcc += error;
 
-		if (Math.abs(error) > .9) {			// .5
-			output = error * kP + Math.copySign(kFF, error);
+		if (Math.abs(error) > 4) {			// .5
+			output = error * kP - Math.copySign(kFF, error);
 		} else {
 			output = error * kP;
 		}
@@ -306,7 +306,7 @@ public class Drivetrain extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
 
-    odometry.update(getGyroAngle(), getDistance(leftFront, leftBack), getDistance(rightFront, rightBack));
+    pose = odometry.update(getGyroAngle(), getDistance(leftFront, leftBack), getDistance(rightFront, rightBack));
 
     log();
   }
@@ -348,7 +348,8 @@ public class Drivetrain extends SubsystemBase {
    */
   // implement voltage compensation
   public void setOutputVoltage(double leftVolts, double rightVolts) {
-    setDrivetrainMotorSpeed(leftVolts / Constants.MAX_VOLTAGE, rightVolts / Constants.MAX_VOLTAGE);
+    SmartDashboard.putNumber("volts", leftVolts);
+    setDrivetrainMotorSpeed(leftVolts / 100, rightVolts / 100);
   }
 
   /**

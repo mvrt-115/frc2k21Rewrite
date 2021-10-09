@@ -46,17 +46,17 @@ public class SmartShoot extends CommandBase {
   public void initialize() {
     limelight.setLED(LED_STATE.ON);
     limelight.setPipeline(CAM_MODE.VISION_WIDE);
+    flywheel.setTargetRPM(flywheel.getRequiredRPM());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-      
-    flywheel.setTargetRPM(flywheel.getRequiredRPM());
+    
 
     if(flywheel.getFlywheelState() == FlywheelState.ATSPEED) {
-        hopper.runTopMotor(0.4);
-        hopper.runBottomMotor(0.7);
+        hopper.runTopMotor(0.6);
+        hopper.runBottomMotor(0.8);
       } else {
         hopper.runTopMotor(0);
         hopper.runBottomMotor(0);
@@ -72,8 +72,8 @@ public class SmartShoot extends CommandBase {
   public void end(boolean interrupted) {
     flywheel.stop();
     flywheel.setTargetRPM(0);
-    limelight.setLED(LED_STATE.OFF);
-    limelight.setPipeline(CAM_MODE.DRIVER);
+    // limelight.setLED(LED_STATE.OFF);
+    // limelight.setPipeline(CAM_MODE.DRIVER);
   }
 
   // Returns true when the command should end.

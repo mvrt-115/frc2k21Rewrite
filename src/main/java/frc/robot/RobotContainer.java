@@ -104,7 +104,7 @@ public class RobotContainer {
     // runIntake.whenPressed(new RunIntake(intake, true)).whenReleased(new RunIntake(intake, false));
 
     // // hopper button
-    autoAlign.whenActive(new AutoAlign(drivetrain, limelight));
+    autoAlign.whenPressed(new AutoAlign(drivetrain, limelight)).whenReleased(new RunDrivetrain(drivetrain, 0));
 
     // // backwards hopper button
     hopperDown.whenPressed(new HopperManual(hopper, -0.35, -0.35)).whenReleased(new HopperManual(hopper, 0, 0));
