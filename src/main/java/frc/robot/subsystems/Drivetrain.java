@@ -5,15 +5,18 @@ import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.RobotBase;
 // import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.SpeedControllerGroup;
 // import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Twist2d;
@@ -38,16 +41,20 @@ public class Drivetrain extends SubsystemBase {
   /// implement current limit
 
   // real hardware
-  private BaseTalon leftFront; // motor on drivetrain located on the left side in the front
-  private BaseTalon rightFront; // motor on drivetrain located on the right side in the front
-  private BaseTalon leftBack; // motor on drivetrain located on the left side in the back
-  private BaseTalon rightBack; // motor on drivetrain located on the right side in the back
-
+  private WPI_TalonFX leftFront; // motor on drivetrain located on the left side in the front
+  private WPI_TalonFX rightFront; // motor on drivetrain located on the right side in the front
+  private WPI_TalonFX leftBack; // motor on drivetrain located on the left side in the back
+  private WPI_TalonFX rightBack; // motor on drivetrain located on the right side in the back
   // keeps track of robot location
   private DifferentialDriveOdometry odometry;
 
   // returns angular and linear velocity to follow path
   private DifferentialDriveKinematics kinematics;
+
+  // differential drive class
+  private DifferentialDrive drive;
+  SpeedControllerGroup rightGroup;
+  SpeedControllerGroup leftGroup;
 
   // constants are from robot characteristics
   private SimpleMotorFeedforward feedforward;
@@ -82,10 +89,14 @@ public class Drivetrain extends SubsystemBase {
   public Drivetrain(Limelight limelight) {
     // initializes if real (plugged into a robot)
     // if (RobotBase.isReal()) {
-      leftFront = new TalonFX(46);
-      leftBack = new TalonFX(9);
-      rightFront = new TalonFX(48);
-      rightBack = new TalonFX(6);
+      leftFront = new WPI_TalonFX(46);
+      leftBack = new WPI_TalonFX(9);
+      rightFront = new WPI_TalonFX(48);
+      rightBack = new WPI_TalonFX(6);
+      // leftFront = new TalonFX(46);
+      // leftBack = new TalonFX(9);
+      // rightFront = new TalonFX(48);
+      // rightBack = new TalonFX(6);
 
       // configures to factory default in case of previous changes
       leftFront.configFactoryDefault();
@@ -124,7 +135,11 @@ public class Drivetrain extends SubsystemBase {
     // }
     gyro = new AHRS(SPI.Port.kMXP);
 
-    odometry = new DifferentialDriveOdometry(getGyroAngle());
+    leftGroup = new SpeedControllerGroup(leftFront, leftBack);
+    rightGroup = new SpeedControllerGroup(rightFront, rightBack);
+    
+    drive = new DifferentialDrive(leftGroup, rightGroup);
+    odometry = new DifferentialDriveOdometry(getGyroRotation2d());
 
     kinematics = new DifferentialDriveKinematics(Constants.Drivetrain.kTrackWidthMeters);
 
@@ -306,7 +321,7 @@ public class Drivetrain extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
 
-    pose = odometry.update(getGyroAngle(), getDistance(leftFront, leftBack), getDistance(rightFront, rightBack));
+    pose = odometry.update(getGyroRotation2d(), getDistance(leftFront, leftBack), getDistance(rightFront, rightBack));
 
     log();
   }
@@ -349,7 +364,10 @@ public class Drivetrain extends SubsystemBase {
   // implement voltage compensation
   public void setOutputVoltage(double leftVolts, double rightVolts) {
     SmartDashboard.putNumber("volts", leftVolts);
-    setDrivetrainMotorSpeed(leftVolts / 100, rightVolts / 100);
+    leftGroup.setVoltage(leftVolts);
+    rightGroup.setVoltage(rightVolts);
+    // setDrivetrainMotorSpeed(leftVolts / 100, rightVolts / 100);
+    drive.feed();
   }
 
   /**
@@ -392,8 +410,25 @@ public class Drivetrain extends SubsystemBase {
    * 
    * @return Rotation2d of current rotation
    */
-  public Rotation2d getGyroAngle() {
-    return Rotation2d.fromDegrees(-gyro.getAngle());
+  public Rotation2d getGyroRotation2d() {
+    return gyro.getRotation2d();
+    // return Rotation2d.fromDegrees(-gyro.getAngle());
+  }
+
+  /**
+   * Returns the heading of the robot.
+   *
+   * @return the robot's heading in degrees, from -180 to 180
+   */
+  public double getHeading() {
+    return gyro.getRotation2d().getDegrees();
+  }
+  /**
+   * gets the rate at which the gyro is turning
+   * @return - turn rate of robot in degrees per second
+   */
+  public double getRate() {
+    return -gyro.getRate();
   }
 
   /**
