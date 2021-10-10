@@ -36,6 +36,7 @@ public class RealClimber implements ClimberInterface
 
         currentConfig = new SupplyCurrentLimitConfiguration(true, 40, 1.3, 30);
         elevatorMaster.configSupplyCurrentLimit(currentConfig);
+        elevatorMaster.setSelectedSensorPosition(0);
     }
 
     /**

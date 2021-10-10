@@ -7,7 +7,6 @@ import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.wpilibj.RobotBase;
 // import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.SPI;
 // import edu.wpi.first.wpilibj.Timer;
@@ -269,32 +268,9 @@ public class Drivetrain extends SubsystemBase {
 			output = error * kP;
 		}
     output+=Math.copySign(distance * kDist, error);
-    // double horizontalAngleError = getHorizontalAngleError();
-    // // find change in error / change in time
-    // double dt = Timer.getFPGATimestamp() - lastTime;
-    // double de = horizontalAngleError - lastHorizontalAngleError;
-    // double slope = de / dt;
-
-    // // if the error is within the range to use integral, add the I term
-    // if (Math.abs(horizontalAngleError) < Constants.Drivetrain.kIntegralRange)
-    //   totalHorizontalAngleError += dt * horizontalAngleError;
-
-    // // calculate turn speed with PID
-    // double turnSpeed = Constants.Drivetrain.kAlignP * horizontalAngleError
-    //     + Constants.Drivetrain.kAlignI * totalHorizontalAngleError + Constants.Drivetrain.kAlignD * slope;
-
-    // // if error is greater than constant value, add FF term
-    // if (horizontalAngleError > 0.9) {
-    //   turnSpeed += Math.copySign(Constants.Drivetrain.kAlignff, horizontalAngleError);
-    // }
 
     // run motors
     setDrivetrainMotorSpeed(output, -output);
-
-    // // change previous angle to current angle
-    // lastHorizontalAngleError = horizontalAngleError;
-    // // change previous time to current time
-    // lastTime = Timer.getFPGATimestamp();
 
     return output;
   }
@@ -349,7 +325,7 @@ public class Drivetrain extends SubsystemBase {
   // implement voltage compensation
   public void setOutputVoltage(double leftVolts, double rightVolts) {
     SmartDashboard.putNumber("volts", leftVolts);
-    setDrivetrainMotorSpeed(leftVolts / 100, rightVolts / 100);
+    setDrivetrainMotorSpeed(leftVolts / 10.0, rightVolts / 10.0); 
   }
 
   /**

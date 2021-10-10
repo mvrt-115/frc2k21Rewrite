@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Robot;
 import frc.robot.utils.RealClimber;
 import frc.robot.utils.ClimberInterface;
 import frc.robot.utils.RollingAverage;
@@ -130,12 +129,12 @@ public class Climber extends SubsystemBase
 
         case GOING_UP:
           // if(sensorPosition >= Constants.Climber.kClimbHeight)
-          climberMethods.setMotorOutputPercent(0.5);
+          climberMethods.setPosition(Constants.Climber.kClimbHeight);
           break;
 
         case GOING_DOWN:
           // if(sensorPosition <= Constants.Climber.kElevatorZero)
-            climberMethods.setMotorOutputPercent(-0.5);
+          climberMethods.setPosition(Constants.Climber.kElevatorZero);
           break;
 
     }
