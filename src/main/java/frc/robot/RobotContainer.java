@@ -58,8 +58,8 @@ public class RobotContainer {
   public JoystickButton hopperUp = new JoystickButton(opJoystick, 4);
   public JoystickButton shootToTarget = new JoystickButton(joystick, 6);
   public JoystickButton resetHopper = new JoystickButton(opJoystick, 3);
-  public JoystickButton elevatorUp  = new JoystickButton(opJoystick, 7);
-  public JoystickButton elevatorDown = new JoystickButton(opJoystick, 8);
+  public JoystickButton elevatorUp  = new JoystickButton(joystick, 7);
+  public JoystickButton elevatorDown = new JoystickButton(joystick, 8);
   // public JoystickButton ratchet = new JoystickButton(joystick, 7);
   public JoystickButton fixIntake = new JoystickButton(joystick, 2);
   public JoystickButton manualShoot = new JoystickButton(opJoystick, 9);
@@ -98,6 +98,7 @@ public class RobotContainer {
     // new JoystickButton(joystick, 1).whenPressed(new
     // ExampleCommand(m_exampleSubsystem, true));
     
+    /*
     drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, this::getQuickTurn));
 
     // run intake button
@@ -138,9 +139,10 @@ public class RobotContainer {
     // Deruiter is goated
     // Codingbat for life. Lets go commonEnd.java is the best excerise
     // Vincent dont forget to do APUSH and Conlin hw
-    
+    */
     elevatorUp.whenPressed(new ElevatorCommand(climber, intake)).whenReleased(new StopElevator(climber));
     elevatorDown.whenPressed(new ClimberDownCommand(climber)).whenReleased(new StopElevator(climber));
+    new JoystickButton(joystick, 1).whenPressed(new MoveServo(climber, true)).whenReleased(new MoveServo(climber, false));
 
   // new JoystickButton(opJoystick, 1).whenPressed(new MoveServo(climber, true));
 
@@ -188,6 +190,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     autonSelector = new SendableChooser<>();
+    TrenchRun trenchRun = new TrenchRun(intake, hopper, drivetrain, flywheel, limelight);
 
     // autonSelector.setDefaultOption("Stand and Shoot", new StandAndShoot(hopper, flywheel, drivetrain, limelight));
     autonSelector.setDefaultOption("Trench Run", new TrenchRun(intake, hopper, drivetrain, flywheel, limelight));
@@ -197,7 +200,7 @@ public class RobotContainer {
     // autonSelector.addOption("Shoot then Back", new BasicAuto());
     // SmartDashboard.putData(autonSelector);
     
-    return autonSelector.getSelected();
+    return trenchRun.getTrajectory1();
   
   }
 }

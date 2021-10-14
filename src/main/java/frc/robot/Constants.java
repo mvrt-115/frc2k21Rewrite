@@ -91,9 +91,9 @@ public final class Constants {
         public static final double kDriveGearRatio = (46.0/9) * (44.0/20); // ticks
         public static final int kFalconTicksPerRotation = 2048; // ticks/rotation
                 
-        public static final double kDriveS = 2.19;//0.166; 
-        public static final double kDriveV = -0.00218; 
-        public static final double kDriveA = 0.0681;  
+        public static final double kDriveS = 0.01;
+        public static final double kDriveV = 1.0; 
+        public static final double kDriveA = 0.1;   
 
         public static final double kDriveP = 0; 
         public static final double kDriveI = 0;
@@ -125,8 +125,8 @@ public final class Constants {
         public static final double kElevatorClimbOutput = 0.257;
         
         //Location Ticks
-        public static final double kClimbHeight = 35000;
-        public static final double kElevatorZero = 3000;
+        public static final double kClimbHeight = 320000;
+        public static final double kElevatorZero = 80000;
 
         //Servo angles
         public static final double kServoRatchet = 1;

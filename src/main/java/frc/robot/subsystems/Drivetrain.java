@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.geometry.Twist2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
@@ -47,10 +48,11 @@ public class Drivetrain extends SubsystemBase {
 
   // returns angular and linear velocity to follow path
   private DifferentialDriveKinematics kinematics;
+  
 
   // constants are from robot characteristics
   private SimpleMotorFeedforward feedforward;
-
+  private Field2d field = new Field2d();
 	// private RamseteController ramseteController; // auton
 	private TrajectoryConfig trajectoryConfig; // auton
   private TrajectoryConfig trajectoryConfigSlow; // auton
@@ -157,7 +159,7 @@ public class Drivetrain extends SubsystemBase {
 				kMaxAccelerationMetersPerSecondSq);
 		trajectoryConfig.setReversed(false);
 
-		trajectoryConfigSlow = new TrajectoryConfig(.5, .75);
+		trajectoryConfigSlow = new TrajectoryConfig(.9, 0.9);
 		trajectoryConfigSlow.setReversed(false);
 
 		// ramseteController = new RamseteController();
@@ -283,7 +285,7 @@ public class Drivetrain extends SubsystemBase {
     // This method will be called once per scheduler run
 
     pose = odometry.update(getGyroAngle(), getDistance(leftFront, leftBack), getDistance(rightFront, rightBack));
-
+    field.setRobotPose(pose);
     log();
   }
 
@@ -300,6 +302,7 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("NavX", gyro.getAngle());
     SmartDashboard.putNumber("Left Output", leftBack.getMotorOutputPercent());
     SmartDashboard.putNumber("right Output", rightBack.getMotorOutputPercent());
+    SmartDashboard.putData(field);
   }
 
   // ***********************************OUTPUT-SETTING

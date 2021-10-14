@@ -129,12 +129,20 @@ public class Climber extends SubsystemBase
 
         case GOING_UP:
           // if(sensorPosition >= Constants.Climber.kClimbHeight)
-          climberMethods.setPosition(Constants.Climber.kClimbHeight);
+          // climberMethods.setPosition(Constants.Climber.kClimbHeight);
+          if(sensorPosition < Constants.Climber.kClimbHeight)
+            climberMethods.setMotorOutputPercent(0.3);
+          else
+             climberMethods.setMotorOutputPercent(0);
           break;
 
         case GOING_DOWN:
           // if(sensorPosition <= Constants.Climber.kElevatorZero)
-          climberMethods.setPosition(Constants.Climber.kElevatorZero);
+          // climberMethods.setPosition(Constants.Climber.kElevatorZero);
+          if(sensorPosition > Constants.Climber.kElevatorZero)
+            climberMethods.setMotorOutputPercent(-0.3);
+          else
+            climberMethods.setMotorOutputPercent(0);
           break;
 
     }
