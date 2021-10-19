@@ -91,13 +91,13 @@ public final class Constants {
         public static final double kDriveGearRatio = (46.0/9) * (44.0/20); // ticks
         public static final int kFalconTicksPerRotation = 2048; // ticks/rotation
                 
-        public static final double kDriveS = 0.01;
-        public static final double kDriveV = 1.0; 
+        public static final double kDriveS = 0.07;
+        public static final double kDriveV = 1; 
         public static final double kDriveA = 0.1;   
 
         public static final double kDriveP = 0; 
         public static final double kDriveI = 0;
-        public static final double kDriveD = 0;
+        public static final double kDriveD = 0.0;
                 
         public static final double kSensitivity = 0.90;
         public static final double kWheelDeadband = 0.02;
