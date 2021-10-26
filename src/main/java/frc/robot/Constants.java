@@ -97,7 +97,7 @@ public final class Constants {
 
         public static final double kDriveP = 0; 
         public static final double kDriveI = 0;
-        public static final double kDriveD = 0;
+        public static final double kDriveD = 0.0;
                 
         public static final double kSensitivity = 0.90;
         public static final double kWheelDeadband = 0.02;
