@@ -98,7 +98,7 @@ public class RobotContainer {
     // new JoystickButton(joystick, 1).whenPressed(new
     // ExampleCommand(m_exampleSubsystem, true));
     
-    /*
+    
     drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, this::getQuickTurn));
 
     // run intake button
@@ -139,10 +139,10 @@ public class RobotContainer {
     // Deruiter is goated
     // Codingbat for life. Lets go commonEnd.java is the best excerise
     // Vincent dont forget to do APUSH and Conlin hw
-    */
+    
     elevatorUp.whenPressed(new ElevatorCommand(climber, intake)).whenReleased(new StopElevator(climber));
     elevatorDown.whenPressed(new ClimberDownCommand(climber)).whenReleased(new StopElevator(climber));
-    new JoystickButton(joystick, 1).whenPressed(new MoveServo(climber, true)).whenReleased(new MoveServo(climber, false));
+    // new JoystickButton(joystick, 1).whenPressed(new MoveServo(climber, true)).whenReleased(new MoveServo(climber, false));
 
   // new JoystickButton(opJoystick, 1).whenPressed(new MoveServo(climber, true));
 
@@ -200,7 +200,7 @@ public class RobotContainer {
     // autonSelector.addOption("Shoot then Back", new BasicAuto());
     // SmartDashboard.putData(autonSelector);
     
-    return trenchRun.getTrajectory1();
+    return trenchRun;
   
   }
 }
