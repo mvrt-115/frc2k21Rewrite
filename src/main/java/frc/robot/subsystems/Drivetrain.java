@@ -259,7 +259,7 @@ public class Drivetrain extends SubsystemBase {
     double error = getHorizontalAngleError();
     double distance = limelight.getDistanceFromTarget();
     double kFF = 0.04;  //0.033;
-		double kP = .0055;
+		double kP = .011;
     double kDist = 0.00005;
 		double output;
 		integralAcc += error;
@@ -270,6 +270,7 @@ public class Drivetrain extends SubsystemBase {
 			output = error * kP;
 		}
     output+=Math.copySign(distance * kDist, error);
+    System.out.println(output);
 
     // run motors
     setDrivetrainMotorSpeed(output, -output);

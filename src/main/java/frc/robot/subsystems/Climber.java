@@ -45,7 +45,7 @@ public class Climber extends SubsystemBase
   /** Creates a new Climber. */
   public Climber() 
   {
-    elevatorServo = new Servo(0);
+    elevatorServo = new Servo(8);
     heightAverage = new RollingAverage(5);
 
     motorID = ClimberInterface.getMotorID();

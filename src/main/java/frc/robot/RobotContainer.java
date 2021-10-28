@@ -58,9 +58,9 @@ public class RobotContainer {
   public JoystickButton hopperUp = new JoystickButton(opJoystick, 4);
   public JoystickButton shootToTarget = new JoystickButton(joystick, 6);
   public JoystickButton resetHopper = new JoystickButton(opJoystick, 3);
-  public JoystickButton elevatorUp  = new JoystickButton(joystick, 7);
-  public JoystickButton elevatorDown = new JoystickButton(joystick, 8);
-  // public JoystickButton ratchet = new JoystickButton(joystick, 7);
+  public JoystickButton elevatorUp  = new JoystickButton(opJoystick, 7);
+  public JoystickButton elevatorDown = new JoystickButton(opJoystick, 8);
+  // public opJoystickButton ratchet = new JoystickButton(joystick, 7);
   public JoystickButton fixIntake = new JoystickButton(joystick, 2);
   public JoystickButton manualShoot = new JoystickButton(opJoystick, 9);
 
@@ -144,7 +144,7 @@ public class RobotContainer {
     elevatorDown.whenPressed(new ClimberDownCommand(climber)).whenReleased(new StopElevator(climber));
     // new JoystickButton(joystick, 1).whenPressed(new MoveServo(climber, true)).whenReleased(new MoveServo(climber, false));
 
-  // new JoystickButton(opJoystick, 1).whenPressed(new MoveServo(climber, true));
+  new JoystickButton(opJoystick, 1).whenPressed(new MoveServo(climber, true));
 
   }
 
