@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.*;
@@ -145,6 +146,19 @@ public class RobotContainer {
     // new JoystickButton(joystick, 1).whenPressed(new MoveServo(climber, true)).whenReleased(new MoveServo(climber, false));
 
   new JoystickButton(opJoystick, 1).whenPressed(new MoveServo(climber, true));
+  autonSelector = new SendableChooser<>();
+
+    // autonSelector.setDefaultOption("Stand and Shoot", new StandAndShoot(hopper, flywheel, drivetrain, limelight));
+    autonSelector.setDefaultOption("Trench Run", new TrenchRun(intake, hopper, drivetrain, flywheel, limelight));
+    autonSelector.addOption("Trench Run", new TrenchRun(intake, hopper, drivetrain, flywheel, limelight));
+    autonSelector.addOption("Stand And Shoot", new RunDrivetrain(drivetrain, 0.3).andThen(new Wait(2)).andThen(new SmartShoot(flywheel, hopper, limelight, true)));
+    // autonSelector.addOption("Rendezvous Run", new RendezvousZone(intake, hopper, drivetrain, flywheel, limelight));
+    // autonSelector.addOption("Rendezvous Run Small", new RendezvousAuton2());
+    // autonSelector.addOption("Shoot then Back", new BasicAuto());
+    // SmartDashboard.putData(autonSelector);
+
+    SmartDashboard.putData(autonSelector);
+    
 
   }
 
@@ -189,18 +203,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    autonSelector = new SendableChooser<>();
-    TrenchRun trenchRun = new TrenchRun(intake, hopper, drivetrain, flywheel, limelight);
-
-    // autonSelector.setDefaultOption("Stand and Shoot", new StandAndShoot(hopper, flywheel, drivetrain, limelight));
-    autonSelector.setDefaultOption("Trench Run", new TrenchRun(intake, hopper, drivetrain, flywheel, limelight));
-    autonSelector.addOption("Trench Run", new TrenchRun(intake, hopper, drivetrain, flywheel, limelight));
-    autonSelector.addOption("Rendezvous Run", new RendezvousZone(intake, hopper, drivetrain, flywheel, limelight));
-    // autonSelector.addOption("Rendezvous Run Small", new RendezvousAuton2());
-    // autonSelector.addOption("Shoot then Back", new BasicAuto());
-    // SmartDashboard.putData(autonSelector);
-    
-    return trenchRun;
+    return autonSelector.getSelected();
   
   }
 }
