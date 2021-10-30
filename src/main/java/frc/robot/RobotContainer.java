@@ -31,6 +31,7 @@ public class RobotContainer {
   public final Intake intake = new Intake();
   public final Limelight limelight = new Limelight();
   public final Climber climber = new Climber();
+  public final LED led = new LED(Constants.LED.kLedLength);
 
   public final Flywheel flywheel = new Flywheel(limelight);  
   public final Drivetrain drivetrain = new Drivetrain(limelight);
@@ -87,6 +88,9 @@ public class RobotContainer {
   public Flywheel getFlywheel() {
     return flywheel;
   }
+  public LED getLED() {
+    return led;
+  }
 
   /**
    * Use this method to define your button->command mappings. Buttons can be
@@ -100,6 +104,7 @@ public class RobotContainer {
     
     
     drivetrain.setDefaultCommand(new JoystickDrive(drivetrain, this::getThrottle, this::getWheel, this::getQuickTurn));
+    led.setDefaultCommand(new LEDControl(led, hopper::getBallsInHopper, this::getElevatorUp, this::getAutoAlign, drivetrain::getHorizontalAngleError));
 
     // run intake button
     // runIntake.whenPressed(new RunIntake(intake, true)).whenReleased(new RunIntake(intake, false));
@@ -181,6 +186,14 @@ public class RobotContainer {
    */
   public boolean getQuickTurn() {
     return quickturn.get();
+  }
+
+  public boolean getElevatorUp() {
+    return elevatorUp.get();
+  }
+
+  public boolean getAutoAlign() {
+    return autoAlign.get();
   }
 
   /**

@@ -28,6 +28,21 @@ public final class Constants {
         public static final double HEIGHT_IN = 45; // inches  
         public static final double TARGET_HEIGHT_IN = 98.25;
     }
+    
+    public static class LED
+    {
+        public static final int kLedLength = 60;
+        public static final int kColorBlockLength = 5;
+        public static final double kTimeToMove = 0.1;
+    
+        public static final int LED_PORT = 6;
+
+        public static final int MAX_BALLS = 5;
+
+        public static final int[] purple = {85,5,117};
+        public static final int[] gold = {255,196,16};
+    }
+    
     public static class Flywheel {
         public static final double P = 0.21;
         public static final double I = 0;
@@ -42,6 +57,7 @@ public final class Constants {
         public static final double FLYWHEEL_RADIUS_IN = 2;
         public static final double FLYWHEEL_ANGLE_DEG = 70;   
     }
+
     public static class Intake {
         public static final int PIVOT_ID = 3;
         public static final int ROLLER_ID = 5;
@@ -74,6 +90,7 @@ public final class Constants {
         public static final double PIVOT_MIN_ANGLE = -Math.PI/12;
         public static final double PIVOT_MAX_ANGLE = Math.PI/2 + Math.PI/12;
     }
+
     public static class Drivetrain{
         //Constants
         //zero and ask mech for vals
@@ -115,6 +132,7 @@ public final class Constants {
 
         public static final double kIntegralRange = 1;
     }
+
     //provides constants for the climber
     public static class Climber
     {
