@@ -130,6 +130,7 @@ public class TrenchRun extends SequentialCommandGroup {
     super.initialize();
 
     hopper.setBallsInHopper(3);
+    drivetrain.resetGyro();
   }
 
   @Override

@@ -39,7 +39,7 @@ public class Climber extends SubsystemBase
    */
   public enum ElevatorState 
   {
-    CLIMBING, HOLD, ZEROING, MANUAL_OVERRIDE, SERVO_TEST_RATCHET, SERVO_TEST_UNRATCHET, SERVO_TEST_REST, GOING_UP, GOING_DOWN
+   INIT,CLIMBING, HOLD, ZEROING, MANUAL_OVERRIDE, SERVO_TEST_RATCHET, SERVO_TEST_UNRATCHET, SERVO_TEST_REST, GOING_UP, GOING_DOWN
   };
 
   /** Creates a new Climber. */
@@ -55,7 +55,7 @@ public class Climber extends SubsystemBase
     else
       climberMethods = new SimulatedClimber(motorID, 2);
 
-    currState = ElevatorState.HOLD;
+    currState = ElevatorState.INIT;
 
     heightAverage.zero();
   }
@@ -71,6 +71,9 @@ public class Climber extends SubsystemBase
     //Have methods into the individual climber classes to make it more readable 
     switch(currState)
     {
+      case INIT:
+        elevatorServo.set(Constants.Climber.kServoUnRatchet);
+        break;
       //Sets the servo to unratched state and moves the climber up
       case CLIMBING:
         elevatorServo.set(Constants.Climber.kServoUnRatchet);

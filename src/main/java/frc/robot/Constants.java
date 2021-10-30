@@ -125,8 +125,8 @@ public final class Constants {
         public static final double kElevatorClimbOutput = 0.257;
         
         //Location Ticks
-        public static final double kClimbHeight = 320000;
-        public static final double kElevatorZero = 80000;
+        public static final double kClimbHeight = 420000;
+        public static final double kElevatorZero = 15000;
 
         //Servo angles
         public static final double kServoRatchet = 1;

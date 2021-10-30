@@ -46,7 +46,8 @@ public class SmartShoot extends CommandBase {
   public void initialize() {
     limelight.setLED(LED_STATE.ON);
     limelight.setPipeline(CAM_MODE.VISION_WIDE);
-    flywheel.setTargetRPM(flywheel.getRequiredRPM());
+    flywheel.setTargetRPM(Math.min(flywheel.getRequiredRPM(), 5000));
+    // flywheel.setTargetRPM(8000);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

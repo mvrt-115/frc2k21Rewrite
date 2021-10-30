@@ -143,9 +143,8 @@ public class RobotContainer {
     
     elevatorUp.whenPressed(new ElevatorCommand(climber, intake)).whenReleased(new StopElevator(climber));
     elevatorDown.whenPressed(new ClimberDownCommand(climber)).whenReleased(new StopElevator(climber));
-    // new JoystickButton(joystick, 1).whenPressed(new MoveServo(climber, true)).whenReleased(new MoveServo(climber, false));
 
-  new JoystickButton(opJoystick, 1).whenPressed(new MoveServo(climber, true));
+  new JoystickButton(opJoystick, 2).whenPressed(new MoveServo(climber, true));
   autonSelector = new SendableChooser<>();
 
     // autonSelector.setDefaultOption("Stand and Shoot", new StandAndShoot(hopper, flywheel, drivetrain, limelight));
